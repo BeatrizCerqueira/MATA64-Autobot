@@ -1,5 +1,7 @@
 package autobot;
 
+import java.awt.Graphics2D;
+
 import robocode.Robot;
 
 // API help : https://robocode.sourceforge.io/docs/robocode/robocode/Robot.html 
