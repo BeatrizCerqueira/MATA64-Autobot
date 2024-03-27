@@ -4,43 +4,40 @@ import robocode.*;
 import robocode.util.Utils;
 import java.awt.*;
 
-public class PaintingRobot extends AdvancedRobot {
+public class Radar extends AdvancedRobot {
 
 	int scannedX = 0;
 	int scannedY = 0;
 	boolean scannedBot = false;
 
 	public void run() {
-		turnRadarRight(360); // ? e se n encontrar depois de 360º?
 		while (true) {
+			if (getRadarTurnRemaining() == 0) {
+				setTurnRadarRight(Double.POSITIVE_INFINITY);	//will not execute until you call execute() or take an action that executes.
+			}
 			scan();
-			/*
-			 * There are 2 reasons to call scan() manually: 1. to scan after you stop
-			 * moving. 2. to interrupt the onScannedRobot event.
-			 */
+			execute();
+				// Executes any pending actions, or continues executing actions that are in
+				// process.
+
 		}
 	}
 
+	
 	public void onScannedRobot(ScannedRobotEvent e) {
 
 		// Calculate target position in degrees
-		double targetPos = getHeading() + e.getBearing();
-		double radarTurn = Utils.normalRelativeAngle(targetPos - getRadarHeading());
-		// the normalized angle that will be in the range of [-180,180[
+		setTurnRadarRight(2.0 * Utils.normalRelativeAngleDegrees(getHeading() + e.getBearing() - getRadarHeading()));
 		
-
-		setTurnRadarRight(radarTurn); // will not execute until you call execute() or take an action that executes.
-
 		// Calculate the angle to the scanned robot
-		double angle = Math.toRadians((targetPos) % 360);
-
+		double angle = Math.toRadians((targetAngle) % 360);
+		
 		// Calculate the coordinates of target robot
 		scannedBot = true;
 		scannedX = (int) (getX() + Math.sin(angle) * e.getDistance());
 		scannedY = (int) (getY() + Math.cos(angle) * e.getDistance());
 	}
 
-	// paint position of target robot
 	public void onPaint(Graphics2D g) {
 		if (scannedBot) {
 
