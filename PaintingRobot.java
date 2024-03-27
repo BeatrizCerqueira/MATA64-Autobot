@@ -11,31 +11,19 @@ public class PaintingRobot extends AdvancedRobot {
 	boolean scannedBot = false;
 
 	public void run() {
-		turnRadarRight(360); // ? e se n encontrar depois de 360º?
 		while (true) {
+			turnRadarRight(360);
 			scan();
-			/*
-			 * There are 2 reasons to call scan() manually: 1. to scan after you stop
-			 * moving. 2. to interrupt the onScannedRobot event.
-			 */
 		}
 	}
 
 	public void onScannedRobot(ScannedRobotEvent e) {
 
-		// Calculate target position in degrees
-		double targetPos = getHeading() + e.getBearing();
-		double radarTurn = Utils.normalRelativeAngle(targetPos - getRadarHeading());
-		// the normalized angle that will be in the range of [-180,180[
-		
-
-		setTurnRadarRight(radarTurn); // will not execute until you call execute() or take an action that executes.
-
-		// Calculate the angle to the scanned robot
-		double angle = Math.toRadians((targetPos) % 360);
-
-		// Calculate the coordinates of target robot
+		// PAINT debug
 		scannedBot = true;
+		// Calculate the angle to the scanned robot
+		double angle = Math.toRadians((getHeading() + e.getBearing()) % 360); 		
+		// Calculate the coordinates of target robot
 		scannedX = (int) (getX() + Math.sin(angle) * e.getDistance());
 		scannedY = (int) (getY() + Math.cos(angle) * e.getDistance());
 	}

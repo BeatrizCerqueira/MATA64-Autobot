@@ -13,6 +13,11 @@ import java.awt.*;
 
 public class RadarWidthLock extends AdvancedRobot {
 
+	double radarCoveredDistance = 10; // Distance we want to scan from middle of enemy to either side
+	int scannedX = 0;
+	int scannedY = 0;
+	boolean scannedBot = false;
+
 	public void run() {
 		do {
 			// ...
@@ -27,23 +32,14 @@ public class RadarWidthLock extends AdvancedRobot {
 
 	public void onScannedRobot(ScannedRobotEvent e) {
 
-		// Absolute angle towards target
-		double angleToEnemy = getHeadingRadians() + e.getBearingRadians();
-
-		// Subtract current radar heading to get the turn required to face the enemy, be
-		// sure it is normalized
-		double radarTurn = Utils.normalRelativeAngle(angleToEnemy - getRadarHeadingRadians());
+		double enemyAngle = getHeadingRadians() + e.getBearingRadians();
+		double radarTurn = Utils.normalRelativeAngle(enemyAngle - getRadarHeadingRadians());
 
 		// Distance we want to scan from middle of enemy to either side
-		// The 36.0 is how many units from the center of the enemy robot it scans.
 		double extraTurn = Math.min(Math.atan(10 / e.getDistance()), Rules.RADAR_TURN_RATE_RADIANS);
 
 		// Adjust the radar turn so it goes that much further in the direction it is
 		// going to turn
-		// Basically if we were going to turn it left, turn it even more left, if right,
-		// turn more right.
-		// This allows us to overshoot our enemy so that we get a good sweep that will
-		// not slip.
 		if (radarTurn < 0)
 			radarTurn -= extraTurn;
 		else
@@ -51,5 +47,27 @@ public class RadarWidthLock extends AdvancedRobot {
 
 		// Turn the radar
 		setTurnRadarRightRadians(radarTurn);
+
+		// PAINT debug
+		scannedBot = true;
+		// Calculate the angle to the scanned robot
+		double angle = Math.toRadians((getHeading() + e.getBearing()) % 360);
+		// Calculate the coordinates of target robot
+		scannedX = (int) (getX() + Math.sin(angle) * e.getDistance());
+		scannedY = (int) (getY() + Math.cos(angle) * e.getDistance());
+	}
+
+	public void onPaint(Graphics2D g) {
+		if (scannedBot) {
+
+			// Set the paint color to a red half transparent color
+			g.setColor(new Color(0xff, 0x00, 0x00, 0x80));
+
+			// Draw a line from our robot to the scanned robot
+			g.drawLine(scannedX, scannedY, (int) getX(), (int) getY());
+
+			// Draw a filled square on top of the scanned robot that covers it
+			g.fillRect(scannedX - 20, scannedY - 20, 40, 40);
+		}
 	}
 }
