@@ -8,6 +8,7 @@ import java.util.ArrayList;
  * 
  * Detect an energy drop to know when a bullet was fired and trace its trajectory
  * Identify multiple bullets
+ * store initial bullet position
  * remove draw when exceeds arena's area
  * 
  */
@@ -29,11 +30,16 @@ public class TrackBullets extends AdvancedRobot {
 	int scannedY = 0;
 	boolean scannedBot = false;
 	double enemy_energy = 100;
+	ArrayList<Bullet> bullets = new ArrayList<>();
 
 	ArrayList<Double> bullets_vel = new ArrayList<>();
 	ArrayList<Integer> bullets_turns = new ArrayList<>();
 
 	public void run() {
+
+		double field_width = getBattleFieldWidth();
+		double field_height = getBattleFieldHeight();
+
 		do {
 			if (getRadarTurnRemaining() == 0.0)
 				setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
@@ -45,11 +51,6 @@ public class TrackBullets extends AdvancedRobot {
 	public void onScannedRobot(ScannedRobotEvent e) {
 //		if (getGunHeat() == 0) 
 //			fire(firepower);
-
-		if (e.getEnergy() < enemy_energy) {
-			newBullet(enemy_energy - e.getEnergy());
-		}
-		enemy_energy = e.getEnergy();
 
 		// ---------
 
@@ -72,11 +73,20 @@ public class TrackBullets extends AdvancedRobot {
 		double angle = Math.toRadians((getHeading() + e.getBearing()) % 360);
 		scannedX = (int) (getX() + Math.sin(angle) * e.getDistance());
 		scannedY = (int) (getY() + Math.cos(angle) * e.getDistance());
+
+		// ----------
+
+		double energy_dec = enemy_energy - e.getEnergy();
+		if (energy_dec > 0 && energy_dec <= 3) {
+			newBullet(enemy_energy - e.getEnergy());
+		}
+		enemy_energy = e.getEnergy();
 	}
 
 	public void newBullet(double firepower) {
-		bullets_vel.add(20 - (3 * firepower));
-		bullets_turns.add(1);
+//		bullets_vel.add(20 - (3 * firepower));
+//		bullets_turns.add(1);
+		bullets.add(new Bullet(scannedX, scannedY, firepower));
 	}
 
 	public void onPaint(Graphics2D g) {
@@ -97,6 +107,8 @@ public class TrackBullets extends AdvancedRobot {
 			drawBulletsRange(g);
 
 		}
+//		g.setColor(Color.pink);
+//		g.drawArc(scannedX, scannedY, 100, 90, 0, 45);
 
 	}
 
@@ -106,13 +118,17 @@ public class TrackBullets extends AdvancedRobot {
 	}
 
 	public void drawBulletsRange(Graphics2D g) {
-
-		for (int i = 0; i < bullets_vel.size(); i++) {
-			out.print(bullets_vel.get(i) + " | ");
-			g.setColor(Color.orange);
-			drawCircle(g, scannedX, scannedY, bullets_vel.get(i) * bullets_turns.get(i));
-			bullets_turns.set(i, bullets_turns.get(i) + 1);
+		for (Bullet bullet : bullets) {
+//			g.setColor(Color.orange);
+//			drawCircle(g, bullet.x, bullet.y, bullet.radius);	
+			bullet.drawBulletRadius(g);
 		}
+//		for (int i = 0; i < bullets_vel.size(); i++) {
+//			out.print(bullets_vel.get(i) + " | ");
+//			g.setColor(Color.orange);
+//			drawCircle(g, scannedX, scannedY, bullets_vel.get(i) * bullets_turns.get(i));
+//			bullets_turns.set(i, bullets_turns.get(i) + 1);
+//		}
 		out.println();
 	}
 
