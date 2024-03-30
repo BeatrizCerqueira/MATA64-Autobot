@@ -8,7 +8,6 @@ import java.util.ArrayList;
  * 
  * Detect an energy drop to know when a bullet was fired and trace its trajectory
  * Identify multiple bullets
- * store initial bullet position
  * remove draw when exceeds arena's area
  * 
  */
@@ -100,11 +99,7 @@ public class TrackBullets extends AdvancedRobot {
 
 			// Draw enemy's bullet position
 			drawBulletsRange(g);
-
 		}
-//		g.setColor(Color.pink);
-//		g.drawArc(scannedX, scannedY, 100, 90, 0, 45);
-
 	}
 
 	public void drawCircle(Graphics2D g, double x, double y, double radius) {
@@ -117,8 +112,6 @@ public class TrackBullets extends AdvancedRobot {
 			bullet.drawBulletRadius(g);
 			if (bullet.inactive)
 				bullets.remove(bullet);
-
 		}
 	}
-
 }
