@@ -32,9 +32,6 @@ public class TrackBullets extends AdvancedRobot {
 	double enemy_energy = 100;
 	ArrayList<Bullet> bullets = new ArrayList<>();
 
-	ArrayList<Double> bullets_vel = new ArrayList<>();
-	ArrayList<Integer> bullets_turns = new ArrayList<>();
-
 	public void run() {
 
 		double field_width = getBattleFieldWidth();
@@ -84,8 +81,6 @@ public class TrackBullets extends AdvancedRobot {
 	}
 
 	public void newBullet(double firepower) {
-//		bullets_vel.add(20 - (3 * firepower));
-//		bullets_turns.add(1);
 		bullets.add(new Bullet(scannedX, scannedY, firepower));
 	}
 
@@ -119,17 +114,8 @@ public class TrackBullets extends AdvancedRobot {
 
 	public void drawBulletsRange(Graphics2D g) {
 		for (Bullet bullet : bullets) {
-//			g.setColor(Color.orange);
-//			drawCircle(g, bullet.x, bullet.y, bullet.radius);	
 			bullet.drawBulletRadius(g);
 		}
-//		for (int i = 0; i < bullets_vel.size(); i++) {
-//			out.print(bullets_vel.get(i) + " | ");
-//			g.setColor(Color.orange);
-//			drawCircle(g, scannedX, scannedY, bullets_vel.get(i) * bullets_turns.get(i));
-//			bullets_turns.set(i, bullets_turns.get(i) + 1);
-//		}
-		out.println();
 	}
 
 }
