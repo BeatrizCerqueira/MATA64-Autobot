@@ -28,14 +28,11 @@ public class TrackBullets extends AdvancedRobot {
 	int scannedX = 0;
 	int scannedY = 0;
 	boolean scannedBot = false;
-	boolean shoot;
-	double enemy_energy;
-	double enemy_bullet_velocity;
-	long shoot_turn;
+	double enemy_energy = 100;
 
 	ArrayList<Double> bullets_vel = new ArrayList<>();
 	ArrayList<Integer> bullets_turns = new ArrayList<>();
-	
+
 	public void run() {
 		do {
 			if (getRadarTurnRemaining() == 0.0)
@@ -50,16 +47,8 @@ public class TrackBullets extends AdvancedRobot {
 //			fire(firepower);
 
 		if (e.getEnergy() < enemy_energy) {
-			double new_bullet_vel = 20 - (3 * (enemy_energy - e.getEnergy()));
-			
-			bullets_vel.add(new_bullet_vel);
-			bullets_turns.add(1);
-			
-			
-			shoot = true;
-			shoot_turn = getTime() - 1;
+			newBullet(enemy_energy - e.getEnergy());
 		}
-
 		enemy_energy = e.getEnergy();
 
 		// ---------
@@ -85,6 +74,11 @@ public class TrackBullets extends AdvancedRobot {
 		scannedY = (int) (getY() + Math.cos(angle) * e.getDistance());
 	}
 
+	public void newBullet(double firepower) {
+		bullets_vel.add(20 - (3 * firepower));
+		bullets_turns.add(1);
+	}
+
 	public void onPaint(Graphics2D g) {
 		// robot size = 40
 
@@ -100,20 +94,7 @@ public class TrackBullets extends AdvancedRobot {
 			g.fillRect(scannedX - 20, scannedY - 20, 40, 40);
 
 			// Draw enemy's bullet position
-			for (int i = 0; i < bullets_vel.size(); i++) {
-				out.print(bullets_vel.get(i) + " | ");
-				g.setColor(Color.orange);
-				drawCircle(g, scannedX, scannedY, bullets_vel.get(i) * bullets_turns.get(i));
-				bullets_turns.set(i, bullets_turns.get(i)+1);
-				
-			}
-			out.println();
-
-//			if (shoot) {
-//				double radius = ((getTime() - shoot_turn) * enemy_bullet_velocity);
-//				g.setColor(Color.orange);
-//				drawCircle(g, scannedX, scannedY, radius);
-//			}
+			drawBulletsRange(g);
 
 		}
 
@@ -124,5 +105,15 @@ public class TrackBullets extends AdvancedRobot {
 		g.drawOval((int) (x - radius), (int) (y - radius), circ, circ);
 	}
 
+	public void drawBulletsRange(Graphics2D g) {
+
+		for (int i = 0; i < bullets_vel.size(); i++) {
+			out.print(bullets_vel.get(i) + " | ");
+			g.setColor(Color.orange);
+			drawCircle(g, scannedX, scannedY, bullets_vel.get(i) * bullets_turns.get(i));
+			bullets_turns.set(i, bullets_turns.get(i) + 1);
+		}
+		out.println();
+	}
 
 }
