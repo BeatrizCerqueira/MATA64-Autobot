@@ -44,10 +44,8 @@ public class DodgeBullets extends AdvancedRobot {
 
 		// Adjust the radar turn so it goes that much further in the direction it is
 		// going to turn
-		if (radarTurn < 0)
-			radarTurn -= extraTurn;
-		else
-			radarTurn += extraTurn;
+		radarTurn += extraTurn*Math.signum(radarTurn);
+	
 
 		// Turn the radar
 		setTurnRadarRight(radarTurn);
