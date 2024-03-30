@@ -22,7 +22,7 @@ import java.awt.*;
  */
 
 
-public class DodgeBullets extends AdvancedRobot {
+public class TrackBullets extends AdvancedRobot {
 	
 	// Paint/Debug properties
 	double radarCoverageDist = 10; // Distance we want to scan from middle of enemy to either side
@@ -51,8 +51,7 @@ public class DodgeBullets extends AdvancedRobot {
 		if (e.getEnergy() < enemy_energy) {
 			shoot = true;
 			enemy_bullet_velocity = 20 - (3 * (enemy_energy - e.getEnergy()));
-			shoot_turn = getTime();
-			out.println("shoot" + enemy_bullet_velocity + " " + shoot_turn);
+			shoot_turn = getTime()-1;
 		}
 
 		enemy_energy = e.getEnergy();
@@ -83,29 +82,32 @@ public class DodgeBullets extends AdvancedRobot {
 	public void onPaint(Graphics2D g) {
 		// robot size = 40
 
+		// Draw robot's security zone
+		g.setColor(Color.green);
+		drawCircle(g, getX(), getY(), 60);
+	
 		if (scannedBot) {
 
 			// Draw enemy robot and distance
-
 			g.setColor(new Color(0xff, 0, 0, 0x80));
 			g.drawLine(scannedX, scannedY, (int) getX(), (int) getY());
 			g.fillRect(scannedX - 20, scannedY - 20, 40, 40);
 
-			// -------------
-
+			
 			// Draw enemy's bullet position
 			if (shoot) {
-
-				double radius = 16 + ((getTime() - shoot_turn) * enemy_bullet_velocity); // approximately the bullet's
-																							// initial position
-				int circ = (int) (2 * radius);
-
-				g.setColor(Color.red);
-				g.drawOval((int) (scannedX - radius), (int) (scannedY - radius), circ, circ);
+				double radius = ((getTime() - shoot_turn) * enemy_bullet_velocity); 
+				g.setColor(Color.orange);
+				drawCircle(g, scannedX, scannedY, radius);
 			}
 
 		}
 
+	}
+	
+	public void drawCircle(Graphics2D g, double x, double y, double radius) {
+		int circ = (int) (2 * radius);
+		g.drawOval((int) (x - radius), (int) (y - radius), circ, circ);
 	}
 
 }
