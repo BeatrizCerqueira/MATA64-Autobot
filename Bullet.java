@@ -6,29 +6,41 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Bullet {
-	public int x;
-	public int y;
-	public double firepower;
-	private double velocity;
-	private int turns;
+	private int x0;
+	private int y0;
 
+	public double x;
+	public double y;
+	public double firepower;
+	public boolean inactive;
+
+	private double velocity;
+	private double radius;
+
+	
 	public Bullet(int x, int y, double firepower) {
-		this.x = x;
-		this.y = y;
+		this.x0 = x;
+		this.y0 = y;
 		this.firepower = firepower;
 		this.velocity = 20 - 3 * firepower;
-		this.turns = 0;
+		this.radius = 0;
+	}
+
+	public void incRadius() {
+		radius += velocity;
+		if (radius > 1000){
+			this.inactive=true;
+		}
 	}
 
 	public double getRadius() {
-		turns++;
-		return velocity * turns;
+		return radius;
 	}
 
 	public void drawBulletRadius(Graphics2D g) {
-		g.setColor(Color.orange);
-		double radius = getRadius();
+		incRadius();
 		int circ = (int) (2 * radius);
-		g.drawOval((int) (x - radius), (int) (y - radius), circ, circ);
+		g.setColor(Color.orange);
+		g.drawOval((int) (x0 - radius), (int) (y0 - radius), circ, circ);
 	}
 }
