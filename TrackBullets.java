@@ -74,13 +74,14 @@ public class TrackBullets extends AdvancedRobot {
 
 		double energy_dec = enemy_energy - e.getEnergy();
 		if (energy_dec > 0 && energy_dec <= 3) {
-			newBullet(enemy_energy - e.getEnergy());
+			double firepower = enemy_energy - e.getEnergy();
+			bullets.add(new Bullet(scannedX, scannedY, firepower, e.getDistance()));
 		}
 		enemy_energy = e.getEnergy();
 	}
 
 	public void newBullet(double firepower) {
-		bullets.add(new Bullet(scannedX, scannedY, firepower));
+
 	}
 
 	public void onPaint(Graphics2D g) {
@@ -99,6 +100,7 @@ public class TrackBullets extends AdvancedRobot {
 
 			// Draw enemy's bullet position
 			drawBulletsRange(g);
+
 		}
 	}
 
@@ -108,10 +110,9 @@ public class TrackBullets extends AdvancedRobot {
 	}
 
 	public void drawBulletsRange(Graphics2D g) {
+
 		for (Bullet bullet : bullets) {
 			bullet.drawBulletRadius(g);
-			if (bullet.inactive)
-				bullets.remove(bullet);
 		}
 	}
 }

@@ -8,29 +8,28 @@ import java.util.ArrayList;
 public class Bullet {
 	private int x0;
 	private int y0;
-
-	public double x;
-	public double y;
+	private double maxRad;
+	
 	public double firepower;
-	public boolean inactive;
+	public boolean active;
 
 	private double velocity;
 	private double radius;
 
-	
-	public Bullet(int x, int y, double firepower) {
+	public Bullet(int x, int y, double firepower, double maxRad) {
 		this.x0 = x;
 		this.y0 = y;
 		this.firepower = firepower;
 		this.velocity = 20 - 3 * firepower;
 		this.radius = 0;
+		this.maxRad = maxRad;
+		this.active = true;
 	}
 
 	public void incRadius() {
 		radius += velocity;
-		if (radius > 1000){
-			this.inactive=true;
-		}
+		if (radius > maxRad)
+			this.active = false;
 	}
 
 	public double getRadius() {
@@ -38,9 +37,15 @@ public class Bullet {
 	}
 
 	public void drawBulletRadius(Graphics2D g) {
-		incRadius();
-		int circ = (int) (2 * radius);
-		g.setColor(Color.orange);
-		g.drawOval((int) (x0 - radius), (int) (y0 - radius), circ, circ);
+		if (this.active) {
+			incRadius();
+			int circ = (int) (2 * radius);
+			g.setColor(Color.orange);
+			g.drawOval((int) (x0 - radius), (int) (y0 - radius), circ, circ);
+		}
+
+	}
+
+	public void remove() {
 	}
 }
