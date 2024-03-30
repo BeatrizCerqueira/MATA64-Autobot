@@ -11,10 +11,10 @@ public class Bullet {
 	private double maxRad;
 	
 	public double firepower;
-	public boolean active;
-
-	private double velocity;
 	private double radius;
+	private double velocity;
+
+	public boolean active;
 
 	public Bullet(int x, int y, double firepower, double maxRad) {
 		this.x0 = x;
@@ -28,7 +28,7 @@ public class Bullet {
 
 	public void incRadius() {
 		radius += velocity;
-		if (radius > maxRad)
+		if (radius > maxRad+50)
 			this.active = false;
 	}
 

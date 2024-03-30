@@ -110,7 +110,6 @@ public class TrackBullets extends AdvancedRobot {
 	}
 
 	public void drawBulletsRange(Graphics2D g) {
-
 		for (Bullet bullet : bullets) {
 			bullet.drawBulletRadius(g);
 		}
