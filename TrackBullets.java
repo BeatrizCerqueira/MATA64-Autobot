@@ -3,7 +3,7 @@ package autobot;
 import robocode.*;
 import robocode.util.Utils;
 import java.awt.*;
-
+import java.util.ArrayList;
 /* # Objective
  * 
  * Detect an energy drop to know when a bullet was fired and trace its trajectory
@@ -21,9 +21,8 @@ import java.awt.*;
  * 
  */
 
-
 public class TrackBullets extends AdvancedRobot {
-	
+
 	// Paint/Debug properties
 	double radarCoverageDist = 10; // Distance we want to scan from middle of enemy to either side
 	int scannedX = 0;
@@ -33,8 +32,10 @@ public class TrackBullets extends AdvancedRobot {
 	double enemy_energy;
 	double enemy_bullet_velocity;
 	long shoot_turn;
-	
 
+	ArrayList<Double> bullets_vel = new ArrayList<>();
+	ArrayList<Integer> bullets_turns = new ArrayList<>();
+	
 	public void run() {
 		do {
 			if (getRadarTurnRemaining() == 0.0)
@@ -49,9 +50,14 @@ public class TrackBullets extends AdvancedRobot {
 //			fire(firepower);
 
 		if (e.getEnergy() < enemy_energy) {
+			double new_bullet_vel = 20 - (3 * (enemy_energy - e.getEnergy()));
+			
+			bullets_vel.add(new_bullet_vel);
+			bullets_turns.add(1);
+			
+			
 			shoot = true;
-			enemy_bullet_velocity = 20 - (3 * (enemy_energy - e.getEnergy()));
-			shoot_turn = getTime()-1;
+			shoot_turn = getTime() - 1;
 		}
 
 		enemy_energy = e.getEnergy();
@@ -72,7 +78,7 @@ public class TrackBullets extends AdvancedRobot {
 		setTurnRadarRight(radarTurn);
 
 		// PAINT debug
-		scannedBot = true; 
+		scannedBot = true;
 		// Calculate the angle and coordinates to the scanned robot
 		double angle = Math.toRadians((getHeading() + e.getBearing()) % 360);
 		scannedX = (int) (getX() + Math.sin(angle) * e.getDistance());
@@ -85,7 +91,7 @@ public class TrackBullets extends AdvancedRobot {
 		// Draw robot's security zone
 		g.setColor(Color.green);
 		drawCircle(g, getX(), getY(), 60);
-	
+
 		if (scannedBot) {
 
 			// Draw enemy robot and distance
@@ -93,21 +99,30 @@ public class TrackBullets extends AdvancedRobot {
 			g.drawLine(scannedX, scannedY, (int) getX(), (int) getY());
 			g.fillRect(scannedX - 20, scannedY - 20, 40, 40);
 
-			
 			// Draw enemy's bullet position
-			if (shoot) {
-				double radius = ((getTime() - shoot_turn) * enemy_bullet_velocity); 
+			for (int i = 0; i < bullets_vel.size(); i++) {
+				out.print(bullets_vel.get(i) + " | ");
 				g.setColor(Color.orange);
-				drawCircle(g, scannedX, scannedY, radius);
+				drawCircle(g, scannedX, scannedY, bullets_vel.get(i) * bullets_turns.get(i));
+				bullets_turns.set(i, bullets_turns.get(i)+1);
+				
 			}
+			out.println();
+
+//			if (shoot) {
+//				double radius = ((getTime() - shoot_turn) * enemy_bullet_velocity);
+//				g.setColor(Color.orange);
+//				drawCircle(g, scannedX, scannedY, radius);
+//			}
 
 		}
 
 	}
-	
+
 	public void drawCircle(Graphics2D g, double x, double y, double radius) {
 		int circ = (int) (2 * radius);
 		g.drawOval((int) (x - radius), (int) (y - radius), circ, circ);
 	}
+
 
 }
