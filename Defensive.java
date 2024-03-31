@@ -39,7 +39,6 @@ public class Defensive extends AdvancedRobot {
 	double enemy_heat = 2.8;
 	ArrayList<Bullet> bullets = new ArrayList<>();
 
-	//
 	static final double WALL_MARGIN = 25;
 	Point2D robotLocation;
 	Point2D enemyLocation;
@@ -48,9 +47,6 @@ public class Defensive extends AdvancedRobot {
 	double movementLateralAngle = 0.2;
 
 	public void run() {
-
-//		double field_width = getBattleFieldWidth();
-//		double field_height = getBattleFieldHeight();
 
 		do {
 			robotLocation = new Point2D.Double(getX(), getY());
@@ -66,6 +62,16 @@ public class Defensive extends AdvancedRobot {
 		double y = getY();
 		double heading = getHeading();
 
+		
+//		double field_width = getBattleFieldWidth();
+//		double field_height = getBattleFieldHeight();
+		Point2D dest = new Point2D.Double(random(WALL_MARGIN, getBattleFieldWidth()), random(WALL_MARGIN, getBattleFieldHeight()));
+//		out.println(dest);
+		
+	}
+
+	public double random(double min, double max) {
+		return min + Math.random() * ((max - min + 1));
 	}
 
 	void goTo(Point2D destination) {
