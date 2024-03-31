@@ -6,22 +6,28 @@ import java.awt.*;
 import java.util.ArrayList;
 /* # Objective
  * 
- * Detect an energy drop to know when a bullet was fired and trace its trajectory
- * Identify multiple bullets
- * remove draw when exceeds arena's area
+ * If moving when enemy fires, then stop 
+ * 	amount of movement defined by his firepower
+ * If stopped when we fires, then start moving
+ * 
+ * Ideally stay still right before he shoots
+ * 
+ * Avoid enemy bullets
+ * Keep safe distance from other robots
+ * Avoid walls
+ * 
+ * Kill enemy bot coliding
  * 
  */
 
 /* # Useful information
  * 
  * After firing, a robot's gun heats up to a value of: 1 + (bulletPower / 5)
- * Bullet velocity 20 - 3 * firepower.
- * Colision damage = abs(velocity) * 0.5 - 1 | max = 8*0.5 -1 = 3,
  * The default cooling rate in Robocode is 0.1 per tick.
  * 
  */
 
-public class TrackBullets extends AdvancedRobot {
+public class Defensive extends AdvancedRobot {
 
 	// Paint/Debug properties
 	double radarCoverageDist = 10; // Distance we want to scan from middle of enemy to either side
@@ -29,7 +35,6 @@ public class TrackBullets extends AdvancedRobot {
 	int scannedY = 0;
 	boolean scannedBot = false;
 	double enemy_energy = 100;
-	double enemy_heat = 2.8;
 	ArrayList<Bullet> bullets = new ArrayList<>();
 
 	public void run() {
@@ -72,21 +77,13 @@ public class TrackBullets extends AdvancedRobot {
 		scannedY = (int) (getY() + Math.cos(angle) * e.getDistance());
 
 		// ----------
-		if (enemy_heat > 0) {
-			enemy_heat -= 0.1;
-			out.println("cooling");
-		} else {
-			out.println("Any time now");
-		}
 
 		double energy_dec = enemy_energy - e.getEnergy();
 		if (energy_dec > 0 && energy_dec <= 3) {
 			double firepower = enemy_energy - e.getEnergy();
 			bullets.add(new Bullet(scannedX, scannedY, firepower, e.getDistance()));
-			enemy_heat = 1 + (firepower / 5);
 		}
 		enemy_energy = e.getEnergy();
-
 	}
 
 	public void newBullet(double firepower) {
