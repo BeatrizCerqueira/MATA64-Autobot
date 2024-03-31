@@ -3,6 +3,7 @@ package autobot;
 import robocode.*;
 import robocode.util.Utils;
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 /* # Objective
  * 
@@ -25,22 +26,23 @@ public class TrackBullets extends AdvancedRobot {
 
 	// Paint/Debug properties
 	double radarCoverageDist = 10; // Distance we want to scan from middle of enemy to either side
-	int scannedX = 0;
-	int scannedY = 0;
 	boolean scannedBot = false;
 	double enemy_energy = 100;
-	double enemy_heat = 2.8;
+	double enemy_heat = 2.8;	//initial heat
+	
 	ArrayList<Bullet> bullets = new ArrayList<>();
+	Point2D robotLocation;
+	Point2D enemyLocation;
+	
+	double enemyDistance;
+	double enemyAbsoluteBearing;
+	double movementLateralAngle = 0.2;
 
 	public void run() {
-
-		double field_width = getBattleFieldWidth();
-		double field_height = getBattleFieldHeight();
-
 		do {
+			robotLocation = new Point2D.Double(getX(), getY());
 			if (getRadarTurnRemaining() == 0.0)
 				setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
-
 			execute();
 		} while (true);
 	}
@@ -53,43 +55,40 @@ public class TrackBullets extends AdvancedRobot {
 
 		double enemyAngle = getHeading() + e.getBearing();
 		double radarTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getRadarHeading());
-
 		double extraTurn = Math.toDegrees(Math.atan(radarCoverageDist / e.getDistance()));
 		extraTurn = Math.min(extraTurn, Rules.RADAR_TURN_RATE);
 
-		// Adjust the radar turn so it goes that much further in the direction it is
-		// going to turn
+		// Radar goes that much further in the direction it is going to turn
 		radarTurn += extraTurn * Math.signum(radarTurn);
-
-		// Turn the radar
 		setTurnRadarRight(radarTurn);
 
 		// PAINT debug
+
 		scannedBot = true;
 		// Calculate the angle and coordinates to the scanned robot
-		double angle = Math.toRadians((getHeading() + e.getBearing()) % 360);
-		scannedX = (int) (getX() + Math.sin(angle) * e.getDistance());
-		scannedY = (int) (getY() + Math.cos(angle) * e.getDistance());
+		double enemyAngleRadians = Math.toRadians(enemyAngle);
+		enemyLocation = getLocation(robotLocation, enemyAngleRadians, e.getDistance());
 
 		// ----------
 		if (enemy_heat > 0) {
 			enemy_heat -= 0.1;
-			out.println("cooling");
 		} else {
-			out.println("Any time now");
+//			out.println("Any time now");
 		}
 
 		double energy_dec = enemy_energy - e.getEnergy();
 		if (energy_dec > 0 && energy_dec <= 3) {
 			double firepower = enemy_energy - e.getEnergy();
-			bullets.add(new Bullet(scannedX, scannedY, firepower, e.getDistance()));
+			bullets.add(new Bullet(enemyLocation, firepower, e.getDistance()));
 			enemy_heat = 1 + (firepower / 5);
 		}
 		enemy_energy = e.getEnergy();
-
 	}
 
-	public void newBullet(double firepower) {
+	public Point2D getLocation(Point2D initLocation, double angle, double distance) {
+		double x = (int) (initLocation.getX() + Math.sin(angle) * distance);
+		double y = (int) (initLocation.getY() + Math.cos(angle) * distance);
+		return new Point2D.Double(x, y);
 
 	}
 
@@ -100,17 +99,21 @@ public class TrackBullets extends AdvancedRobot {
 		g.setColor(Color.green);
 		drawCircle(g, getX(), getY(), 60);
 
-		if (scannedBot) {
-
-			// Draw enemy robot and distance
+		// Draw enemy robot and distance
+		if (enemyLocation != null) {
 			g.setColor(new Color(0xff, 0, 0, 0x80));
-			g.drawLine(scannedX, scannedY, (int) getX(), (int) getY());
-			g.fillRect(scannedX - 20, scannedY - 20, 40, 40);
-
-			// Draw enemy's bullet position
+			drawLine(g, robotLocation, enemyLocation);
+//			g.fillRect(x - 20, y - 20, 40, 40);
 			drawBulletsRange(g);
-
 		}
+	}
+
+	public void drawLine(Graphics2D g, Point2D source, Point2D target) {
+		int sourceX = (int) source.getX();
+		int sourceY = (int) source.getY();
+		int targetX = (int) target.getX();
+		int targetY = (int) target.getY();
+		g.drawLine(sourceX, sourceY, targetX, targetY);
 	}
 
 	public void drawCircle(Graphics2D g, double x, double y, double radius) {

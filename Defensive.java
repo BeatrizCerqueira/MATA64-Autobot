@@ -34,8 +34,6 @@ public class Defensive extends AdvancedRobot {
 
 	// Paint/Debug properties
 	double radarCoverageDist = 10; // Distance we want to scan from middle of enemy to either side
-	int scannedX = 0;
-	int scannedY = 0;
 	boolean scannedBot = false;
 	double enemy_energy = 100;
 	double enemy_heat = 2.8;
@@ -100,8 +98,6 @@ public class Defensive extends AdvancedRobot {
 		scannedBot = true;
 		// Calculate the angle and coordinates to the scanned robot
 		double enemyAngleRadians = Math.toRadians(enemyAngle);
-		scannedX = (int) (getX() + Math.sin(enemyAngleRadians) * e.getDistance());
-		scannedY = (int) (getY() + Math.cos(enemyAngleRadians) * e.getDistance());
 		enemyLocation = getLocation(robotLocation, enemyAngleRadians, e.getDistance());
 
 		// ----------
@@ -114,7 +110,7 @@ public class Defensive extends AdvancedRobot {
 		double energy_dec = enemy_energy - e.getEnergy();
 		if (energy_dec > 0 && energy_dec <= 3) {
 			double firepower = enemy_energy - e.getEnergy();
-			bullets.add(new Bullet(scannedX, scannedY, firepower, e.getDistance()));
+			bullets.add(new Bullet(enemyLocation, firepower, e.getDistance()));
 			enemy_heat = 1 + (firepower / 5);
 		}
 		enemy_energy = e.getEnergy();
@@ -138,23 +134,11 @@ public class Defensive extends AdvancedRobot {
 		if (enemyLocation != null) {
 			g.setColor(new Color(0xff, 0, 0, 0x80));
 			drawLine(g, robotLocation, enemyLocation);
-//			g.fillRect(scannedX - 20, scannedY - 20, 40, 40);
+//			g.fillRect(x - 20, y - 20, 40, 40);
 			drawBulletsRange(g);
 		}
-
-//		if (scannedBot) {
-//
-//			// Draw enemy robot and distance
-//			g.setColor(new Color(0xff, 0, 0, 0x80));
-//			g.drawLine(scannedX, scannedY, (int) getX(), (int) getY());
-//			g.fillRect(scannedX - 20, scannedY - 20, 40, 40);
-//
-//			// Draw enemy's bullet position
-//			drawBulletsRange(g);
-//
-//		}
 	}
-	
+
 	public void drawLine(Graphics2D g, Point2D source, Point2D target) {
 		int sourceX = (int) source.getX();
 		int sourceY = (int) source.getY();

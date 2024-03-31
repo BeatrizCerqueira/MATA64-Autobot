@@ -3,22 +3,24 @@ package autobot;
 import robocode.*;
 import robocode.util.Utils;
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class Bullet {
-	private int x0;
-	private int y0;
+//	private int x0;
+//	private int y0;
+
+	private Point2D initLocation;
 	private double maxRad;
-	
-	public double firepower;
+
 	private double radius;
 	private double velocity;
 
+	public double firepower;
 	public boolean active;
 
-	public Bullet(int x, int y, double firepower, double maxRad) {
-		this.x0 = x;
-		this.y0 = y;
+	public Bullet(Point2D initLocation, double firepower, double maxRad) {
+		this.initLocation = initLocation;
 		this.firepower = firepower;
 		this.velocity = 20 - 3 * firepower;
 		this.radius = 0;
@@ -28,7 +30,7 @@ public class Bullet {
 
 	public void incRadius() {
 		radius += velocity;
-		if (radius > maxRad+50)
+		if (radius > maxRad + 50)
 			this.active = false;
 	}
 
@@ -41,11 +43,7 @@ public class Bullet {
 			incRadius();
 			int circ = (int) (2 * radius);
 			g.setColor(Color.orange);
-			g.drawOval((int) (x0 - radius), (int) (y0 - radius), circ, circ);
+			g.drawOval((int) (initLocation.getX() - radius), (int) (initLocation.getY() - radius), circ, circ);
 		}
-
-	}
-
-	public void remove() {
 	}
 }
