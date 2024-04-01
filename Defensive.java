@@ -6,22 +6,34 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import org.w3c.dom.ranges.Range;
+
 /* # Objective
  * 
  * Implement Point2D
  * 
  * Random movement
  * 	Avoid walls
- * 	turn randomly + ahead ranomly (inversely proportional)
- * 		OR
- * 	define ramdom destiny
+ * 
+ * Random estrategies:
+ * 	1. random destiny 
+ * OR
+ * 	2. turn randomly + ahead randomly (inversely proportional)
+ * 	preferably change direction 90º
+ * 		maybe use algorithm to define headTurn angle
+ * 
  * 
  * Stay still when enemy will potentially fire (enemyHeat = 0)
  * While enemy gun cools, move randomly
+ * 	what if he hits wall?
+ * 		get his position
+ * 		get successive energy decrease
  * 
  * Avoid enemy bullets
- * Keep safe distance from other robots
-
+ * 	do not return to past positions
+ * 
+ * When other robot approaches
+ * 	run away or colide with it, depending of his energy
  * 
  * Kill enemy bot coliding
  * 
@@ -48,14 +60,13 @@ public class Defensive extends AdvancedRobot {
 	double enemy_heat = 2.8;
 	ArrayList<Bullet> bullets = new ArrayList<>();
 
-	static final double WALL_MARGIN = 25;
 	Point2D robotLocation;
 	Point2D enemyLocation;
 	double enemyDistance;
 	double enemyAbsoluteBearing;
 	double movementLateralAngle = 0.2;
 
-	int movementDistance = 0;
+	static final double WALL_MARGIN = 50;
 
 	public void run() {
 		do {
@@ -71,23 +82,76 @@ public class Defensive extends AdvancedRobot {
 		return min + Math.random() * ((max - min + 1));
 	}
 
+	public double getHeadTurn() {
+
+		double minHeadingTurn = 0;
+		double maxHeadingTurn = 360;
+
+		// get Relative location
+		double xLimit = getBattleFieldWidth() / 2;
+		double yLimit = getBattleFieldHeight() / 2;
+
+		double x = robotLocation.getX() - xLimit;
+		double y = robotLocation.getY() - yLimit;
+
+		boolean xMargin = Math.abs(x) > xLimit - WALL_MARGIN;
+		boolean yMargin = Math.abs(y) > yLimit - WALL_MARGIN;
+
+//		out.println(x + " " + y);
+
+		if (xMargin || yMargin) {
+			out.println("BORDER");
+		}
+
+		return 0.0;
+//		
+//
+//		// avoid hitting wall
+//		if (robotLocation.getX() < WALL_MARGIN) {
+//			// next to left side, turn to right
+//			// turn heading to 0 ~ 180
+//			minHeadingTurn = 0;
+//			maxHeadingTurn = minHeadingTurn+180;
+//		}
+//
+//		if (robotLocation.getY() > getBattleFieldHeight() - WALL_MARGIN) {
+//			// next to upper side, turn to down
+//			// turn heading to 90 ~ 270
+//			minHeadingTurn = Math.max(minHeadingTurn, 90);
+//			maxHeadingTurn = Math.min(maxHeadingTurn, 270);
+//
+//		}
+//
+//		if (robotLocation.getX() > (getBattleFieldWidth() - WALL_MARGIN)) {
+//			// next to left side, turn to left
+//		}
+//
+//		//intersect
+
+	}
+
 	public void onScannedRobot(ScannedRobotEvent e) {
 //		if (getGunHeat() == 0) 
 //			fire(firepower);
+
+		// --------- MOVE
 		double robotTurn = 0;
 		double aheadDist = 0;
-		// --------- MOVE
+
 		if (enemy_heat > 0) {
 			// enemy gun is cooling, move randomly
 
 			enemy_heat -= 0.1;
+
+			getHeadTurn();
+
 			double maxRotation = (10 - (0.75 * getVelocity()));
+
 			robotTurn = random(-1 * maxRotation, maxRotation);
 			aheadDist = random(0, 20);
 
 		} else {
-			// enemy robot will shot, stay still
-			// out.println("Any time now");
+			// enemy robot will shot any time now, stay still
 		}
 
 		setTurnRight(robotTurn);
