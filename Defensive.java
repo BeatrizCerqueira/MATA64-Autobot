@@ -55,7 +55,7 @@ import org.w3c.dom.ranges.Range;
 public class Defensive extends AdvancedRobot {
 
 	// Paint/Debug properties
-	double radarCoverageDist = 10; // Distance we want to scan from middle of enemy to either side
+	double radarCoverageDist = 20; // Distance we want to scan from middle of enemy to either side
 	double enemy_energy = 100;
 	double enemy_heat = 2.8;
 	ArrayList<Bullet> bullets = new ArrayList<>();
@@ -67,6 +67,8 @@ public class Defensive extends AdvancedRobot {
 	double movementLateralAngle = 0.2;
 
 	static final double WALL_MARGIN = 50;
+
+	double headTurn = 0;
 
 	public void run() {
 		do {
@@ -82,7 +84,7 @@ public class Defensive extends AdvancedRobot {
 		return min + Math.random() * ((max - min + 1));
 	}
 
-	public double getHeadTurn() {
+	public void move() {
 
 		// get Absolute Angle to turn
 
@@ -99,34 +101,41 @@ public class Defensive extends AdvancedRobot {
 		boolean xMargin = (Math.abs(x) + WALL_MARGIN) > xLimit;
 		boolean yMargin = (Math.abs(y) + WALL_MARGIN) > yLimit;
 
-		double turnAngle = random(-180, 180);
-
 		// # To avoid hitting the wall, run along it
+
 		if (xMargin || yMargin) {
-			out.print("BORDER ");
+
 			// run along the wall;
-			if (xMargin) {
-				turnAngle = Math.acos(-1 * Math.signum(y));
-				// y +1 | turn down | acos(-1) = 180
-				// y -1 | turn up | acos( 1) = 0
-			}
+			double absoluteAngle = 0;
+			double extraTurn = random(30, 60); // degrees
+			extraTurn *= Math.signum(x) * Math.signum(y); // extra turn direction
 
 			if (yMargin) {
-				turnAngle = Math.asin(-1 * Math.signum(x));
-				// x -1 | turn right | asen(1) = 90
-				// x +1 | turn left | asen(-1) = -90
+				absoluteAngle = Math.asin(-1 * Math.signum(x));
+				extraTurn *= -1;
+				// x -1 L | turn right | asen(1) = 90 -30
+				// x +1 R | turn left | asen(-1) = -90 +30
 			}
 
-			turnAngle = Math.toDegrees(turnAngle);
+			if (xMargin) {
+				absoluteAngle = Math.acos(-1 * Math.signum(y));
+				// y +1 U | turn down | acos(-1) = 180
+				// y -1 D | turn up | acos( 1) = 0
+
+			}
+
+			absoluteAngle = Math.toDegrees(absoluteAngle);
+			absoluteAngle += extraTurn;
+			headTurn = Utils.normalRelativeAngleDegrees(absoluteAngle - getHeading());
+
+		} else {
+			double maxRotation = (10 - (0.75 * getVelocity()));
+			headTurn = random(-1 * maxRotation, maxRotation);
 		}
 
-		// -x left | turn 0 180
-		// +x right | turn -180 0
+		setTurnRight(headTurn);
+		setAhead(20);
 
-		// -y down | turn -90 90
-		// +y up | turn 90 -90
-		out.println("turn to " + turnAngle + " degrees");
-		return turnAngle;
 	}
 
 	public void onScannedRobot(ScannedRobotEvent e) {
@@ -134,26 +143,21 @@ public class Defensive extends AdvancedRobot {
 //			fire(firepower);
 
 		// --------- MOVE
-		double robotTurn = 0;
 		double aheadDist = 0;
+		headTurn = 0;
 
-		if (enemy_heat > 0) {
+		if (enemy_heat > 0.4) {
 			// enemy gun is cooling, move randomly
-
 			enemy_heat -= 0.1;
-
-			double headTurn = getHeadTurn();
-
-//			double maxRotation = (10 - (0.75 * getVelocity()));
-//
-//			robotTurn = random(-1 * maxRotation, maxRotation);
-			aheadDist = random(0, 20);
+			if (getTurnRemaining() == 0) {
+				aheadDist = random(5, 20);
+				move();
+			}
 
 		} else {
+
 			// enemy robot will shot any time now, stay still
 		}
-
-		setTurnRight(robotTurn);
 		setAhead(aheadDist);
 		// ---------
 
@@ -165,7 +169,7 @@ public class Defensive extends AdvancedRobot {
 		// Radar goes that much further in the direction it is going to turn
 		double enemyDirection = Math.signum(radarTurn);
 		radarTurn += extraTurn * enemyDirection;
-		radarTurn += robotTurn * enemyDirection;
+		radarTurn += headTurn * enemyDirection;
 		setTurnRadarRight(radarTurn);
 
 		// PAINT debug
