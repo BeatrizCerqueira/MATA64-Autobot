@@ -84,6 +84,8 @@ public class Defensive extends AdvancedRobot {
 
 	public double getHeadTurn() {
 
+		// get Absolute Angle to turn
+
 		double minHeadingTurn = 0;
 		double maxHeadingTurn = 360;
 
@@ -94,40 +96,37 @@ public class Defensive extends AdvancedRobot {
 		double x = robotLocation.getX() - xLimit;
 		double y = robotLocation.getY() - yLimit;
 
-		boolean xMargin = Math.abs(x) > xLimit - WALL_MARGIN;
-		boolean yMargin = Math.abs(y) > yLimit - WALL_MARGIN;
+		boolean xMargin = (Math.abs(x) + WALL_MARGIN) > xLimit;
+		boolean yMargin = (Math.abs(y) + WALL_MARGIN) > yLimit;
 
-//		out.println(x + " " + y);
+		double turnAngle = random(-180, 180);
 
+		// # To avoid hitting the wall, run along it
 		if (xMargin || yMargin) {
-			out.println("BORDER");
+			out.print("BORDER ");
+			// run along the wall;
+			if (xMargin) {
+				turnAngle = Math.acos(-1 * Math.signum(y));
+				// y +1 | turn down | acos(-1) = 180
+				// y -1 | turn up | acos( 1) = 0
+			}
+
+			if (yMargin) {
+				turnAngle = Math.asin(-1 * Math.signum(x));
+				// x -1 | turn right | asen(1) = 90
+				// x +1 | turn left | asen(-1) = -90
+			}
+
+			turnAngle = Math.toDegrees(turnAngle);
 		}
 
-		return 0.0;
-//		
-//
-//		// avoid hitting wall
-//		if (robotLocation.getX() < WALL_MARGIN) {
-//			// next to left side, turn to right
-//			// turn heading to 0 ~ 180
-//			minHeadingTurn = 0;
-//			maxHeadingTurn = minHeadingTurn+180;
-//		}
-//
-//		if (robotLocation.getY() > getBattleFieldHeight() - WALL_MARGIN) {
-//			// next to upper side, turn to down
-//			// turn heading to 90 ~ 270
-//			minHeadingTurn = Math.max(minHeadingTurn, 90);
-//			maxHeadingTurn = Math.min(maxHeadingTurn, 270);
-//
-//		}
-//
-//		if (robotLocation.getX() > (getBattleFieldWidth() - WALL_MARGIN)) {
-//			// next to left side, turn to left
-//		}
-//
-//		//intersect
+		// -x left | turn 0 180
+		// +x right | turn -180 0
 
+		// -y down | turn -90 90
+		// +y up | turn 90 -90
+		out.println("turn to " + turnAngle + " degrees");
+		return turnAngle;
 	}
 
 	public void onScannedRobot(ScannedRobotEvent e) {
@@ -143,11 +142,11 @@ public class Defensive extends AdvancedRobot {
 
 			enemy_heat -= 0.1;
 
-			getHeadTurn();
+			double headTurn = getHeadTurn();
 
-			double maxRotation = (10 - (0.75 * getVelocity()));
-
-			robotTurn = random(-1 * maxRotation, maxRotation);
+//			double maxRotation = (10 - (0.75 * getVelocity()));
+//
+//			robotTurn = random(-1 * maxRotation, maxRotation);
 			aheadDist = random(0, 20);
 
 		} else {
