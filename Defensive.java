@@ -5,17 +5,23 @@ import robocode.util.Utils;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+
 /* # Objective
  * 
  * Implement Point2D
  * 
  * Random movement
+ * 	Avoid walls
+ * 	turn randomly + ahead ranomly (inversely proportional)
+ * 		OR
+ * 	define ramdom destiny
+ * 
  * Stay still when enemy will potentially fire (enemyHeat = 0)
  * While enemy gun cools, move randomly
  * 
  * Avoid enemy bullets
  * Keep safe distance from other robots
- * Avoid walls
+
  * 
  * Kill enemy bot coliding
  * 
@@ -25,8 +31,12 @@ import java.util.ArrayList;
  * 
  * After firing, a robot's gun heats up to a value of: 1 + (bulletPower / 5)
  * The default cooling rate in Robocode is 0.1 per tick.
+ * Max rate of rotation is: (10 - 0.75 * abs(velocity)) deg/turn. The faster you're moving, the slower you turn.
+ * 	4 ~ 9.25
+
+
  *  randomize from velocity 2 to 12 instead of 0 to 8. Everything higher than 8 will be cut off to 8, so a large part of the time you will travel at fullspeed.
- * https://robowiki.net/wiki/Maximum_Escape_Angle
+ * 	https://robowiki.net/wiki/Maximum_Escape_Angle
  * 
  */
 
@@ -34,7 +44,6 @@ public class Defensive extends AdvancedRobot {
 
 	// Paint/Debug properties
 	double radarCoverageDist = 10; // Distance we want to scan from middle of enemy to either side
-	boolean scannedBot = false;
 	double enemy_energy = 100;
 	double enemy_heat = 2.8;
 	ArrayList<Bullet> bullets = new ArrayList<>();
@@ -46,48 +55,43 @@ public class Defensive extends AdvancedRobot {
 	double enemyAbsoluteBearing;
 	double movementLateralAngle = 0.2;
 
-	public void run() {
+	int movementDistance = 0;
 
+	public void run() {
 		do {
 			robotLocation = new Point2D.Double(getX(), getY());
 			if (getRadarTurnRemaining() == 0.0)
 				setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
-			move();
 			execute();
+
 		} while (true);
-	}
-
-	public void move() {
-		double x = getX();
-		double y = getY();
-		double heading = getHeading();
-
-		
-//		double field_width = getBattleFieldWidth();
-//		double field_height = getBattleFieldHeight();
-		Point2D dest = new Point2D.Double(random(WALL_MARGIN, getBattleFieldWidth()), random(WALL_MARGIN, getBattleFieldHeight()));
-//		out.println(dest);
-		
 	}
 
 	public double random(double min, double max) {
 		return min + Math.random() * ((max - min + 1));
 	}
 
-	void goTo(Point2D destination) {
-
-//		double angle = Utils.normalRelativeAngleDegrees(absoluteBearing(robotLocation, destination) - getHeading());
-//		double turnAngle = Math.atan(Math.tan(angle));
-//		setTurnRightRadians(turnAngle);
-//		setAhead(robotLocation.distance(destination) * (angle == turnAngle ? 1 : -1));
-//		// Hit the brake pedal hard if we need to turn sharply
-//		setMaxVelocity(Math.abs(getTurnRemaining()) > 33 ? 0 : MAX_VELOCITY);
-	}
-
 	public void onScannedRobot(ScannedRobotEvent e) {
 //		if (getGunHeat() == 0) 
 //			fire(firepower);
+		double robotTurn = 0;
+		double aheadDist = 0;
+		// --------- MOVE
+		if (enemy_heat > 0) {
+			// enemy gun is cooling, move randomly
 
+			enemy_heat -= 0.1;
+			double maxRotation = (10 - (0.75 * getVelocity()));
+			robotTurn = random(-1 * maxRotation, maxRotation);
+			aheadDist = random(0, 20);
+
+		} else {
+			// enemy robot will shot, stay still
+			// out.println("Any time now");
+		}
+
+		setTurnRight(robotTurn);
+		setAhead(aheadDist);
 		// ---------
 
 		double enemyAngle = getHeading() + e.getBearing();
@@ -96,22 +100,18 @@ public class Defensive extends AdvancedRobot {
 		extraTurn = Math.min(extraTurn, Rules.RADAR_TURN_RATE);
 
 		// Radar goes that much further in the direction it is going to turn
-		radarTurn += extraTurn * Math.signum(radarTurn);
+		double enemyDirection = Math.signum(radarTurn);
+		radarTurn += extraTurn * enemyDirection;
+		radarTurn += robotTurn * enemyDirection;
 		setTurnRadarRight(radarTurn);
 
 		// PAINT debug
 
-		scannedBot = true;
 		// Calculate the angle and coordinates to the scanned robot
 		double enemyAngleRadians = Math.toRadians(enemyAngle);
 		enemyLocation = getLocation(robotLocation, enemyAngleRadians, e.getDistance());
 
 		// ----------
-		if (enemy_heat > 0) {
-			enemy_heat -= 0.1;
-		} else {
-//			out.println("Any time now");
-		}
 
 		double energy_dec = enemy_energy - e.getEnergy();
 		if (energy_dec > 0 && energy_dec <= 3) {
@@ -120,6 +120,7 @@ public class Defensive extends AdvancedRobot {
 			enemy_heat = 1 + (firepower / 5);
 		}
 		enemy_energy = e.getEnergy();
+
 	}
 
 	public Point2D getLocation(Point2D initLocation, double angle, double distance) {
