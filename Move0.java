@@ -19,9 +19,6 @@ import org.w3c.dom.ranges.Range;
  * 
  * Stay still when enemy will potentially fire (enemyHeat = 0)
  * While enemy gun cools, move randomly
- * 	what if he hits wall?
- * 		get his position
- * 		get successive energy decrease
  * 
  */
 

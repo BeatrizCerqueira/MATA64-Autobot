@@ -9,33 +9,23 @@ import java.util.ArrayList;
 import org.w3c.dom.ranges.Range;
 
 /* # Objective
- * 
- * Implement Point2D
- * 
- * Random movement
- * 	Avoid walls
- * 
- * Random estrategies:
- * 	1. random destiny 
- * OR
- * 	2. turn randomly + ahead randomly (inversely proportional)
- * 	preferably change direction 90º
- * 		maybe use algorithm to define headTurn angle
- * 
+ * Improve Move0 Robot
  * 
  * Stay still when enemy will potentially fire (enemyHeat = 0)
  * While enemy gun cools, move randomly
- * 	what if he hits wall?
- * 		get his position
- * 		get successive energy decrease
+ * 	
+ * To improve movement:
+ * 		turn head while waits his gun to cool down
+ * 			maybe use move(), this will potentially keep my robot in center arena
+ * 	
+ * 		identify if enemy hit the wall
  * 
- * Avoid enemy bullets
- * 	do not return to past positions
+ * Determine what to do if enemy approaches "safeZone"
+ * 		run away or colide with it, depending of his energy
  * 
- * When other robot approaches
- * 	run away or colide with it, depending of his energy
- * 
- * Kill enemy bot coliding
+ * ------ 
+ * Do not return to past positions? 
+ * Kill enemy bot coliding?
  * 
  */
 
