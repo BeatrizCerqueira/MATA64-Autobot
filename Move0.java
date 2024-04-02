@@ -13,29 +13,15 @@ import org.w3c.dom.ranges.Range;
  * Implement Point2D
  * 
  * Random movement
- * 	Avoid walls
+ * 	when close to a wall, run along it
  * 
- * Random estrategies:
- * 	1. random destiny 
- * OR
- * 	2. turn randomly + ahead randomly (inversely proportional)
- * 	preferably change direction 90º
- * 		maybe use algorithm to define headTurn angle
- * 
+ * Each turn, set random headTurn and Ahead Dist
  * 
  * Stay still when enemy will potentially fire (enemyHeat = 0)
  * While enemy gun cools, move randomly
  * 	what if he hits wall?
  * 		get his position
  * 		get successive energy decrease
- * 
- * Avoid enemy bullets
- * 	do not return to past positions
- * 
- * When other robot approaches
- * 	run away or colide with it, depending of his energy
- * 
- * Kill enemy bot coliding
  * 
  */
 
@@ -45,14 +31,10 @@ import org.w3c.dom.ranges.Range;
  * The default cooling rate in Robocode is 0.1 per tick.
  * Max rate of rotation is: (10 - 0.75 * abs(velocity)) deg/turn. The faster you're moving, the slower you turn.
  * 	4 ~ 9.25
-
-
- *  randomize from velocity 2 to 12 instead of 0 to 8. Everything higher than 8 will be cut off to 8, so a large part of the time you will travel at fullspeed.
- * 	https://robowiki.net/wiki/Maximum_Escape_Angle
  * 
  */
 
-public class Defensive extends AdvancedRobot {
+public class Move0 extends AdvancedRobot {
 
 	// Paint/Debug properties
 	double radarCoverageDist = 20; // Distance we want to scan from middle of enemy to either side
