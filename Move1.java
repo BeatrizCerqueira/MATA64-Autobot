@@ -81,6 +81,54 @@ public class Move1 extends AdvancedRobot {
 		double x = robotLocation.getX() - xLimit;
 		double y = robotLocation.getY() - yLimit;
 
+		// closer you get to the edges, more it will turn
+		double xTurnFactor = Math.abs(x) / xLimit;
+		double yTurnFactor = Math.abs(y) / yLimit;
+
+		double absoluteTurn = getHeading();
+		double maxRotation = (10 - (0.75 * getVelocity())) ;
+		double extraTurn = random(-1 * maxRotation, maxRotation); // max 10 deg per turn if robot not moving
+
+		// run along the wall;
+		extraTurn = Math.signum(x) * Math.signum(y) * Math.abs(extraTurn); // extra turn direction
+
+		// prioritize yTurn (-90º or 90º) to move across x axis
+		if (yTurnFactor > xTurnFactor) {
+			absoluteTurn = yTurnFactor * Math.asin(-1 * Math.signum(x)); // if next to y margin (-90 ~ 90)
+			extraTurn *= -1; // if next to y margin, extraTurn reverse
+
+		} else
+			absoluteTurn = xTurnFactor * Math.acos(-1 * Math.signum(y)); // if next to x margin (0 ~ 180)
+
+		absoluteTurn = Math.toDegrees(absoluteTurn);
+
+		if (enemyHeat > 0.4) {
+			// enemy gun is cooling, time to move!
+			enemyHeat -= 0.1;
+			setAhead(random(5, 20));
+		} else {
+			setAhead(0);
+		}
+
+		absoluteTurn += extraTurn;
+
+		out.print(" x " + xTurnFactor);
+		out.print(" y " + yTurnFactor);
+		out.println(" turn to " + absoluteTurn);
+
+		return Utils.normalRelativeAngleDegrees(absoluteTurn - getHeading());
+
+	}
+
+	public double turnRobot2() {
+
+		// get Relative location
+		double xLimit = getBattleFieldWidth() / 2;
+		double yLimit = getBattleFieldHeight() / 2;
+
+		double x = robotLocation.getX() - xLimit;
+		double y = robotLocation.getY() - yLimit;
+
 		boolean xMargin = (Math.abs(x) + WALL_MARGIN) > xLimit;
 		boolean yMargin = (Math.abs(y) + WALL_MARGIN) > yLimit;
 
@@ -122,23 +170,24 @@ public class Move1 extends AdvancedRobot {
 //			fire(firepower);
 
 		// --------- MOVE
-		double aheadDist = 0;
+//		double aheadDist = 0;
 //		double turnAngle = 0; // may not be zero
 
-		if (enemyHeat > 0.4) {
-			// enemy gun is cooling, move randomly
-			enemyHeat -= 0.1;
-			if (getTurnRemaining() == 0) {
-				aheadDist = random(5, 20);
-			}
+//		if (enemyHeat > 0.4) {
+//			// enemy gun is cooling, move randomly
+//			enemyHeat -= 0.1;
+//			if (getTurnRemaining() == 0) {
+//				aheadDist = random(5, 20);
+//			}
+//
+//		} else {
+//			// enemy robot will shot any time now, stay still
+//		}
 
-		} else {
-			// enemy robot will shot any time now, stay still
-		}
 		double turnAngle = turnRobot();
-
-		setAhead(aheadDist);
 		setTurnRight(turnAngle);
+//		setAhead(aheadDist);
+
 		// ---------
 
 		double enemyAngle = getHeading() + e.getBearing();
