@@ -91,34 +91,29 @@ public class Move1 extends AdvancedRobot {
 		double maxRotation = (10 - (0.75 * getVelocity()));
 //		headTurn = random(-1 * maxRotation, maxRotation);
 
-		double extraTurn = random(0, maxRotation); // max 10 deg if stopped
+		double extraTurn = random(-1 * maxRotation, maxRotation); // max 10 deg per turn if stopped
 
 		if (xMargin || yMargin) {
 
-			out.println("BORDER");
-			
 			// run along the wall;
-			extraTurn *= Math.signum(x) * Math.signum(y); // extra turn direction
+			extraTurn = Math.signum(x) * Math.signum(y) * Math.abs(extraTurn); // extra turn direction
 
-			int xFactor = xMargin ? 1 : 0;
-			int yFactor = yMargin ? 1 : 0;
+			if (yMargin) { // prioritize yTurn (-90º or 90º) to move across x axis
+				absoluteTurn = Math.asin(-1 * Math.signum(x)); // if next to y margin (-90 ~ 90)
+				extraTurn *= -1; // if next to y margin, extraTurn reverse
 
-			double xTurn = xFactor * Math.acos(-1 * Math.signum(y)); // if next to x margin (0 ~ 180)
-			double yTurn = yFactor * Math.asin(-1 * Math.signum(x)); // if next to y margin (-90 ~ 90)
-
-			extraTurn *= yFactor * -1; // if next to y margin, extraTurn reverse
+			} else if (xMargin)
+				absoluteTurn = Math.acos(-1 * Math.signum(y)); // if next to x margin (0 ~ 180)
 
 			absoluteTurn = Math.toDegrees(absoluteTurn);
 
-			setAhead(20); // to leave border, after turning
+			if (enemyHeat > 0.4)
+				setAhead(20); // to leave border after turning
 		}
 
 		absoluteTurn += extraTurn;
 
 		return Utils.normalRelativeAngleDegrees(absoluteTurn - getHeading());
-
-//		setTurnRight(headTurn);
-//		setAhead(20);
 
 	}
 
@@ -128,19 +123,19 @@ public class Move1 extends AdvancedRobot {
 
 		// --------- MOVE
 		double aheadDist = 0;
-		double turnAngle = 0; // may not be zero
+//		double turnAngle = 0; // may not be zero
 
 		if (enemyHeat > 0.4) {
 			// enemy gun is cooling, move randomly
 			enemyHeat -= 0.1;
 			if (getTurnRemaining() == 0) {
 				aheadDist = random(5, 20);
-				turnAngle = turnRobot();
 			}
 
 		} else {
 			// enemy robot will shot any time now, stay still
 		}
+		double turnAngle = turnRobot();
 
 		setAhead(aheadDist);
 		setTurnRight(turnAngle);
