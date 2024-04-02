@@ -33,17 +33,14 @@ import org.w3c.dom.ranges.Range;
 
 public class Move0 extends AdvancedRobot {
 
-	// Paint/Debug properties
-	double radarCoverageDist = 20; // Distance we want to scan from middle of enemy to either side
-	double enemy_energy = 100;
-	double enemy_heat = 2.8;
-	ArrayList<Bullet> bullets = new ArrayList<>();
 
 	Point2D robotLocation;
+	double radarCoverageDist = 20; // Distance we want to scan from middle of enemy to either side
+	ArrayList<Bullet> bullets = new ArrayList<>();
+
 	Point2D enemyLocation;
-	double enemyDistance;
-	double enemyAbsoluteBearing;
-	double movementLateralAngle = 0.2;
+	double enemyEnergy = 100;
+	double enemyHeat = 2.8;
 
 	static final double WALL_MARGIN = 50;
 

@@ -17,6 +17,8 @@ import org.w3c.dom.ranges.Range;
  * To improve movement:
  * 		turn head while waits his gun to cool down
  * 			maybe use move(), this will potentially keep my robot in center arena
+ *
+ * IF i was hit, move a few degrees away from him!
  * 	
  * 		identify if enemy hit the wall
  * 
@@ -42,19 +44,15 @@ import org.w3c.dom.ranges.Range;
  * 
  */
 
-public class Move0 extends AdvancedRobot {
-
-	// Paint/Debug properties
-	double radarCoverageDist = 20; // Distance we want to scan from middle of enemy to either side
-	double enemy_energy = 100;
-	double enemy_heat = 2.8;
-	ArrayList<Bullet> bullets = new ArrayList<>();
+public class Move1 extends AdvancedRobot {
 
 	Point2D robotLocation;
+	double radarCoverageDist = 20; // Distance we want to scan from middle of enemy to either side
+	ArrayList<Bullet> bullets = new ArrayList<>();
+
 	Point2D enemyLocation;
-	double enemyDistance;
-	double enemyAbsoluteBearing;
-	double movementLateralAngle = 0.2;
+	double enemyEnergy = 100;
+	double enemyHeat = 2.8;
 
 	static final double WALL_MARGIN = 50;
 
@@ -136,9 +134,9 @@ public class Move0 extends AdvancedRobot {
 		double aheadDist = 0;
 		headTurn = 0;
 
-		if (enemy_heat > 0.4) {
+		if (enemyHeat > 0.4) {
 			// enemy gun is cooling, move randomly
-			enemy_heat -= 0.1;
+			enemyHeat -= 0.1;
 			if (getTurnRemaining() == 0) {
 				aheadDist = random(5, 20);
 				move();
@@ -170,13 +168,13 @@ public class Move0 extends AdvancedRobot {
 
 		// ----------
 
-		double energy_dec = enemy_energy - e.getEnergy();
+		double energy_dec = enemyEnergy - e.getEnergy();
 		if (energy_dec > 0 && energy_dec <= 3) {
-			double firepower = enemy_energy - e.getEnergy();
+			double firepower = enemyEnergy - e.getEnergy();
 			bullets.add(new Bullet(enemyLocation, firepower, e.getDistance()));
-			enemy_heat = 1 + (firepower / 5);
+			enemyHeat = 1 + (firepower / 5);
 		}
-		enemy_energy = e.getEnergy();
+		enemyEnergy = e.getEnergy();
 
 	}
 
