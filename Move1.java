@@ -71,7 +71,8 @@ public class Move1 extends AdvancedRobot {
 	public double random(double min, double max) {
 		return min + Math.random() * ((max - min + 1));
 	}
-
+	
+	
 	public double turnRobot() {
 
 		// get Relative location
@@ -82,26 +83,74 @@ public class Move1 extends AdvancedRobot {
 		double y = robotLocation.getY() - yLimit;
 
 		// closer you get to the edges, more it will turn
-		double xTurnFactor = Math.abs(x) / xLimit;
-		double yTurnFactor = Math.abs(y) / yLimit;
+		double xTurnFactor = Math.abs(x) / xLimit; // to move vertically
+		double yTurnFactor = Math.abs(y) / yLimit; // to move horizontally
 
 		double absoluteTurn = getHeading();
-		double maxRotation = (10 - (0.75 * getVelocity())) ;
+		double maxRotation = (10 - (0.75 * getVelocity()));
 		double extraTurn = random(-1 * maxRotation, maxRotation); // max 10 deg per turn if robot not moving
+
+		double turnFactor = getDistance(robotLocation, new Point2D.Double(0, 0)) / 500;
 
 		// run along the wall;
 		extraTurn = Math.signum(x) * Math.signum(y) * Math.abs(extraTurn); // extra turn direction
 
-		// prioritize yTurn (-90º or 90º) to move across x axis
-		if (yTurnFactor > xTurnFactor) {
-			absoluteTurn = yTurnFactor * Math.asin(-1 * Math.signum(x)); // if next to y margin (-90 ~ 90)
-			extraTurn *= -1; // if next to y margin, extraTurn reverse
+		double xTurnAbs = Math.toDegrees(turnFactor * Math.asin(-1 * Math.signum(x))); // (-90 ~ 90) at left -(-1), turn
+																						// right (90)
+		double yTurnAbs = Math.toDegrees(turnFactor * Math.acos(-1 * Math.signum(y))); // (0 ~ 180) at up -(-1), turn
+																						// down (180)
 
-		} else
-			absoluteTurn = xTurnFactor * Math.acos(-1 * Math.signum(y)); // if next to x margin (0 ~ 180)
+		out.print("at " + getHeading());
+		out.print(" To " + xTurnAbs + " or " + yTurnAbs);
 
-		absoluteTurn = Math.toDegrees(absoluteTurn);
+		double xTurnRel = Utils.normalRelativeAngleDegrees(xTurnAbs - getHeading());
+		double yTurnRel = Utils.normalRelativeAngleDegrees(yTurnAbs - getHeading());
 
+		// quao longe do centro (0). max = 500;
+
+		double relativeTurn = Math.min(xTurnRel, yTurnRel);
+		out.println(" Turn " + relativeTurn);
+
+		relativeTurn += extraTurn;
+
+//		out.print("dir " + absoluteTurn);
+//
+//		absoluteTurn *= turnFactor;
+//		out.print(" * " + turnFactor);
+//
+//		absoluteTurn += extraTurn;
+//		out.print(" + " + extraTurn);
+//
+//		double relativeTurn = Utils.normalRelativeAngleDegrees(absoluteTurn - getHeading());
+//
+//		out.println(" turn " + relativeTurn);
+
+//		extraTurn *= -1; // if next to y margin, extraTurn reverse
+
+//		if (yTurnFactor > xTurnFactor) { // closer to x border then y border
+//			out.print(" y ");
+//			absoluteTurn = Math.asin(-1 * yTurnFactor * Math.signum(x)); // if next to y margin (-90 ~ 90)
+//			extraTurn *= -1; // if next to y margin, extraTurn reverse
+//			turnFactor = yTurnFactor;
+//		} else {
+//			out.print(" x ");
+//			absoluteTurn = Math.acos(-1 * xTurnFactor * Math.signum(y)); // if next to x margin (0 ~ 180)
+//			turnFactor = xTurnFactor;
+//		}
+
+//		absoluteTurn = Math.toDegrees(absoluteTurn);
+//		out.print("dir " + absoluteTurn);
+//
+//		absoluteTurn *= turnFactor;
+//		out.print(" * " + turnFactor);
+//
+//		absoluteTurn += extraTurn;
+//		out.print(" + " + extraTurn);
+//
+//		double relativeTurn = Utils.normalRelativeAngleDegrees(absoluteTurn - getHeading());
+//
+//		out.println(" turn " + relativeTurn);
+//		
 		if (enemyHeat > 0.4) {
 			// enemy gun is cooling, time to move!
 			enemyHeat -= 0.1;
@@ -110,13 +159,7 @@ public class Move1 extends AdvancedRobot {
 			setAhead(0);
 		}
 
-		absoluteTurn += extraTurn;
-
-		out.print(" x " + xTurnFactor);
-		out.print(" y " + yTurnFactor);
-		out.println(" turn to " + absoluteTurn);
-
-		return Utils.normalRelativeAngleDegrees(absoluteTurn - getHeading());
+		return relativeTurn;
 
 	}
 
@@ -224,6 +267,10 @@ public class Move1 extends AdvancedRobot {
 		double y = (int) (initLocation.getY() + Math.cos(angle) * distance);
 		return new Point2D.Double(x, y);
 
+	}
+
+	public double getDistance(Point2D A, Point2D B) {
+		return Point2D.distance(A.getX(), A.getY(), B.getX(), B.getY());
 	}
 
 	public void onPaint(Graphics2D g) {
