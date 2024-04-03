@@ -129,12 +129,13 @@ public class Move0 extends AdvancedRobot {
                 aheadDist = random(5, 20);
                 move();
             }
-
         }
+
 //        else {
 //
 //            // enemy robot will shot any time now, stay still
 //        }
+
         setAhead(aheadDist);
         // ---------
 
