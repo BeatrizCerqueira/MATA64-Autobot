@@ -80,7 +80,13 @@ public class Move2 extends AdvancedRobot {
     }
 
     public void moveRobot() {
-        //TODO: every x turns set absolute degrees to turn
+        //TODO: check min enemyHeat to move
+        //TODO: Mudar direção ao levar dano (evitar tiros)
+        //TODO: Mudar direção ao colidir
+        //TODO: outras formas do inimigo perder energia (dano por tiro/colisão/empate)
+        //TODO: Quando colidir com o inimigo? comparar energias?
+        //TODO: every x turns set absolute degrees to turn?
+
 
         double maxHeadTurn = (10 - (0.75 * getVelocity())); //max robot can turn considering its velocity
         double headTurn = random(-1 * maxHeadTurn, maxHeadTurn);    //random relative angle to turn
