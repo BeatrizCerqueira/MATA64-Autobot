@@ -82,7 +82,11 @@ public class Move2 extends AdvancedRobot {
     public void moveRobot() {
         //TODO: every x turns set absolute degrees to turn
 
-        if (enemyHeat < 0.4) { // enemy gun will shoot any time now. do not move, TODO: but maybe turn!
+        double maxHeadTurn = (10 - (0.75 * getVelocity())); //max robot can turn considering its velocity
+        double headTurn = random(-1 * maxHeadTurn, maxHeadTurn);    //random relative angle to turn
+
+        if (enemyHeat < 0.4) { // enemy gun will shoot any time now. do not move
+            setTurnRight(headTurn);
             return;
         }
 
@@ -96,8 +100,6 @@ public class Move2 extends AdvancedRobot {
 
         // default behavior,  in center arena
         double aheadDist = random(0, 20);   //distance to move forward
-        double maxHeadTurn = (10 - (0.75 * getVelocity())); //max robot can turn considering velocity
-        double headTurn = random(-1 * maxHeadTurn, maxHeadTurn);    //random relative angle to turn
 
 
         // aux variables
