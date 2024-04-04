@@ -82,62 +82,83 @@ public class Move1 extends AdvancedRobot {
 
 
     public void moveRobot() {
-        if (enemyHeat < 0.4) {
-            // enemy gun will shoot any time now
+//        if (enemyHeat < 0.4) { // enemy gun will shoot any time now. do not move
+//            return;
+//        }
+
+        if (getTurnRemaining() > 0) {
             return;
         }
 
+
+        // default behavior,  in center arena
+        double aheadDist = random(0, 20);   //distance to move if
+        setAhead(aheadDist);
+        double maxHeadTurn = (10 - (0.75 * getVelocity()));
+        double headTurn = random(-1 * maxHeadTurn, maxHeadTurn);
+        setTurnRight(headTurn);
+
+
         // enemy gun is cooling down, move randomly
         enemyHeat -= 0.1;
-        setAhead(random(5, 20));
 
+
+        // aux variables
         double xLimit = getBattleFieldWidth() / 2;
         double yLimit = getBattleFieldHeight() / 2;
 
         double x = robotLocation.getX() - xLimit;
         double y = robotLocation.getY() - yLimit;
 
-        double xSign = Math.signum(x);
-        double ySign = Math.signum(y);
-
         boolean xMargin = xLimit - (Math.abs(x)) < WALL_MARGIN;
         boolean yMargin = yLimit - (Math.abs(y)) < WALL_MARGIN;
 
-        double minAngle = 0;
-        double maxAngle = 180;
 
-        if (xMargin && yMargin) {
-            out.println("Edge");
-            maxAngle = 90;
+        if (xMargin || yMargin) {
+            // next to borders, consider changing
 
-        } else if (xMargin) {
-            out.println("xMargin");
-            minAngle = Math.acos(-1 * xSign);
+            double minAngle = 0;
+            double maxAngle = 180;
+            aheadDist = random(0, 4);  //reduce vel to not hit wall
 
-        } else if (yMargin) {
-            out.println("yMargin");
-            minAngle = Math.asin(ySign);
+            //consider moving back if facing wall
+            //TODO: set zero until not face wall
 
-        } else {
-            maxAngle = 360;
+            if (xMargin && yMargin) {
+                out.println("Edge");
+                maxAngle = 90;
+
+            } else if (xMargin) {
+                minAngle = Math.acos(-1 * Math.signum(x));
+
+            } else if (yMargin) {
+                minAngle = Math.asin(Math.signum(y));
+
+            }
+
+            minAngle = Math.toDegrees(minAngle);
+            maxAngle += minAngle;
+
+            double absTurnAngle = random(minAngle, maxAngle);
+
+            out.println("=====");
+            out.println(minAngle + " ~ " + maxAngle);
+
+            headTurn = Utils.normalRelativeAngleDegrees(absTurnAngle - getHeading());
+            out.println("turn to " + absTurnAngle + " = " + headTurn);
+
         }
 
-        minAngle = Math.toDegrees(minAngle);
-        maxAngle += minAngle;
+        setTurnRight(headTurn);
+        setAhead(aheadDist);
 
-        double turnAngle = random(minAngle, maxAngle);
+        // #1
+        // encontrou parede, priorize giro.
+        // se heading estiver dentro do range, ande pra frente
 
-        out.println("=====");
-        out.println(minAngle + " ~ " + maxAngle);
-
-        double headTurn = Utils.normalRelativeAngleDegrees(turnAngle - getHeading());
-        double maxHeadTurn = (10 - (0.75 * getVelocity()));
-        out.println(headTurn + " / " + maxHeadTurn);
-
-
-        double ans = Math.min(Math.abs(headTurn), maxHeadTurn) * Math.signum(headTurn);
-        out.println("turn" + ans);
-        setTurnRight(ans);
+        // #2
+        // girar absoluto quando estiver nas bordas
+        // usar remaining
 
 
     }
