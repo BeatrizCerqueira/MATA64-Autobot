@@ -87,9 +87,11 @@ public class Move1 extends AdvancedRobot {
 //        }
 
         if (getTurnRemaining() > 0) {
+            setAhead(2);
             return;
         }
 
+        //sempre vira pra direita??
 
         // default behavior,  in center arena
         double aheadDist = random(0, 20);   //distance to move if
@@ -145,7 +147,7 @@ public class Move1 extends AdvancedRobot {
             out.println(minAngle + " ~ " + maxAngle);
 
             headTurn = Utils.normalRelativeAngleDegrees(absTurnAngle - getHeading());
-            out.println("turn to " + absTurnAngle + " = " + headTurn);
+            out.println("at " + getHeading() + " turn to " + absTurnAngle + " = " + headTurn);
 
         }
 
