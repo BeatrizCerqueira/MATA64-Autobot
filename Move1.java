@@ -60,12 +60,17 @@ public class Move1 extends AdvancedRobot {
 //	double headTurn = 0;
 
     public void run() {
+
+        // Set gun to turn independent from the robot's turn
+        setAdjustRadarForRobotTurn(true);
+
         do {
 
             robotLocation = new Point2D.Double(getX(), getY());
             if (getRadarTurnRemaining() == 0.0)
                 setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
 
+            moveRobot();
             execute();
 
         } while (true);
@@ -76,138 +81,64 @@ public class Move1 extends AdvancedRobot {
     }
 
 
-    public double turnRobot() {
+    public void moveRobot() {
+        if (enemyHeat < 0.4) {
+            // enemy gun will shoot any time now
+            return;
+        }
 
-        // get Relative location
+        // enemy gun is cooling down, move randomly
+        enemyHeat -= 0.1;
+        setAhead(random(5, 20));
+
         double xLimit = getBattleFieldWidth() / 2;
         double yLimit = getBattleFieldHeight() / 2;
 
         double x = robotLocation.getX() - xLimit;
         double y = robotLocation.getY() - yLimit;
 
-        // closer you get to the edges, more it will turn
-        double xTurnFactor = Math.abs(x) / xLimit; // to move vertically
-        double yTurnFactor = Math.abs(y) / yLimit; // to move horizontally
+        double xSign = Math.signum(x);
+        double ySign = Math.signum(y);
 
-        double absoluteTurn = getHeading();
-        double maxRotation = (10 - (0.75 * getVelocity()));
-        double extraTurn = random(-1 * maxRotation, maxRotation); // max 10 deg per turn if robot not moving
+        boolean xMargin = xLimit - (Math.abs(x)) < WALL_MARGIN;
+        boolean yMargin = yLimit - (Math.abs(y)) < WALL_MARGIN;
 
-        double turnFactor = getDistance(robotLocation, new Point2D.Double(0, 0)) / 500;
+        double minAngle = 0;
+        double maxAngle = 180;
 
-        // run along the wall;
-        extraTurn = Math.signum(x) * Math.signum(y) * Math.abs(extraTurn); // extra turn direction
+        if (xMargin && yMargin) {
+            out.println("Edge");
+            maxAngle = 90;
 
-        double xTurnAbs = Math.toDegrees(turnFactor * Math.asin(-1 * Math.signum(x))); // (-90 ~ 90) at left -(-1), turn
-        // right (90)
-        double yTurnAbs = Math.toDegrees(turnFactor * Math.acos(-1 * Math.signum(y))); // (0 ~ 180) at up -(-1), turn
-        // down (180)
+        } else if (xMargin) {
+            out.println("xMargin");
+            minAngle = Math.acos(-1 * xSign);
 
-        out.print("at " + getHeading());
-        out.print(" To " + xTurnAbs + " or " + yTurnAbs);
+        } else if (yMargin) {
+            out.println("yMargin");
+            minAngle = Math.asin(ySign);
 
-        double xTurnRel = Utils.normalRelativeAngleDegrees(xTurnAbs - getHeading());
-        double yTurnRel = Utils.normalRelativeAngleDegrees(yTurnAbs - getHeading());
-
-        // quao longe do centro (0). max = 500;
-
-        double relativeTurn = Math.min(xTurnRel, yTurnRel);
-        out.println(" Turn " + relativeTurn);
-
-        relativeTurn += extraTurn;
-
-//		out.print("dir " + absoluteTurn);
-//
-//		absoluteTurn *= turnFactor;
-//		out.print(" * " + turnFactor);
-//
-//		absoluteTurn += extraTurn;
-//		out.print(" + " + extraTurn);
-//
-//		double relativeTurn = Utils.normalRelativeAngleDegrees(absoluteTurn - getHeading());
-//
-//		out.println(" turn " + relativeTurn);
-
-//		extraTurn *= -1; // if next to y margin, extraTurn reverse
-
-//		if (yTurnFactor > xTurnFactor) { // closer to x border then y border
-//			out.print(" y ");
-//			absoluteTurn = Math.asin(-1 * yTurnFactor * Math.signum(x)); // if next to y margin (-90 ~ 90)
-//			extraTurn *= -1; // if next to y margin, extraTurn reverse
-//			turnFactor = yTurnFactor;
-//		} else {
-//			out.print(" x ");
-//			absoluteTurn = Math.acos(-1 * xTurnFactor * Math.signum(y)); // if next to x margin (0 ~ 180)
-//			turnFactor = xTurnFactor;
-//		}
-
-//		absoluteTurn = Math.toDegrees(absoluteTurn);
-//		out.print("dir " + absoluteTurn);
-//
-//		absoluteTurn *= turnFactor;
-//		out.print(" * " + turnFactor);
-//
-//		absoluteTurn += extraTurn;
-//		out.print(" + " + extraTurn);
-//
-//		double relativeTurn = Utils.normalRelativeAngleDegrees(absoluteTurn - getHeading());
-//
-//		out.println(" turn " + relativeTurn);
-//		
-        if (enemyHeat > 0.4) {
-            // enemy gun is cooling, time to move!
-            enemyHeat -= 0.1;
-            setAhead(random(5, 20));
         } else {
-            setAhead(0);
+            maxAngle = 360;
         }
 
-        return relativeTurn;
+        minAngle = Math.toDegrees(minAngle);
+        maxAngle += minAngle;
 
-    }
+        double turnAngle = random(minAngle, maxAngle);
 
-    public double turnRobot2() {
+        out.println("=====");
+        out.println(minAngle + " ~ " + maxAngle);
 
-        // get Relative location
-        double xLimit = getBattleFieldWidth() / 2;
-        double yLimit = getBattleFieldHeight() / 2;
+        double headTurn = Utils.normalRelativeAngleDegrees(turnAngle - getHeading());
+        double maxHeadTurn = (10 - (0.75 * getVelocity()));
+        out.println(headTurn + " / " + maxHeadTurn);
 
-        double x = robotLocation.getX() - xLimit;
-        double y = robotLocation.getY() - yLimit;
 
-        boolean xMargin = (Math.abs(x) + WALL_MARGIN) > xLimit;
-        boolean yMargin = (Math.abs(y) + WALL_MARGIN) > yLimit;
+        double ans = Math.min(Math.abs(headTurn), maxHeadTurn) * Math.signum(headTurn);
+        out.println("turn" + ans);
+        setTurnRight(ans);
 
-        // # To avoid hitting the wall, run along it
-        double absoluteTurn = getHeading();
-//		double extraTurn = random(30, 60); // degrees
-
-        double maxRotation = (10 - (0.75 * getVelocity()));
-//		headTurn = random(-1 * maxRotation, maxRotation);
-
-        double extraTurn = random(-1 * maxRotation, maxRotation); // max 10 deg per turn if stopped
-
-        if (xMargin || yMargin) {
-
-            // run along the wall;
-            extraTurn = Math.signum(x) * Math.signum(y) * Math.abs(extraTurn); // extra turn direction
-
-            if (yMargin) { // prioritize yTurn (-90º or 90º) to move across x axis
-                absoluteTurn = Math.asin(-1 * Math.signum(x)); // if next to y margin (-90 ~ 90)
-                extraTurn *= -1; // if next to y margin, extraTurn reverse
-
-            } else if (xMargin)
-                absoluteTurn = Math.acos(-1 * Math.signum(y)); // if next to x margin (0 ~ 180)
-
-            absoluteTurn = Math.toDegrees(absoluteTurn);
-
-            if (enemyHeat > 0.4)
-                setAhead(20); // to leave border after turning
-        }
-
-        absoluteTurn += extraTurn;
-
-        return Utils.normalRelativeAngleDegrees(absoluteTurn - getHeading());
 
     }
 
@@ -215,23 +146,7 @@ public class Move1 extends AdvancedRobot {
 //		if (getGunHeat() == 0) 
 //			fire(firepower);
 
-        // --------- MOVE
-//		double aheadDist = 0;
-//		double turnAngle = 0; // may not be zero
 
-//		if (enemyHeat > 0.4) {
-//			// enemy gun is cooling, move randomly
-//			enemyHeat -= 0.1;
-//			if (getTurnRemaining() == 0) {
-//				aheadDist = random(5, 20);
-//			}
-//
-//		} else {
-//			// enemy robot will shot any time now, stay still
-//		}
-
-        double turnAngle = turnRobot();
-        setTurnRight(turnAngle);
 //		setAhead(aheadDist);
 
         // ---------
@@ -244,7 +159,7 @@ public class Move1 extends AdvancedRobot {
         // Radar goes that much further in the direction it is going to turn
         double enemyDirection = Math.signum(radarTurn);
         radarTurn += extraTurn * enemyDirection;
-        radarTurn += turnAngle * enemyDirection;
+        radarTurn += enemyDirection;
         setTurnRadarRight(radarTurn);
 
         // PAINT debug

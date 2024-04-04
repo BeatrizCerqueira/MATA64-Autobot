@@ -62,7 +62,12 @@ public class Edit_Interactive extends AdvancedRobot {
     // Fire power, where 0 = don't fire
     int firePower;
 
+    // =================== LUCAS
     Point2D robotLocation;
+    static final double WALL_MARGIN = 50;
+
+    // =================== LUCAS
+
 
     // Called when the robot must run
     public void run() {
@@ -73,8 +78,14 @@ public class Edit_Interactive extends AdvancedRobot {
 
         // Loop forever
         for (; ; ) {
+
+            // =================== LUCAS
+
             robotLocation = new Point2D.Double(getX(), getY());
-            turnRange();
+            turnDEBUG();
+
+            // =================== LUCAS
+
             // Sets the robot to move forward, backward or stop moving depending
             // on the move direction and amount of pixels to move
             setAhead(moveAmount * moveDirection);
@@ -106,7 +117,12 @@ public class Edit_Interactive extends AdvancedRobot {
         }
     }
 
-    public void turnRange() {
+    // =================== LUCAS
+    public double random(double min, double max) {
+        return min + Math.random() * ((max - min + 1));
+    }
+
+    public void turnDEBUG() {
 
         // get Relative location
         double xLimit = getBattleFieldWidth() / 2;
@@ -115,34 +131,37 @@ public class Edit_Interactive extends AdvancedRobot {
         double x = robotLocation.getX() - xLimit;
         double y = robotLocation.getY() - yLimit;
 
-        double xBase = Math.toDegrees(Math.asin(-1 * Math.signum(x)));  // 90 ~ -90
-        double yBase = Math.toDegrees(Math.acos(-1 * Math.signum(y)));  // 0 ~ 180
-        yBase *= Math.signum(x);    // 1Q 180 // 2Q -180
+        double xSign = Math.signum(x);
+        double ySign = Math.signum(y);
 
-        double xDist = Math.signum(x) * (xLimit - Math.abs(x));
-        double yDist = Math.signum(y) * (yLimit - Math.abs(y));
+        boolean xMargin = xLimit - (Math.abs(x)) < WALL_MARGIN;
+        boolean yMargin = yLimit - (Math.abs(y)) < WALL_MARGIN;
 
-        double xExtraAngle = Math.toDegrees(Math.atan(xDist / y));
-        double yExtraAngle = Math.toDegrees(Math.atan(yDist / x));
+        double minAngle = 0;
+        double maxAngle = 180;
 
-        out.print("x: " + xExtraAngle);
-        out.println(" y: " + yExtraAngle);
+        if (xMargin && yMargin) {
+            out.println("Edge");
+            maxAngle = 90;
 
-//        double xAngle = xBase + xExtraAngle;
-//        double yAngle = yBase + yExtraAngle;
+        } else if (xMargin) {
+            out.println("xMargin");
+            minAngle = Math.acos(-1 * xSign);
 
-//        out.print("x: " + xAngle);
-//        out.println(" y: " + yAngle);
-//        out.println();
+        } else if (yMargin) {
+            out.println("yMargin");
+            minAngle = Math.asin(ySign);
 
-        //Base
-        //Q1: 90 ~ 180  Q2: -90 ~ 180 *
-        //Q3: 90 ~ 0 *  Q4: -90 ~ 0
+        } else {
+            maxAngle = 360;
+        }
 
-        //Extra
-        //Q1: 90-y ~ 180+x  Q2: -90+y ~ 180-x *
-        //Q3: 90+y ~ 0-x *  Q4: -90-X ~ 0+Y
+        minAngle = Math.toDegrees(minAngle);
+        maxAngle += minAngle;
 
+        double turnAngle = random(minAngle, maxAngle);
+
+        out.println(minAngle + " ~ " + maxAngle);
 
     }
 
@@ -156,6 +175,8 @@ public class Edit_Interactive extends AdvancedRobot {
     public double getDistance(Point2D A, Point2D B) {
         return Point2D.distance(A.getX(), A.getY(), B.getX(), B.getY());
     }
+
+    // =================== LUCAS
 
     // Called when a key has been pressed
     public void onKeyPressed(KeyEvent e) {
