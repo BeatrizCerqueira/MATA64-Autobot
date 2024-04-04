@@ -9,39 +9,12 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-/* # Objective
- * Improve Move0 Robot
- *
- * Stay still when enemy will potentially fire (enemyHeat = 0)
- * While enemy gun cools, move randomly
- *
- * To improve movement:
- * 		turn head while waits his gun to cool down
- * 			maybe use move(), this will potentially keep my robot in center arena
- *
- * IF i was hit, move a few degrees away from him!
- *
- * 		identify if enemy hit the wall
- *
- * Determine what to do if enemy approaches "safeZone"
- * 		run away or colide with it, depending of his energy
- *
- * ------
- * Do not return to past positions?
- * Kill enemy bot coliding?
- *
- */
-
 /* # Useful information
  *
  * After firing, a robot's gun heats up to a value of: 1 + (bulletPower / 5)
  * The default cooling rate in Robocode is 0.1 per tick.
  * Max rate of rotation is: (10 - 0.75 * abs(velocity)) deg/turn. The faster you're moving, the slower you turn.
  * 	4 ~ 9.25
-
-
- *  randomize from velocity 2 to 12 instead of 0 to 8. Everything higher than 8 will be cut off to 8, so a large part of the time you will travel at fullspeed.
- * 	https://robowiki.net/wiki/Maximum_Escape_Angle
  *
  */
 
@@ -80,7 +53,6 @@ public class Move2 extends AdvancedRobot {
     }
 
     public void moveRobot() {
-        //TODO: ajustar enemyHeat minimo para mover mais
 
         //TODO: Mudar direção ao levar dano (evitar tiros)
         //TODO: Mudar direção ao colidir com parede
@@ -94,6 +66,8 @@ public class Move2 extends AdvancedRobot {
         //          if  onBulletHit / energia<< e vel<<
 
         //TODO: aumentar distancia de fuga proporcional a distancia do robo inimigo
+
+        //TODO: ajustar enemyHeat minimo para mover mais
 
 
         double maxHeadTurn = (10 - (0.75 * getVelocity())); //max robot can turn considering its velocity
