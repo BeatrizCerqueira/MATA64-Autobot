@@ -20,7 +20,7 @@ import java.util.ArrayList;
  *
  * After firing, a robot's gun heats up to a value of: 1 + (bulletPower / 5)
  * Bullet velocity 20 - 3 * firepower.
- * Colision damage = abs(velocity) * 0.5 - 1 | max = 8*0.5 -1 = 3,
+ * Collision damage = abs(velocity) * 0.5 - 1 | max = 8*0.5 -1 = 3,
  * The default cooling rate in Robocode is 0.1 per tick.
  *
  */
@@ -37,11 +37,8 @@ public class TrackBulletsBia extends AdvancedRobot {
     Point2D robotLocation;
     Point2D enemyLocation;
 
-    double enemyDistance;
-    double enemyAbsoluteBearing;
-    double movementLateralAngle = 0.2;
-
     public void run() {
+        //noinspection InfiniteLoopStatement
         do {
             robotLocation = new Point2D.Double(getX(), getY());
             if (getRadarTurnRemaining() == 0.0)
@@ -76,9 +73,6 @@ public class TrackBulletsBia extends AdvancedRobot {
         if (enemy_heat > 0) {
             enemy_heat -= 0.1;
         }
-        //else {
-        //	out.println("Any time now");
-        //}
 
         double energy_dec = enemy_energy - e.getEnergy();
         if (energy_dec > 0 && energy_dec <= 3) {
@@ -121,8 +115,8 @@ public class TrackBulletsBia extends AdvancedRobot {
     }
 
     public void drawCircle(Graphics2D g, double x, double y, double radius) {
-        int circ = (int) (2 * radius);
-        g.drawOval((int) (x - radius), (int) (y - radius), circ, circ);
+        int circumference = (int) (2 * radius);
+        g.drawOval((int) (x - radius), (int) (y - radius), circumference, circumference);
     }
 
     public void drawBulletsRange(Graphics2D g) {
