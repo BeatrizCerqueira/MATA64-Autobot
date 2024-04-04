@@ -124,7 +124,6 @@ public class Move1 extends AdvancedRobot {
             aheadDist = random(0, 4);  //reduce vel to not hit wall
 
             //consider moving back if facing wall
-            //TODO: set zero until not face wall
 
             if (xMargin && yMargin) {
                 out.println("Edge");

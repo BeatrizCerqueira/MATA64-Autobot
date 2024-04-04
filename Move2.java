@@ -53,7 +53,7 @@ public class Move2 extends AdvancedRobot {
 
     Point2D enemyLocation;
     double enemyEnergy = 100;
-    double enemyHeat = 2.8;
+    double enemyHeat = 3;   //initial
 
     static final double WALL_MARGIN = 50;
 
@@ -83,18 +83,24 @@ public class Move2 extends AdvancedRobot {
         //TODO: check min enemyHeat to move
         //TODO: Mudar direção ao levar dano (evitar tiros)
         //TODO: Mudar direção ao colidir
+        //TODO: move forward enough to scape bullet
         //TODO: outras formas do inimigo perder energia (dano por tiro/colisão/empate)
-        //TODO: Quando colidir com o inimigo? comparar energias?
+        //TODO: estrategia ofensiva de colisão
         //TODO: every x turns set absolute degrees to turn?
 
 
         double maxHeadTurn = (10 - (0.75 * getVelocity())); //max robot can turn considering its velocity
         double headTurn = random(-1 * maxHeadTurn, maxHeadTurn);    //random relative angle to turn
 
-        if (enemyHeat < 0.4) { // enemy gun will shoot any time now. do not move
+        int turnsToStop = (int) (getVelocity() / Rules.DECELERATION);
+        if (enemyHeat <= turnsToStop * getGunCoolingRate()) { // enemy gun will shoot any time now. do not move
+            out.print(".");
             setTurnRight(headTurn);
+            setAhead(0);
             return;
         }
+        out.print(">");
+        out.println("enemyHeat " + enemyHeat);
 
         // enemy gun is cooling down, move randomly
         enemyHeat -= 0.1;
@@ -134,17 +140,11 @@ public class Move2 extends AdvancedRobot {
 
             double minAngle = xMargin ? Math.acos(-1 * Math.signum(x)) : Math.asin(Math.signum(y));
 
-
             minAngle = Math.toDegrees(minAngle);
             maxAngle += minAngle;
 
             double absTurnAngle = random(minAngle, maxAngle);
-
-            out.println("=====");
-            out.println(minAngle + " ~ " + maxAngle);
-
             headTurn = Utils.normalRelativeAngleDegrees(absTurnAngle - getHeading());
-            out.println("at " + getHeading() + " turn to " + absTurnAngle + " = " + headTurn);
 
         }
         setTurnRight(headTurn);
@@ -157,6 +157,7 @@ public class Move2 extends AdvancedRobot {
 
         //TODO: fire algorithm
 
+        // # Variables and calculations
 
         double enemyAngle = getHeading() + e.getBearing();
         double radarTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getRadarHeading());
@@ -169,23 +170,28 @@ public class Move2 extends AdvancedRobot {
         radarTurn += enemyDirection;
         setTurnRadarRight(radarTurn);
 
-        // PAINT debug
+        // # Update enemy data
 
-        // Calculate the angle and coordinates to the scanned robot
+        // Enemy position
         double enemyAngleRadians = Math.toRadians(enemyAngle);
         enemyLocation = getLocation(robotLocation, enemyAngleRadians, e.getDistance());
 
-        // ----------
+        // Track enemy energy to identify his bullets
+        double energyDec = enemyEnergy - e.getEnergy();
+        //what if his energy increases?
 
-        double energy_dec = enemyEnergy - e.getEnergy();
-        if (energy_dec > 0 && energy_dec <= 3) {
+        if (energyDec > 0 && energyDec <= 3) {
             double firepower = enemyEnergy - e.getEnergy();
             bullets.add(new Bullet(enemyLocation, firepower, e.getDistance()));
             enemyHeat = 1 + (firepower / 5);
+
+            out.println("Duck!");
+            out.println("v: " + getVelocity());
+
         }
         enemyEnergy = e.getEnergy();
-
     }
+
 
     public Point2D getLocation(Point2D initLocation, double angle, double distance) {
         double x = (int) (initLocation.getX() + Math.sin(angle) * distance);
