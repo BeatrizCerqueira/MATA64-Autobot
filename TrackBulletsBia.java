@@ -28,7 +28,7 @@ import java.util.ArrayList;
 public class TrackBulletsBia extends AdvancedRobot {
 
     // Paint/Debug properties
-    double radarCoverageDist = 10; // Distance we want to scan from middle of enemy to either side
+    final double RADAR_COVERAGE_DIST = 10; // Distance we want to scan from middle of enemy to either side
     boolean scannedBot = false;
     double enemy_energy = 100;
     double enemy_heat = 2.8;    //initial heat
@@ -38,29 +38,48 @@ public class TrackBulletsBia extends AdvancedRobot {
     Point2D enemyLocation;
 
     public void run() {
+        setAdjustRadarForGunTurn(true);
+
         //noinspection InfiniteLoopStatement
         do {
             robotLocation = new Point2D.Double(getX(), getY());
+
             if (getRadarTurnRemaining() == 0.0)
                 setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
+
             execute();
+
         } while (true);
     }
 
     public void onScannedRobot(ScannedRobotEvent e) {
-//		if (getGunHeat() == 0) 
-//			fire(firepower);
-
-        // ---------
 
         double enemyAngle = getHeading() + e.getBearing();
-        double radarTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getRadarHeading());
-        double extraTurn = Math.toDegrees(Math.atan(radarCoverageDist / e.getDistance()));
-        extraTurn = Math.min(extraTurn, Rules.RADAR_TURN_RATE);
+
+        // --------- Radar angle
+
+        double radarInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getRadarHeading());
+        double extraRadarTurn = Math.toDegrees(Math.atan(RADAR_COVERAGE_DIST / e.getDistance()));
 
         // Radar goes that much further in the direction it is going to turn
-        radarTurn += extraTurn * Math.signum(radarTurn);
+        double radarTotalTurn = radarInitialTurn + (extraRadarTurn * Math.signum(radarInitialTurn));
+
+        // Radar goes to the less distance direction
+        double normalizedRadarTotalTurn = Utils.normalRelativeAngleDegrees(radarTotalTurn);
+        double radarTurn = (Math.min(Math.abs(normalizedRadarTotalTurn), Rules.RADAR_TURN_RATE)) * Math.signum(normalizedRadarTotalTurn);
+
         setTurnRadarRight(radarTurn);
+
+        // --------- Gun
+
+        double gunInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getGunHeading());
+        double gunTurn = (Math.min(Math.abs(gunInitialTurn), Rules.GUN_TURN_RATE)) * Math.signum(gunInitialTurn);
+
+        setTurnGunRight(gunTurn);
+
+        // --------- Fire
+
+        setFire(1);
 
         // PAINT debug
 
