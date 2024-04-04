@@ -80,30 +80,35 @@ public class Move2 extends AdvancedRobot {
     }
 
     public void moveRobot() {
-        //TODO: check min enemyHeat to move
+        //TODO: ajustar enemyHeat minimo para mover mais
+
         //TODO: Mudar direção ao levar dano (evitar tiros)
-        //TODO: Mudar direção ao colidir
-        //TODO: move forward enough to scape bullet
-        //TODO: outras formas do inimigo perder energia (dano por tiro/colisão/empate)
-        //TODO: estrategia ofensiva de colisão
-        //TODO: every x turns set absolute degrees to turn?
+        //TODO: Mudar direção ao colidir com parede
+        //          prioridade eventos parede > tiro > scanned
+
+        //TODO: se estiver mais perto, ande mais (se dist < X, ande o dobro)
+
+        //TODO: estrategia defensiva de colisão (fugir do inimigo)
+
+        //TODO: outras formas do inimigo perder energia (dano por tiro/colisão c parede)
+        //          if  onBulletHit / energia<< e vel<<
+
+        //TODO: aumentar distancia de fuga proporcional a distancia do robo inimigo
 
 
         double maxHeadTurn = (10 - (0.75 * getVelocity())); //max robot can turn considering its velocity
         double headTurn = random(-1 * maxHeadTurn, maxHeadTurn);    //random relative angle to turn
 
-        int turnsToStop = (int) (getVelocity() / Rules.DECELERATION);
-        if (enemyHeat <= turnsToStop * getGunCoolingRate()) { // enemy gun will shoot any time now. do not move
+        if (enemyHeat < 0.3) { // enemy gun will shoot any time now. do not move
             out.print(".");
             setTurnRight(headTurn);
             setAhead(0);
             return;
         }
         out.print(">");
-        out.println("enemyHeat " + enemyHeat);
 
         // enemy gun is cooling down, move randomly
-        enemyHeat -= 0.1;
+        enemyHeat -= getGunCoolingRate();
 
         if (getTurnRemaining() > 0) {   //still turning, go slowly
             setAhead(1);
@@ -112,7 +117,6 @@ public class Move2 extends AdvancedRobot {
 
         // default behavior,  in center arena
         double aheadDist = random(0, 20);   //distance to move forward
-
 
         // aux variables
         double xLimit = getBattleFieldWidth() / 2;
@@ -181,9 +185,8 @@ public class Move2 extends AdvancedRobot {
         //what if his energy increases?
 
         if (energyDec > 0 && energyDec <= 3) {
-            double firepower = enemyEnergy - e.getEnergy();
-            bullets.add(new Bullet(enemyLocation, firepower, e.getDistance()));
-            enemyHeat = 1 + (firepower / 5);
+            bullets.add(new Bullet(enemyLocation, energyDec, e.getDistance()));
+            enemyHeat = 1 + (energyDec / 5);
 
             out.println("Duck!");
             out.println("v: " + getVelocity());
