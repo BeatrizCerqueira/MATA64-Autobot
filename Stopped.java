@@ -13,7 +13,8 @@ public class Stopped extends AdvancedRobot {
      */
     @Override
     public void run() {
-        fire(3);
+
+
     }
 
 }

@@ -54,6 +54,8 @@ public class TrackBulletsBia extends AdvancedRobot {
 
     public void onScannedRobot(ScannedRobotEvent e) {
 
+        out.println(e.getHeading());
+
         double enemyAngle = getHeading() + e.getBearing();
 
         // --------- Radar angle

@@ -7,19 +7,9 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-/* # Useful information
- *
- * After firing, a robot's gun heats up to a value of: 1 + (bulletPower / 5)
- * The default cooling rate in Robocode is 0.1 per tick.
- * Max rate of rotation is: (10 - 0.75 * abs(velocity)) deg/turn. The faster you're moving, the slower you turn.
- * 	4 ~ 9.25
- *
- */
-
-public class Move3 extends AdvancedRobot {
+public class Move3Fire extends AdvancedRobot {
 
     Point2D robotLocation;
-    double radarCoverageDist = 20; // Distance we want to scan from middle of enemy to either side
     ArrayList<Bullet> bullets = new ArrayList<>();
 
     Point2D enemyLocation;
@@ -27,12 +17,15 @@ public class Move3 extends AdvancedRobot {
     double enemyHeat = 3;   //initial
 
     static final double WALL_MARGIN = 50;
+    final double RADAR_COVERAGE_DIST = 15;  // // Distance we want to scan from middle of enemy to either side
 
 //	double headTurn = 0;
 
     public void run() {
 
         setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
+        setAdjustRadarForGunTurn(true);
+        setAdjustGunForRobotTurn(true);
 
         do {
             robotLocation = new Point2D.Double(getX(), getY());
@@ -146,20 +139,33 @@ public class Move3 extends AdvancedRobot {
         //TODO: fire algorithm
 
 
-        // # Variables and calculations
-
         double enemyAngle = getHeading() + e.getBearing();
-        double radarTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getRadarHeading());
-        double extraTurn = Math.toDegrees(Math.atan(radarCoverageDist / e.getDistance()));
-        extraTurn = Math.min(extraTurn, Rules.RADAR_TURN_RATE);
+
+        // --------- Radar angle
+
+        double radarInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getRadarHeading());
+        double extraRadarTurn = Math.toDegrees(Math.atan(RADAR_COVERAGE_DIST / e.getDistance()));
 
         // Radar goes that much further in the direction it is going to turn
-        double enemyDirection = Math.signum(radarTurn);
-        radarTurn += extraTurn * enemyDirection;
-        radarTurn += enemyDirection;
+        double radarTotalTurn = radarInitialTurn + (extraRadarTurn * Math.signum(radarInitialTurn));
+
+        // Radar goes to the less distance direction
+        double normalizedRadarTotalTurn = Utils.normalRelativeAngleDegrees(radarTotalTurn);
+        double radarTurn = (Math.min(Math.abs(normalizedRadarTotalTurn), Rules.RADAR_TURN_RATE)) * Math.signum(normalizedRadarTotalTurn);
+
         setTurnRadarRight(radarTurn);
 
-        // # Update enemy data
+        // --------- Gun
+
+        double gunInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getGunHeading());
+        double gunTurn = (Math.min(Math.abs(gunInitialTurn), Rules.GUN_TURN_RATE)) * Math.signum(gunInitialTurn);
+
+        setTurnGunRight(gunTurn);
+
+        // --------- Fire
+
+        setFire(1);
+
 
         // Enemy position
         double enemyAngleRadians = Math.toRadians(enemyAngle);
