@@ -52,39 +52,54 @@ public class TrackBulletsBia extends AdvancedRobot {
         } while (true);
     }
 
-    public void onScannedRobot(ScannedRobotEvent e) {
+    private void setRadarTurn(ScannedRobotEvent e) {
 
+        // Get the enemy angle
         double enemyAngle = getHeading() + e.getBearing();
 
-        // --------- Radar angle
-
+        // Relativize enemy angle
         double radarInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getRadarHeading());
-        double extraRadarTurn = Math.toDegrees(Math.atan(RADAR_COVERAGE_DIST / e.getDistance()));
 
         // Radar goes that much further in the direction it is going to turn
+        double extraRadarTurn = Math.toDegrees(Math.atan(RADAR_COVERAGE_DIST / e.getDistance()));
         double radarTotalTurn = radarInitialTurn + (extraRadarTurn * Math.signum(radarInitialTurn));
 
         // Radar goes to the less distance direction
         double normalizedRadarTotalTurn = Utils.normalRelativeAngleDegrees(radarTotalTurn);
         double radarTurn = (Math.min(Math.abs(normalizedRadarTotalTurn), Rules.RADAR_TURN_RATE)) * Math.signum(normalizedRadarTotalTurn);
 
+        // Set radar turn
         setTurnRadarRight(radarTurn);
+    }
 
-        // --------- Gun
+    private void setGunTurn(ScannedRobotEvent e) {
 
+        // Get the enemy angle
+        double enemyAngle = getHeading() + e.getBearing();
+
+        // Relativize enemy angle
         double gunInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getGunHeading());
+
+        // Gun goes to the less distance direction
         double gunTurn = (Math.min(Math.abs(gunInitialTurn), Rules.GUN_TURN_RATE)) * Math.signum(gunInitialTurn);
 
+        // Set gun turn
         setTurnGunRight(gunTurn);
 
-        // --------- Fire
+    }
 
+    public void onScannedRobot(ScannedRobotEvent e) {
+
+        setRadarTurn(e);
+        setGunTurn(e);
         setFire(1);
+
 
         // PAINT debug
 
         scannedBot = true;
         // Calculate the angle and coordinates to the scanned robot
+        double enemyAngle = getHeading() + e.getBearing();
         double enemyAngleRadians = Math.toRadians(enemyAngle);
         enemyLocation = getLocation(robotLocation, enemyAngleRadians, e.getDistance());
 
