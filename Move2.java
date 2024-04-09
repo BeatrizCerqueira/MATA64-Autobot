@@ -1,15 +1,27 @@
 package autobot;
 
-import robocode.*;
+import robocode.AdvancedRobot;
+import robocode.Rules;
+import robocode.ScannedRobotEvent;
 import robocode.util.Utils;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-public class Autobot extends AdvancedRobot {
+/* # Useful information
+ *
+ * After firing, a robot's gun heats up to a value of: 1 + (bulletPower / 5)
+ * The default cooling rate in Robocode is 0.1 per tick.
+ * Max rate of rotation is: (10 - 0.75 * abs(velocity)) deg/turn. The faster you're moving, the slower you turn.
+ * 	4 ~ 9.25
+ *
+ */
+
+public class Move2 extends AdvancedRobot {
 
     Point2D robotLocation;
+    double radarCoverageDist = 20; // Distance we want to scan from middle of enemy to either side
     ArrayList<Bullet> bullets = new ArrayList<>();
 
     Point2D enemyLocation;
@@ -17,16 +29,12 @@ public class Autobot extends AdvancedRobot {
     double enemyHeat = 3;   //initial
 
     static final double WALL_MARGIN = 50;
-    final double RADAR_COVERAGE_DIST = 15;  // // Distance we want to scan from middle of enemy to either side
-    final double SAFE_DISTANCE = 150;
 
 //	double headTurn = 0;
 
     public void run() {
 
-        setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
-        setAdjustRadarForGunTurn(true);
-        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForRobotTurn(true); // Set gun to turn independent from the robot's turn
 
         do {
             robotLocation = new Point2D.Double(getX(), getY());
@@ -46,9 +54,13 @@ public class Autobot extends AdvancedRobot {
 
     public void moveRobot() {
 
-        //WIP se estiver mais perto, ande mais (se dist < X, ande o dobro)
+        //TODO: Mudar direção ao levar dano (evitar tiros)
+        //TODO: Mudar direção ao colidir com parede
+        //          prioridade eventos parede > tiro > scanned
 
-        //WIP estrategia defensiva de colisão (fugir do inimigo)
+        //TODO: se estiver mais perto, ande mais (se dist < X, ande o dobro)
+
+        //TODO: estrategia defensiva de colisão (fugir do inimigo)
 
         //TODO: outras formas do inimigo perder energia (dano por tiro/colisão c parede)
         //          if  onBulletHit / energia<< e vel<<
@@ -61,14 +73,13 @@ public class Autobot extends AdvancedRobot {
         double maxHeadTurn = (10 - (0.75 * getVelocity())); //max robot can turn considering its velocity
         double headTurn = random(-1 * maxHeadTurn, maxHeadTurn);    //random relative angle to turn
 
-
-//        double distance = (enemyLocation != null) ? getDistance(robotLocation, enemyLocation) : 0;
-
         if (enemyHeat < 0.3) { // enemy gun will shoot any time now. do not move
+            out.print(".");
             setTurnRight(headTurn);
             setAhead(0);
             return;
         }
+        out.print(">");
 
         // enemy gun is cooling down, move randomly
         enemyHeat -= getGunCoolingRate();
@@ -78,10 +89,8 @@ public class Autobot extends AdvancedRobot {
             return;
         }
 
-
         // default behavior,  in center arena
         double aheadDist = random(0, 20);   //distance to move forward
-
 
         // aux variables
         double xLimit = getBattleFieldWidth() / 2;
@@ -116,79 +125,46 @@ public class Autobot extends AdvancedRobot {
             headTurn = Utils.normalRelativeAngleDegrees(absTurnAngle - getHeading());
 
         }
-
         setTurnRight(headTurn);
         setAhead(aheadDist);
-
-    }
-
-    public void onHitByBullet(HitByBulletEvent e) {
-        // Done! Mudar direção ao levar dano (evitar tiros)
-        // ? prioridade eventos parede > tiro > scanned
-        // TODO: Aprimorar - mover na perpendicular?
-
-        double headTurn = random(30, 90) * Math.signum(random(-1, 1));
-
-        out.println("HIT! Turn " + headTurn);
-        turnRight(headTurn);
-        ahead(40);
-
-    }
-
-    public void onHitWall(HitWallEvent e) {
-        // DONE! Mudar direção ao colidir com parede
-        turnRight(random(30, 90) * Math.signum(random(-1, 1)));
 
     }
 
 
     public void onScannedRobot(ScannedRobotEvent e) {
 
+        //TODO: fire algorithm
+
+        // # Variables and calculations
+
         double enemyAngle = getHeading() + e.getBearing();
-
-
-        // --------- Radar angle
-
-        double radarInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getRadarHeading());
-        double extraRadarTurn = Math.toDegrees(Math.atan(RADAR_COVERAGE_DIST / e.getDistance()));
+        double radarTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getRadarHeading());
+        double extraTurn = Math.toDegrees(Math.atan(radarCoverageDist / e.getDistance()));
+        extraTurn = Math.min(extraTurn, Rules.RADAR_TURN_RATE);
 
         // Radar goes that much further in the direction it is going to turn
-        double radarTotalTurn = radarInitialTurn + (extraRadarTurn * Math.signum(radarInitialTurn));
-
-        // Radar goes to the less distance direction
-        double normalizedRadarTotalTurn = Utils.normalRelativeAngleDegrees(radarTotalTurn);
-        double radarTurn = (Math.min(Math.abs(normalizedRadarTotalTurn), Rules.RADAR_TURN_RATE)) * Math.signum(normalizedRadarTotalTurn);
-
+        double enemyDirection = Math.signum(radarTurn);
+        radarTurn += extraTurn * enemyDirection;
+        radarTurn += enemyDirection;
         setTurnRadarRight(radarTurn);
 
-        // --------- Gun
-
-        double gunInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getGunHeading());
-        double gunTurn = (Math.min(Math.abs(gunInitialTurn), Rules.GUN_TURN_RATE)) * Math.signum(gunInitialTurn);
-
-        setTurnGunRight(gunTurn);
-
-        // --------- Fire
-
-        setFire(1);
-
+        // # Update enemy data
 
         // Enemy position
         double enemyAngleRadians = Math.toRadians(enemyAngle);
         enemyLocation = getLocation(robotLocation, enemyAngleRadians, e.getDistance());
 
-        // Enemy is getting closer, move away
-        if (e.getDistance() < SAFE_DISTANCE) {
-//            out.println("RUN!");
-            ahead(100);
-        }
-
         // Track enemy energy to identify his bullets
         double energyDec = enemyEnergy - e.getEnergy();
+        //what if his energy increases?
 
         if (energyDec > 0 && energyDec <= 3) {
             bullets.add(new Bullet(enemyLocation, energyDec, e.getDistance()));
             enemyHeat = 1 + (energyDec / 5);
+
+            out.println("Duck!");
+            out.println("v: " + getVelocity());
+
         }
         enemyEnergy = e.getEnergy();
     }
@@ -201,10 +177,6 @@ public class Autobot extends AdvancedRobot {
 
     }
 
-    public double getAngle(Point2D A, Point2D B) {
-        return Math.asin((B.getY() - A.getY()) / getDistance(A, B));
-    }
-
     public double getDistance(Point2D A, Point2D B) {
         return Point2D.distance(A.getX(), A.getY(), B.getX(), B.getY());
     }
@@ -214,7 +186,7 @@ public class Autobot extends AdvancedRobot {
 
         // Draw robot's security zone
         g.setColor(Color.green);
-        drawCircle(g, getX(), getY(), SAFE_DISTANCE);
+        drawCircle(g, getX(), getY(), 60);
 
         // Draw enemy robot and distance
         if (enemyLocation != null) {
