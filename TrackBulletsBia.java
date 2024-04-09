@@ -5,9 +5,8 @@ import robocode.Rules;
 import robocode.ScannedRobotEvent;
 import robocode.util.Utils;
 
-import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
+
 /* # Objective
  *
  * Detect an energy drop to know when a bullet was fired and trace its trajectory
@@ -27,15 +26,10 @@ import java.util.ArrayList;
 
 public class TrackBulletsBia extends AdvancedRobot {
 
-    // Paint/Debug properties
-    final double RADAR_COVERAGE_DIST = 10; // Distance we want to scan from middle of enemy to either side
-    boolean scannedBot = false;
-    double enemy_energy = 100;
-    double enemy_heat = 2.8;    //initial heat
+    // Distance we want to scan from middle of enemy to either side
+    final double RADAR_COVERAGE_DIST = 10;
 
-    ArrayList<Bullet> bullets = new ArrayList<>();
     Point2D robotLocation;
-    Point2D enemyLocation;
 
     public void run() {
         setAdjustRadarForGunTurn(true);
@@ -52,97 +46,72 @@ public class TrackBulletsBia extends AdvancedRobot {
         } while (true);
     }
 
-    public void onScannedRobot(ScannedRobotEvent e) {
+    private void setRadarTurn(ScannedRobotEvent e) {
 
-        out.println(e.getHeading());
-
+        // Get the enemy angle
         double enemyAngle = getHeading() + e.getBearing();
 
-        // --------- Radar angle
-
+        // Relativize enemy angle
         double radarInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getRadarHeading());
-        double extraRadarTurn = Math.toDegrees(Math.atan(RADAR_COVERAGE_DIST / e.getDistance()));
 
         // Radar goes that much further in the direction it is going to turn
+        double extraRadarTurn = Math.toDegrees(Math.atan(RADAR_COVERAGE_DIST / e.getDistance()));
         double radarTotalTurn = radarInitialTurn + (extraRadarTurn * Math.signum(radarInitialTurn));
 
         // Radar goes to the less distance direction
         double normalizedRadarTotalTurn = Utils.normalRelativeAngleDegrees(radarTotalTurn);
         double radarTurn = (Math.min(Math.abs(normalizedRadarTotalTurn), Rules.RADAR_TURN_RATE)) * Math.signum(normalizedRadarTotalTurn);
 
+        // Set radar turn
         setTurnRadarRight(radarTurn);
+    }
 
-        // --------- Gun
+    private void setGunTurn(ScannedRobotEvent e) {
 
+        // Get the enemy angle
+        double enemyAngle = getHeading() + e.getBearing();
+
+        // Relativize enemy angle
         double gunInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getGunHeading());
+
+        // Gun goes to the less distance direction
         double gunTurn = (Math.min(Math.abs(gunInitialTurn), Rules.GUN_TURN_RATE)) * Math.signum(gunInitialTurn);
 
+        // Set gun turn
         setTurnGunRight(gunTurn);
 
-        // --------- Fire
+    }
 
-        setFire(1);
+    private void setFireTurn(ScannedRobotEvent e) {
 
-        // PAINT debug
+        int turns = 20;
 
-        scannedBot = true;
-        // Calculate the angle and coordinates to the scanned robot
-        double enemyAngleRadians = Math.toRadians(enemyAngle);
-        enemyLocation = getLocation(robotLocation, enemyAngleRadians, e.getDistance());
+        double enemyCurrentDistance = e.getDistance();
+        double enemyMovedDistanceAfterTurns = e.getVelocity() * turns;
 
-        // ----------
-        if (enemy_heat > 0) {
-            enemy_heat -= 0.1;
+        double angleDegree = getHeading() + e.getBearing() + 180 - e.getHeading();
+        double angleRadians = Math.toRadians(angleDegree);
+
+        double enemyDistanceAfterTurns =
+                Math.sqrt
+                        (Math.pow(enemyCurrentDistance, 2) + Math.pow(enemyMovedDistanceAfterTurns, 2)
+                                - 2 * enemyCurrentDistance * enemyMovedDistanceAfterTurns * Math.cos(angleRadians));
+
+        double firePowerToHit = (20 - (enemyDistanceAfterTurns / turns)) / 3;
+
+        if (firePowerToHit >= Rules.MIN_BULLET_POWER) {
+            double firePower = Math.min(firePowerToHit, Rules.MAX_BULLET_POWER);
+            setFire(firePower);
         }
 
-        double energy_dec = enemy_energy - e.getEnergy();
-        if (energy_dec > 0 && energy_dec <= 3) {
-            double firepower = enemy_energy - e.getEnergy();
-            bullets.add(new Bullet(enemyLocation, firepower, e.getDistance()));
-            enemy_heat = 1 + (firepower / 5);
-        }
-        enemy_energy = e.getEnergy();
     }
 
-    public Point2D getLocation(Point2D initLocation, double angle, double distance) {
-        double x = (int) (initLocation.getX() + Math.sin(angle) * distance);
-        double y = (int) (initLocation.getY() + Math.cos(angle) * distance);
-        return new Point2D.Double(x, y);
+    public void onScannedRobot(ScannedRobotEvent e) {
+
+        setRadarTurn(e);
+        setGunTurn(e);
+        setFireTurn(e);
 
     }
 
-    public void onPaint(Graphics2D g) {
-        // robot size = 40
-
-        // Draw robot's security zone
-        g.setColor(Color.green);
-        drawCircle(g, getX(), getY(), 60);
-
-        // Draw enemy robot and distance
-        if (enemyLocation != null) {
-            g.setColor(new Color(0xff, 0, 0, 0x80));
-            drawLine(g, robotLocation, enemyLocation);
-//			g.fillRect(x - 20, y - 20, 40, 40);
-            drawBulletsRange(g);
-        }
-    }
-
-    public void drawLine(Graphics2D g, Point2D source, Point2D target) {
-        int sourceX = (int) source.getX();
-        int sourceY = (int) source.getY();
-        int targetX = (int) target.getX();
-        int targetY = (int) target.getY();
-        g.drawLine(sourceX, sourceY, targetX, targetY);
-    }
-
-    public void drawCircle(Graphics2D g, double x, double y, double radius) {
-        int circumference = (int) (2 * radius);
-        g.drawOval((int) (x - radius), (int) (y - radius), circumference, circumference);
-    }
-
-    public void drawBulletsRange(Graphics2D g) {
-        for (Bullet bullet : bullets) {
-            bullet.drawBulletRadius(g);
-        }
-    }
 }
