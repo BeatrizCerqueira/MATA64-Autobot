@@ -24,8 +24,10 @@ public class Autobot extends AdvancedRobot {
     Bot myBot = new Bot();
     Bot enemyBot = new Bot();
 
-
     public void run() {
+
+        myBot.setGunCoolingRate(getGunCoolingRate());
+        enemyBot.setGunCoolingRate(getGunCoolingRate());
 
         setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
         setAdjustRadarForGunTurn(true);

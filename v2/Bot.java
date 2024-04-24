@@ -20,12 +20,21 @@ public class Bot {
     private double gunHeat;
 
     //AdvancedRobot
-    private final double coolingRate;
+    private double gunCoolingRate;
+
+//    public Bot() {
+//        this.energy = 100;
+//        this.gunHeat = 3;
+//        this.coolingRate = 0.01;
+//    }
 
     public Bot() {
         this.energy = 100;
         this.gunHeat = 3;
-        this.coolingRate = 0.01;
+    }
+
+    public void setGunCoolingRate(double gunCoolingRate) {
+        this.gunCoolingRate = gunCoolingRate;
     }
 
     // Update methods
@@ -65,7 +74,7 @@ public class Bot {
 
     // General data
     public void coolGun() { // ENEMY
-        gunHeat = gunHeat > 0 ? gunHeat - coolingRate : 0;
+        gunHeat = gunHeat > 0 ? gunHeat - gunCoolingRate : 0;
     }
 
     // DEBUG
