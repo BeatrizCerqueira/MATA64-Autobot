@@ -21,8 +21,8 @@ public class Autobot extends AdvancedRobot {
     double enemyEnergy = 100;
     double enemyHeat = 3;   //initial
 
-    Bot myBot = new Bot(getGunCoolingRate());
-    Bot enemyBot = new Bot(getGunCoolingRate());
+    Bot myBot = new Bot();
+    Bot enemyBot = new Bot();
 
 
     public void run() {

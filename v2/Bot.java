@@ -20,12 +20,12 @@ public class Bot {
     private double gunHeat;
 
     //AdvancedRobot
-    private double coolingRate;
+    private final double coolingRate;
 
-    public Bot(double coolingRate) {
+    public Bot() {
         this.energy = 100;
         this.gunHeat = 3;
-        this.coolingRate = coolingRate;
+        this.coolingRate = 0.01;
     }
 
     // Update methods
@@ -37,7 +37,7 @@ public class Bot {
         print("MY");
     }
 
-    public void update(ScannedRobotEvent event, Point2D myPosition, double myHeading) {
+    public void update(ScannedRobotEvent event, Point2D myPosition, double myHeading) { // ENEMY
 
         double enemyAngle = myHeading + event.getBearing();
         double enemyAngleRadians = Math.toRadians(enemyAngle);
@@ -64,7 +64,7 @@ public class Bot {
     }
 
     // General data
-    public void coolGun() {
+    public void coolGun() { // ENEMY
         gunHeat = gunHeat > 0 ? gunHeat - coolingRate : 0;
     }
 
