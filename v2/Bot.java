@@ -48,7 +48,7 @@ public class Bot {
             gunHeat = 1 + (energyDecrease / 5);
 
         energy = event.getEnergy();
-        position = calcLocation(myPosition, enemyAngleRadians, event.getDistance());
+        position = calcRelativePosition(myPosition, enemyAngleRadians, event.getDistance());
 
         print("ENEMY");
     }
@@ -78,7 +78,8 @@ public class Bot {
     }
 
     //UTILS
-    private Point2D calcLocation(Point2D initLocation, double angle, double distance) {
+    private Point2D calcRelativePosition(Point2D initLocation, double angle, double distance) {
+        // Calcula posição relativa ao ponto inicial
         double x = (int) (initLocation.getX() + Math.sin(angle) * distance);
         double y = (int) (initLocation.getY() + Math.cos(angle) * distance);
         return new Point2D.Double(x, y);
