@@ -22,20 +22,18 @@ public class Autobot extends AdvancedRobot {
     final double RADAR_COVERAGE_DIST = 15;  // // Distance we want to scan from middle of enemy to either side
     final double SAFE_DISTANCE = 150;
 
+
     Bot myBot = new Bot(this);
     Bot enemyBot = new Bot(this);
 
 
     public void run() {
 
-
         setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
         setAdjustRadarForGunTurn(true);
         setAdjustGunForRobotTurn(true);
 
-
         do {
-
             update();
 
             if (getRadarTurnRemaining() == 0.0)
@@ -48,11 +46,9 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void update() {
-        //update bots data
-        out.print("up");
         myBot.update(this);
         enemyBot.update();
-
+        out.println("=====");
     }
 
     public double random(double min, double max) {
@@ -72,10 +68,8 @@ public class Autobot extends AdvancedRobot {
 
         //TODO: ajustar enemyHeat minimo para mover mais
 
-
         double maxHeadTurn = (10 - (0.75 * getVelocity())); //max robot can turn considering its velocity
         double headTurn = random(-1 * maxHeadTurn, maxHeadTurn);    //random relative angle to turn
-
 
 //        double distance = (enemyLocation != null) ? getDistance(robotLocation, enemyLocation) : 0;
 
@@ -156,23 +150,18 @@ public class Autobot extends AdvancedRobot {
 //        turnRight(random(30, 90) * Math.signum(random(-1, 1)));
     }
 
-
     public void onScannedRobot(ScannedRobotEvent e) {
 
-        // Update enemyBot
-//        enemyBot.update(this, e);
-
-        // Set enemy position
+        // Update enemy Bot
         double enemyAngle = getHeading() + e.getBearing();
         double enemyAngleRadians = Math.toRadians(enemyAngle);
         enemyBot.setPosition(getLocation(myBot.getPosition(), enemyAngleRadians, e.getDistance()));
-//        enemyLocation = enemyBot.getPosition();
-
         enemyBot.update(e);
 
+//        enemyLocation = enemyBot.getPosition();
         // ------------------------- Lucas refacted up here
 
-       
+
 //
 //        // --------- Radar angle
 //

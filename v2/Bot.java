@@ -9,50 +9,54 @@ import java.awt.geom.Point2D;
 public class Bot extends AdvancedRobot {
 
     // Arena
-    private int width = 800;
-    private int height = 600;
-    private int halfWidth = width / 2;
-    private int halfHeight = height / 2;
-
+    private final int width = 800;
+    private final int height = 600;
+    private final int halfWidth = width / 2;
+    private final int halfHeight = height / 2;
 
     //Bot
-    private Point2D position;
     private AdvancedRobot refBot;
-
+    private Point2D position;
     private double energy;
     private double gunHeat;
 
     // enemy
     public ScannedRobotEvent scanned;
 
-
+    // Constructor
     public Bot(AdvancedRobot bot) {
         refBot = bot;
         energy = 100;
         gunHeat = 3;
     }
 
+    // Update methods
     public void update() { //using to enemyBot
         coolGun();
+
+        print("ENEMY");
     }
 
     public void update(AdvancedRobot myBot) { // using with myBot
         refBot = myBot;
+
+        energy = myBot.getEnergy();
+        gunHeat = myBot.getGunHeat();
+
         setPosition(calcPosition());
         coolGun();
-    }
+        print("MY");
 
+    }
 
     public void update(ScannedRobotEvent event) {
         setScanned(event);
-        checkFireBullet();
-    }
 
+        double energyDec = energy - scanned.getEnergy();
+        if (energyDec > 0 && energyDec <= 3)
+            gunHeat = 1 + (energyDec / 5);
 
-    public void update(AdvancedRobot myBot, ScannedRobotEvent e) { //called on event
-        double absAngle = myBot.getHeading() + e.getBearing();
-        Point2D myBotPos = calcPosition(myBot);
-        setPosition(calcPosition(myBotPos, Math.toRadians(absAngle), e.getDistance()));
+        energy = scanned.getEnergy();
     }
 
     // Position
@@ -62,10 +66,6 @@ public class Bot extends AdvancedRobot {
 
     public Point2D calcPosition() {
         return new Point2D.Double(refBot.getX(), refBot.getY());
-    }
-
-    public Point2D calcPosition(AdvancedRobot bot) {
-        return new Point2D.Double(bot.getX(), bot.getY());
     }
 
     public Point2D getPosition() {
@@ -83,29 +83,19 @@ public class Bot extends AdvancedRobot {
         this.scanned = event;
     }
 
-    private void checkFireBullet() {
-        double energyDec = energy - scanned.getEnergy();
-        if (energyDec > 0 && energyDec <= 3) {
-            gunHeat = 1 + (energyDec / 5);
-        }
-        energy = scanned.getEnergy();
-    }
-
     // General data
     public void coolGun() {
-        if (gunHeat > 0)
-            gunHeat -= refBot.getGunCoolingRate();
+        gunHeat = gunHeat > 0 ? gunHeat - refBot.getGunCoolingRate() : 0;
     }
 
     // Enemy data
 
-    // utils
-    public Point2D calcPosition(Point2D initPosition, double angle, double distance) {
-        double x = (int) (initPosition.getX() + Math.sin(angle) * distance);
-        double y = (int) (initPosition.getY() + Math.cos(angle) * distance);
-        return new Point2D.Double(x, y);
-
+    // DEBUG
+    public void print(String ref) {
+        System.out.println(ref);
+        System.out.println("Position: " + position);
+        System.out.println("Energy: " + energy);
+        System.out.println("GunHeat: " + gunHeat);
+        System.out.println();
     }
-
-
 }
