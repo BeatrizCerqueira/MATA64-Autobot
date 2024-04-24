@@ -6,7 +6,7 @@ import robocode.ScannedRobotEvent;
 import java.awt.geom.Point2D;
 
 
-public class Bot extends AdvancedRobot {
+public class Bot {
 
     // Arena
     private final int width = 800;
@@ -15,57 +15,42 @@ public class Bot extends AdvancedRobot {
     private final int halfHeight = height / 2;
 
     //Bot
-    private AdvancedRobot refBot;
     private Point2D position;
     private double energy;
     private double gunHeat;
 
-    // enemy
-    public ScannedRobotEvent scanned;
+    //AdvancedRobot
+    private double coolingRate;
 
-    // Constructor
-    public Bot(AdvancedRobot bot) {
-        refBot = bot;
-        energy = 100;
-        gunHeat = 3;
+    public Bot(double coolingRate) {
+        this.energy = 100;
+        this.gunHeat = 3;
+        this.coolingRate = coolingRate;
     }
 
     // Update methods
-    public void update() { //using to enemyBot
-        coolGun();
+    public void update(AdvancedRobot myRobot) { // using with myRobot
+        gunHeat = myRobot.getGunHeat();
+        energy = myRobot.getEnergy();
+        position = new Point2D.Double(myRobot.getX(), myRobot.getY());
+
+        print("MY");
+    }
+
+    public void update(ScannedRobotEvent event, Point2D myPosition, double myHeading) {
+
+        double enemyAngle = myHeading + event.getBearing();
+        double enemyAngleRadians = Math.toRadians(enemyAngle);
+        double energyDecrease = energy - event.getEnergy();
+        boolean hasGunFired = energyDecrease > 0 && energyDecrease <= 3;
+
+        if (hasGunFired)
+            gunHeat = 1 + (energyDecrease / 5);
+
+        energy = event.getEnergy();
+        position = getLocation(myPosition, enemyAngleRadians, event.getDistance());
 
         print("ENEMY");
-    }
-
-    public void update(AdvancedRobot myBot) { // using with myBot
-        refBot = myBot;
-
-        energy = myBot.getEnergy();
-        gunHeat = myBot.getGunHeat();
-
-        setPosition(calcPosition());
-        coolGun();
-        print("MY");
-
-    }
-
-    public void update(ScannedRobotEvent event) {
-        setScanned(event);
-
-        double energyDec = energy - scanned.getEnergy();
-        if (energyDec > 0 && energyDec <= 3)
-            gunHeat = 1 + (energyDec / 5);
-
-        energy = scanned.getEnergy();
-    }
-
-    // Position
-    public void setPosition(Point2D position) {
-        this.position = position;
-    }
-
-    public Point2D calcPosition() {
-        return new Point2D.Double(refBot.getX(), refBot.getY());
     }
 
     public Point2D getPosition() {
@@ -78,17 +63,10 @@ public class Bot extends AdvancedRobot {
         return new Point2D.Double(x, y);
     }
 
-    // Scanned methods
-    private void setScanned(ScannedRobotEvent event) {
-        this.scanned = event;
-    }
-
     // General data
     public void coolGun() {
-        gunHeat = gunHeat > 0 ? gunHeat - refBot.getGunCoolingRate() : 0;
+        gunHeat = gunHeat > 0 ? gunHeat - coolingRate : 0;
     }
-
-    // Enemy data
 
     // DEBUG
     public void print(String ref) {
@@ -97,5 +75,13 @@ public class Bot extends AdvancedRobot {
         System.out.println("Energy: " + energy);
         System.out.println("GunHeat: " + gunHeat);
         System.out.println();
+    }
+
+    //UTILS
+    private Point2D getLocation(Point2D initLocation, double angle, double distance) {
+        double x = (int) (initLocation.getX() + Math.sin(angle) * distance);
+        double y = (int) (initLocation.getY() + Math.cos(angle) * distance);
+        return new Point2D.Double(x, y);
+
     }
 }

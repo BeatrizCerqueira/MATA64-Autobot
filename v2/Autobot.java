@@ -11,20 +11,18 @@ import java.awt.geom.Point2D;
 
 public class Autobot extends AdvancedRobot {
 
-
-    Point2D robotLocation;
-
-    Point2D enemyLocation;
-    double enemyEnergy = 100;
-    double enemyHeat = 3;   //initial
-
     static final double WALL_MARGIN = 50;
     final double RADAR_COVERAGE_DIST = 15;  // // Distance we want to scan from middle of enemy to either side
     final double SAFE_DISTANCE = 150;
 
+    Point2D robotLocation;
+    Point2D enemyLocation;
 
-    Bot myBot = new Bot(this);
-    Bot enemyBot = new Bot(this);
+    double enemyEnergy = 100;
+    double enemyHeat = 3;   //initial
+
+    Bot myBot = new Bot(getGunCoolingRate());
+    Bot enemyBot = new Bot(getGunCoolingRate());
 
 
     public void run() {
@@ -34,7 +32,7 @@ public class Autobot extends AdvancedRobot {
         setAdjustGunForRobotTurn(true);
 
         do {
-            update();
+            newTurn();
 
             if (getRadarTurnRemaining() == 0.0)
                 setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
@@ -45,9 +43,9 @@ public class Autobot extends AdvancedRobot {
         } while (true);
     }
 
-    public void update() {
+    public void newTurn() {
         myBot.update(this);
-        enemyBot.update();
+        enemyBot.coolGun();
         out.println("=====");
     }
 
@@ -153,12 +151,19 @@ public class Autobot extends AdvancedRobot {
     public void onScannedRobot(ScannedRobotEvent e) {
 
         // Update enemy Bot
-        double enemyAngle = getHeading() + e.getBearing();
-        double enemyAngleRadians = Math.toRadians(enemyAngle);
-        enemyBot.setPosition(getLocation(myBot.getPosition(), enemyAngleRadians, e.getDistance()));
-        enemyBot.update(e);
+//        double enemyAngle = getHeading() + e.getBearing();
+//        double enemyAngleRadians = Math.toRadians(enemyAngle);
+//        enemyBot.setPosition(getLocation(myBot.getPosition(), enemyAngleRadians, e.getDistance()));
+//        enemyBot.update(e);
+        enemyBot.update(e, myBot.getPosition(), getHeading());
 
 //        enemyLocation = enemyBot.getPosition();
+
+
+//        myBot.enemy.getDistance(); //enemy
+//        myBot.getEnergy();
+
+
         // ------------------------- Lucas refacted up here
 
 
