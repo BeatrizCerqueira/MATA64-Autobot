@@ -1,4 +1,4 @@
-package autobot.v2;
+package autobot.v1;
 
 import org.jpl7.Query;
 import robocode.Robot;

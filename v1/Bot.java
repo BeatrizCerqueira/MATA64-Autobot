@@ -1,4 +1,4 @@
-package autobot.v2;
+package autobot.v1;
 
 import robocode.AdvancedRobot;
 import robocode.ScannedRobotEvent;

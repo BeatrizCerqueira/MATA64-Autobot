@@ -1,4 +1,4 @@
-package autobot;
+package autobot.v0;
 
 import robocode.AdvancedRobot;
 import robocode.Rules;
@@ -24,7 +24,7 @@ import java.awt.geom.Point2D;
  *
  */
 
-public class TrackBulletsBia_BranchBiaMru extends AdvancedRobot {
+public class TrackBulletsBia extends AdvancedRobot {
 
     // Distance we want to scan from middle of enemy to either side
     final double RADAR_COVERAGE_DIST = 10;

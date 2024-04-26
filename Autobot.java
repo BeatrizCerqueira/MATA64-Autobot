@@ -1,5 +1,6 @@
 package autobot;
 
+import autobot.v0.Bullet;
 import robocode.*;
 import robocode.util.Utils;
 
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 public class Autobot extends AdvancedRobot {
 
     Point2D robotLocation;
-    ArrayList<Bullet> bullets = new ArrayList<>();
+    ArrayList<autobot.v0.Bullet> bullets = new ArrayList<>();
 
     Point2D enemyLocation;
     double enemyEnergy = 100;
@@ -187,7 +188,7 @@ public class Autobot extends AdvancedRobot {
         double energyDec = enemyEnergy - e.getEnergy();
 
         if (energyDec > 0 && energyDec <= 3) {
-            bullets.add(new Bullet(enemyLocation, energyDec, e.getDistance()));
+            bullets.add(new autobot.v0.Bullet(enemyLocation, energyDec, e.getDistance()));
             enemyHeat = 1 + (energyDec / 5);
         }
         enemyEnergy = e.getEnergy();

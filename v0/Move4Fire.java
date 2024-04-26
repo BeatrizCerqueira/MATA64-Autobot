@@ -1,4 +1,4 @@
-package autobot;
+package autobot.v0;
 
 import robocode.*;
 import robocode.util.Utils;

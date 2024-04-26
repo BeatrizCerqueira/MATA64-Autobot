@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * https://robocode.sourceforge.io/license/epl-v10.html
  */
-package autobot;
+package autobot.v0;
 
 import robocode.AdvancedRobot;
 import robocode.ScannedRobotEvent;
