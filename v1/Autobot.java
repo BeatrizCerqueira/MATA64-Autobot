@@ -142,34 +142,71 @@ public class Autobot extends AdvancedRobot {
 
     }
 
+    private void setRadarTurn(ScannedRobotEvent e) {
 
-    public void onScannedRobot(ScannedRobotEvent e) {
-
+        // Get the enemy angle
         double enemyAngle = getHeading() + e.getBearing();
 
-
-        // --------- Radar angle
-
+        // Relativize enemy angle
         double radarInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getRadarHeading());
-        double extraRadarTurn = Math.toDegrees(Math.atan(RADAR_COVERAGE_DIST / e.getDistance()));
 
         // Radar goes that much further in the direction it is going to turn
+        double extraRadarTurn = Math.toDegrees(Math.atan(RADAR_COVERAGE_DIST / e.getDistance()));
         double radarTotalTurn = radarInitialTurn + (extraRadarTurn * Math.signum(radarInitialTurn));
 
         // Radar goes to the less distance direction
         double normalizedRadarTotalTurn = Utils.normalRelativeAngleDegrees(radarTotalTurn);
         double radarTurn = (Math.min(Math.abs(normalizedRadarTotalTurn), Rules.RADAR_TURN_RATE)) * Math.signum(normalizedRadarTotalTurn);
 
+        // Set radar turn
         setTurnRadarRight(radarTurn);
+    }
 
-        // --------- Gun
+    private void setGunTurn(ScannedRobotEvent e) {
 
+        // Get the enemy angle
+        double enemyAngle = getHeading() + e.getBearing();
+
+        // Relativize enemy angle
         double gunInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getGunHeading());
+
+        // Gun goes to the less distance direction
         double gunTurn = (Math.min(Math.abs(gunInitialTurn), Rules.GUN_TURN_RATE)) * Math.signum(gunInitialTurn);
 
+        // Set gun turn
         setTurnGunRight(gunTurn);
 
-        // --------- Fire
+    }
+
+    private void setFireTurn(ScannedRobotEvent e) {
+
+        int turns = 20;
+
+        double enemyCurrentDistance = e.getDistance();
+        double enemyMovedDistanceAfterTurns = e.getVelocity() * turns;
+
+        double angleDegree = getHeading() + e.getBearing() + 180 - e.getHeading();
+        double angleRadians = Math.toRadians(angleDegree);
+
+        double enemyDistanceAfterTurns =
+                Math.sqrt
+                        (Math.pow(enemyCurrentDistance, 2) + Math.pow(enemyMovedDistanceAfterTurns, 2)
+                                - 2 * enemyCurrentDistance * enemyMovedDistanceAfterTurns * Math.cos(angleRadians));
+
+        double firePowerToHit = (20 - (enemyDistanceAfterTurns / turns)) / 3;
+
+        if (firePowerToHit >= Rules.MIN_BULLET_POWER) {
+            double firePower = Math.min(firePowerToHit, Rules.MAX_BULLET_POWER);
+            setFire(firePower);
+        }
+
+    }
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+
+        setRadarTurn(e);
+        setGunTurn(e);
+        setFireTurn(e);
 
         setFire(1);
 
