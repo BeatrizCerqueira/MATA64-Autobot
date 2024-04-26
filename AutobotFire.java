@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-public class Autobot extends AdvancedRobot {
+public class AutobotFire extends AdvancedRobot {
 
     Point2D robotLocation;
     ArrayList<Bullet> bullets = new ArrayList<>();

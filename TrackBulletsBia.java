@@ -28,7 +28,6 @@ public class TrackBulletsBia extends AdvancedRobot {
 
     // Distance we want to scan from middle of enemy to either side
     final double RADAR_COVERAGE_DIST = 10;
-    final int TURNS_TO_PREDICT = 20;
 
     Point2D robotLocation;
 
@@ -67,48 +66,40 @@ public class TrackBulletsBia extends AdvancedRobot {
         setTurnRadarRight(radarTurn);
     }
 
+    private void setGunTurn(ScannedRobotEvent e) {
 
-    private void setRobotFire(ScannedRobotEvent e) {
+        // Get the enemy angle
+        double enemyAngle = getHeading() + e.getBearing();
 
-        // General
+        // Relativize enemy angle
+        double gunInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getGunHeading());
+
+        // Gun goes to the less distance direction
+        double gunTurn = (Math.min(Math.abs(gunInitialTurn), Rules.GUN_TURN_RATE)) * Math.signum(gunInitialTurn);
+
+        // Set gun turn
+        setTurnGunRight(gunTurn);
+
+    }
+
+    private void setFireTurn(ScannedRobotEvent e) {
+
+        int turns = 20;
 
         double enemyCurrentDistance = e.getDistance();
-        double enemyMovedDistanceAfterTurns = e.getVelocity() * TURNS_TO_PREDICT;
+        double enemyMovedDistanceAfterTurns = e.getVelocity() * turns;
 
         double angleDegree = getHeading() + e.getBearing() + 180 - e.getHeading();
         double angleRadians = Math.toRadians(angleDegree);
 
         double enemyDistanceAfterTurns =
-                Math.sqrt(
-                        Math.pow(enemyCurrentDistance, 2) + Math.pow(enemyMovedDistanceAfterTurns, 2)
+                Math.sqrt
+                        (Math.pow(enemyCurrentDistance, 2) + Math.pow(enemyMovedDistanceAfterTurns, 2)
                                 - 2 * enemyCurrentDistance * enemyMovedDistanceAfterTurns * Math.cos(angleRadians));
 
+        double firePowerToHit = (20 - (enemyDistanceAfterTurns / turns)) / 3;
 
-        //// Gun firepower
-
-        double firePowerToHit = (20 - (enemyDistanceAfterTurns / TURNS_TO_PREDICT)) / 3;
-
-
-        //// Gun angle
-
-        double diffBearing =
-                Math.asin((enemyMovedDistanceAfterTurns * Math.sin(angleRadians)) / enemyDistanceAfterTurns);
-
-        double enemyBearingAfterTurns =
-                Utils.normalRelativeAngleDegrees(e.getBearing() + diffBearing);
-
-        double gunAngleToHit = Utils.normalRelativeAngleDegrees(enemyBearingAfterTurns - getGunHeading());
-
-
-        //// Set the gun angle to turn, even if it's not possible to reach the required angle in the next turn
-
-        double gunAngleToTurn = (Math.min(Math.abs(gunAngleToHit), Rules.GUN_TURN_RATE)) * Math.signum(gunAngleToHit);
-        setTurnGunRight(gunAngleToTurn);
-
-
-        //// Set fire if the robot can hit the enemy in the next turns
-
-        if (firePowerToHit >= Rules.MIN_BULLET_POWER && Math.abs(gunAngleToHit) <= Rules.GUN_TURN_RATE) {
+        if (firePowerToHit >= Rules.MIN_BULLET_POWER) {
             double firePower = Math.min(firePowerToHit, Rules.MAX_BULLET_POWER);
             setFire(firePower);
         }
@@ -118,7 +109,8 @@ public class TrackBulletsBia extends AdvancedRobot {
     public void onScannedRobot(ScannedRobotEvent e) {
 
         setRadarTurn(e);
-        setRobotFire(e);
+        setGunTurn(e);
+        setFireTurn(e);
 
     }
 
