@@ -59,9 +59,9 @@ public class Autobot extends AdvancedRobot {
 
         enemyBot.scanned(this, e);
 
-        setRadarTurn(e);
-        setGunTurn(e);
-        setFireTurn(e);
+        setRadarTurn();
+        setGunTurn();
+        setFireTurn();
 
         setFire(1);
 
@@ -79,7 +79,7 @@ public class Autobot extends AdvancedRobot {
 
     // Class for Radar/Gun:
 
-    private void setRadarTurn(ScannedRobotEvent e) {
+    private void setRadarTurn() {
 
         // Get the enemy angle
         double enemyAngle = enemyBot.getAngle();
@@ -99,7 +99,7 @@ public class Autobot extends AdvancedRobot {
         setTurnRadarRight(radarTurn);
     }
 
-    private void setGunTurn(ScannedRobotEvent e) {
+    private void setGunTurn() {
 
         // Get the enemy angle
         double enemyAngle = enemyBot.getAngle();
@@ -115,7 +115,7 @@ public class Autobot extends AdvancedRobot {
 
     }
 
-    private void setFireTurn(ScannedRobotEvent e) {
+    private void setFireTurn() {
 
         int turns = 20;
 
