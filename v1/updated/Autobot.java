@@ -70,9 +70,9 @@ public class Autobot extends AdvancedRobot {
 
         // --------- Other
 
-        setEnemyLocation(e);
+//        setEnemyLocation(e);
         moveAwayFromEnemy(e);
-        identifyEnemyBullets(e);
+//        identifyEnemyBullets(e);
     }
 
     public void onPaint(Graphics2D g) {
@@ -203,14 +203,14 @@ public class Autobot extends AdvancedRobot {
 
 //        double distance = (enemyLocation != null) ? getDistance(robotLocation, enemyLocation) : 0;
 
-        if (enemyBot.heat < 0.3) { // enemy gun will shoot any time now. do not move
+        if (enemyBot.isGunReady()) { // enemy gun will shoot any time now. do not move
             setTurnRight(headTurn);
             setAhead(0);
             return;
         }
 
         // enemy gun is cooling down, move randomly
-        enemyBot.heat -= getGunCoolingRate();
+        enemyBot.passTurn(getGunCoolingRate());
 
         if (getTurnRemaining() > 0) {   //still turning, go slowly
             setAhead(1);

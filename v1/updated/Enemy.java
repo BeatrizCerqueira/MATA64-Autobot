@@ -60,4 +60,13 @@ public class Enemy {
             heat = 1 + (energyDecreased / 5);
 
     }
+
+    public void passTurn(double gunCoolingRate) {
+        heat -= gunCoolingRate;
+    }
+
+    public boolean isGunReady() {
+        return heat < 0.3;
+    }
+
 }
