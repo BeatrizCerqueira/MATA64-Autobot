@@ -65,8 +65,6 @@ public class Autobot extends AdvancedRobot {
 
         setFire(1);
 
-        // --------- Other
-        moveAwayFromEnemy(e);
     }
 
     public void onPaint(Graphics2D g) {
@@ -142,12 +140,6 @@ public class Autobot extends AdvancedRobot {
 
     // Class for Movements:
 
-    private void moveAwayFromEnemy(ScannedRobotEvent e) {
-        // Enemy is getting closer, move away
-        if (e.getDistance() < Consts.SAFE_DISTANCE) {
-            ahead(100);
-        }
-    }
 
     public void moveRobot() {
 
@@ -162,6 +154,11 @@ public class Autobot extends AdvancedRobot {
 
         //TODO: ajustar enemyHeat minimo para mover mais
 
+        // moveAwayFromEnemy();
+        if (enemyBot.getDistance() < Consts.SAFE_DISTANCE) {
+            ahead(100);
+            return;
+        }
 
         double maxHeadTurn = (10 - (0.75 * getVelocity())); //max robot can turn considering its velocity
         double headTurn = MathUtils.random(-1 * maxHeadTurn, maxHeadTurn);    //random relative angle to turn
