@@ -15,7 +15,8 @@ public class Enemy {
     double heat;
     double angle;
     double distance;
-
+    double heading;
+    double velocity;
 
     public Enemy() {
         energy = Consts.INITIAL_ENERGY;
@@ -27,6 +28,8 @@ public class Enemy {
 
         angle = myBot.getHeading() + e.getBearing();
         distance = e.getDistance();
+        heading = e.getHeading();
+        velocity = e.getVelocity();
 
         energy = e.getEnergy();
         identifyEnemyBullets(energy - e.getEnergy());
@@ -44,6 +47,14 @@ public class Enemy {
 
     public double getDistance() {
         return distance;
+    }
+
+    public double getHeading() {
+        return heading;
+    }
+
+    public double getVelocity() {
+        return velocity;
     }
 
     private void setLocation(AdvancedRobot myBot) {

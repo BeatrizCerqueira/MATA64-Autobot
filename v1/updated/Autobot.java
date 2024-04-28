@@ -13,8 +13,6 @@ public class Autobot extends AdvancedRobot {
 
     Point2D robotLocation;
 
-    //    double enemyEnergy = Consts.INITIAL_ENERGY;
-//    double enemyHeat = Consts.INITIAL_GUN_HEAT;
     Enemy enemyBot = new Enemy();
 
 //	double headTurn = 0;
@@ -68,9 +66,7 @@ public class Autobot extends AdvancedRobot {
         setFire(1);
 
         // --------- Other
-
         moveAwayFromEnemy(e);
-//        identifyEnemyBullets(e);
     }
 
     public void onPaint(Graphics2D g) {
@@ -79,14 +75,6 @@ public class Autobot extends AdvancedRobot {
         // Draw robot's security zone
         g.setColor(Color.green);
         Draw.drawCircle(g, getX(), getY(), Consts.SAFE_DISTANCE);
-
-        // Draw enemy robot and distance
-//        if (enemyBot.getLocation() != null) {
-//            g.setColor(new Color(0xff, 0, 0, 0x80));
-//            Draw.drawLine(g, robotLocation, enemyBot.getLocation());
-////			g.fillRect(x - 20, y - 20, 40, 40);
-//            Draw.drawBulletsRange(g);
-//        }
     }
 
     // Class for Radar/Gun:
@@ -131,11 +119,11 @@ public class Autobot extends AdvancedRobot {
 
         int turns = 20;
 
-        double enemyCurrentDistance = e.getDistance();
-        double enemyMovedDistanceAfterTurns = e.getVelocity() * turns;
+        double enemyCurrentDistance = enemyBot.getDistance(); // e.getDistance();
+        double enemyMovedDistanceAfterTurns = enemyBot.getVelocity() * turns;
 
 
-        double angleDegree = getHeading() + e.getBearing() + 180 - e.getHeading();
+        double angleDegree = enemyBot.getAngle() + 180 - enemyBot.getHeading();//getHeading() + e.getBearing() + 180 - e.getHeading();
         double angleRadians = Math.toRadians(angleDegree);
 
         double enemyDistanceAfterTurns =
@@ -150,19 +138,6 @@ public class Autobot extends AdvancedRobot {
             setFire(firePower);
         }
 
-    }
-
-    // Class for Enemy attributes:
-
-    private void identifyEnemyBullets(ScannedRobotEvent e) {
-        // Track enemy energy to identify his bullets
-        double energyDec = enemyBot.energy - e.getEnergy();
-
-        if (energyDec > 0 && energyDec <= 3) {
-            enemyBot.heat = 1 + (energyDec / 5);
-        }
-
-        enemyBot.energy = e.getEnergy();
     }
 
     // Class for Movements:
