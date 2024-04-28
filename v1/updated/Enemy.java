@@ -51,6 +51,10 @@ public class Enemy {
         location = MathUtils.getLocation(myBotLocation, getAngleRad(), distance);
     }
 
+    public Point2D getLocation() {
+        return location;
+    }
+
     private void identifyEnemyBullets(double energyDecreased) {
         // check enemy energy decrease to identify if enemy has fired
         // if so, update heat

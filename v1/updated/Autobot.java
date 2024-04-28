@@ -12,7 +12,6 @@ import java.awt.geom.Point2D;
 public class Autobot extends AdvancedRobot {
 
     Point2D robotLocation;
-    Point2D enemyLocation;
 
     //    double enemyEnergy = Consts.INITIAL_ENERGY;
 //    double enemyHeat = Consts.INITIAL_GUN_HEAT;
@@ -70,7 +69,6 @@ public class Autobot extends AdvancedRobot {
 
         // --------- Other
 
-//        setEnemyLocation(e);
         moveAwayFromEnemy(e);
 //        identifyEnemyBullets(e);
     }
@@ -83,12 +81,12 @@ public class Autobot extends AdvancedRobot {
         Draw.drawCircle(g, getX(), getY(), Consts.SAFE_DISTANCE);
 
         // Draw enemy robot and distance
-        if (enemyLocation != null) {
-            g.setColor(new Color(0xff, 0, 0, 0x80));
-            Draw.drawLine(g, robotLocation, enemyLocation);
-//			g.fillRect(x - 20, y - 20, 40, 40);
-            Draw.drawBulletsRange(g);
-        }
+//        if (enemyBot.getLocation() != null) {
+//            g.setColor(new Color(0xff, 0, 0, 0x80));
+//            Draw.drawLine(g, robotLocation, enemyBot.getLocation());
+////			g.fillRect(x - 20, y - 20, 40, 40);
+//            Draw.drawBulletsRange(g);
+//        }
     }
 
     // Class for Radar/Gun:
@@ -156,13 +154,6 @@ public class Autobot extends AdvancedRobot {
 
     // Class for Enemy attributes:
 
-    private void setEnemyLocation(ScannedRobotEvent e) {
-
-        // Enemy position
-        double enemyAngleRadians = enemyBot.getAngleRad();
-        enemyLocation = MathUtils.getLocation(robotLocation, enemyAngleRadians, enemyBot.getDistance());
-    }
-
     private void identifyEnemyBullets(ScannedRobotEvent e) {
         // Track enemy energy to identify his bullets
         double energyDec = enemyBot.energy - e.getEnergy();
@@ -200,8 +191,6 @@ public class Autobot extends AdvancedRobot {
         double maxHeadTurn = (10 - (0.75 * getVelocity())); //max robot can turn considering its velocity
         double headTurn = MathUtils.random(-1 * maxHeadTurn, maxHeadTurn);    //random relative angle to turn
 
-
-//        double distance = (enemyLocation != null) ? getDistance(robotLocation, enemyLocation) : 0;
 
         if (enemyBot.isGunReady()) { // enemy gun will shoot any time now. do not move
             setTurnRight(headTurn);
