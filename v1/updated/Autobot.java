@@ -3,7 +3,6 @@ package autobot.v1.updated;
 import autobot.v1.updated.aux.Consts;
 import autobot.v1.updated.aux.Draw;
 import autobot.v1.updated.aux.MathUtils;
-import org.jetbrains.annotations.NotNull;
 import robocode.*;
 import robocode.util.Utils;
 
@@ -15,8 +14,9 @@ public class Autobot extends AdvancedRobot {
     Point2D robotLocation;
     Point2D enemyLocation;
 
-    double enemyEnergy = Consts.INITIAL_ENERGY;
-    double enemyHeat = Consts.INITIAL_GUN_HEAT;
+    //    double enemyEnergy = Consts.INITIAL_ENERGY;
+//    double enemyHeat = Consts.INITIAL_GUN_HEAT;
+    Enemy enemyBot = new Enemy();
 
 //	double headTurn = 0;
 
@@ -60,6 +60,8 @@ public class Autobot extends AdvancedRobot {
 
     public void onScannedRobot(ScannedRobotEvent e) {
 
+        enemyBot.scanned(this, e);
+
         setRadarTurn(e);
         setGunTurn(e);
         setFireTurn(e);
@@ -73,7 +75,7 @@ public class Autobot extends AdvancedRobot {
         identifyEnemyBullets(e);
     }
 
-    public void onPaint(@NotNull Graphics2D g) {
+    public void onPaint(Graphics2D g) {
         // robot size = 40
 
         // Draw robot's security zone
@@ -91,16 +93,16 @@ public class Autobot extends AdvancedRobot {
 
     // Class for Radar/Gun:
 
-    private void setRadarTurn(@NotNull ScannedRobotEvent e) {
+    private void setRadarTurn(ScannedRobotEvent e) {
 
         // Get the enemy angle
-        double enemyAngle = getHeading() + e.getBearing();
+        double enemyAngle = enemyBot.getAngle();
 
         // Relativize enemy angle
         double radarInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getRadarHeading());
 
         // Radar goes that much further in the direction it is going to turn
-        double extraRadarTurn = Math.toDegrees(Math.atan(Consts.RADAR_COVERAGE_DIST / e.getDistance()));
+        double extraRadarTurn = Math.toDegrees(Math.atan(Consts.RADAR_COVERAGE_DIST / enemyBot.getDistance()));
         double radarTotalTurn = radarInitialTurn + (extraRadarTurn * Math.signum(radarInitialTurn));
 
         // Radar goes to the less distance direction
@@ -111,10 +113,10 @@ public class Autobot extends AdvancedRobot {
         setTurnRadarRight(radarTurn);
     }
 
-    private void setGunTurn(@NotNull ScannedRobotEvent e) {
+    private void setGunTurn(ScannedRobotEvent e) {
 
         // Get the enemy angle
-        double enemyAngle = getHeading() + e.getBearing();
+        double enemyAngle = enemyBot.getAngle();
 
         // Relativize enemy angle
         double gunInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getGunHeading());
@@ -127,12 +129,13 @@ public class Autobot extends AdvancedRobot {
 
     }
 
-    private void setFireTurn(@NotNull ScannedRobotEvent e) {
+    private void setFireTurn(ScannedRobotEvent e) {
 
         int turns = 20;
 
         double enemyCurrentDistance = e.getDistance();
         double enemyMovedDistanceAfterTurns = e.getVelocity() * turns;
+
 
         double angleDegree = getHeading() + e.getBearing() + 180 - e.getHeading();
         double angleRadians = Math.toRadians(angleDegree);
@@ -153,32 +156,29 @@ public class Autobot extends AdvancedRobot {
 
     // Class for Enemy attributes:
 
-    private void setEnemyLocation(@NotNull ScannedRobotEvent e) {
-
-        double enemyAngle = getHeading() + e.getBearing();
+    private void setEnemyLocation(ScannedRobotEvent e) {
 
         // Enemy position
-        double enemyAngleRadians = Math.toRadians(enemyAngle);
-        enemyLocation = MathUtils.getLocation(robotLocation, enemyAngleRadians, e.getDistance());
+        double enemyAngleRadians = enemyBot.getAngleRad();
+        enemyLocation = MathUtils.getLocation(robotLocation, enemyAngleRadians, enemyBot.getDistance());
     }
 
-    private void identifyEnemyBullets(@NotNull ScannedRobotEvent e) {
+    private void identifyEnemyBullets(ScannedRobotEvent e) {
         // Track enemy energy to identify his bullets
-        double energyDec = enemyEnergy - e.getEnergy();
+        double energyDec = enemyBot.energy - e.getEnergy();
 
         if (energyDec > 0 && energyDec <= 3) {
-            enemyHeat = 1 + (energyDec / 5);
+            enemyBot.heat = 1 + (energyDec / 5);
         }
 
-        enemyEnergy = e.getEnergy();
+        enemyBot.energy = e.getEnergy();
     }
 
     // Class for Movements:
 
-    private void moveAwayFromEnemy(@NotNull ScannedRobotEvent e) {
+    private void moveAwayFromEnemy(ScannedRobotEvent e) {
         // Enemy is getting closer, move away
         if (e.getDistance() < Consts.SAFE_DISTANCE) {
-//            out.println("RUN!");
             ahead(100);
         }
     }
@@ -203,14 +203,14 @@ public class Autobot extends AdvancedRobot {
 
 //        double distance = (enemyLocation != null) ? getDistance(robotLocation, enemyLocation) : 0;
 
-        if (enemyHeat < 0.3) { // enemy gun will shoot any time now. do not move
+        if (enemyBot.heat < 0.3) { // enemy gun will shoot any time now. do not move
             setTurnRight(headTurn);
             setAhead(0);
             return;
         }
 
         // enemy gun is cooling down, move randomly
-        enemyHeat -= getGunCoolingRate();
+        enemyBot.heat -= getGunCoolingRate();
 
         if (getTurnRemaining() > 0) {   //still turning, go slowly
             setAhead(1);
