@@ -140,12 +140,8 @@ public class Autobot extends AdvancedRobot {
 
     // Class for Movements:
 
-    public void moveAway() {
-
-    }
-
     public void moveRandomly() {
-        // default random movement behavior, at center of arena
+        // set default movement attributes, considering robot is at center of arena
 
         // turn
         double maxHeadTurn = (10 - (0.75 * getVelocity())); //max robot can turn considering its velocity
@@ -155,6 +151,58 @@ public class Autobot extends AdvancedRobot {
         // ahead
         double aheadDist = MathUtils.random(0, 20);   //distance to move forward
         setAhead(aheadDist);
+    }
+
+    public void avoidBorders(double xSign, double ySign) {
+        // To avoid borders, turn robot in an absolute angle, defined according to which border it is approaching
+        // e.g.: when robot approaches left border, must turn in any angle between 0º ~ 180º
+
+        // Quadrants map:
+        // 1Q | 2Q
+        // 3Q | 4Q
+
+        boolean xMargin = xSign != 0;
+        boolean yMargin = ySign != 0;
+        boolean isAtEdge = xMargin && yMargin;
+
+        // at positive edges (2Q and 3Q), use same calc as xMargin
+        if (isAtEdge)   //      boolean xMargin = isAtEdge ? xSign * ySign > 1 : xSign != 0;
+            xMargin = xSign * ySign > 1;
+
+        // If next to x borders, or in positive edges, use Math.acos(-x)
+        // Otherwise, use Math.asin(y)
+
+        double minAngle = xMargin ? Math.acos(-1 * xSign) : Math.asin(ySign);
+        minAngle = Math.toDegrees(minAngle);
+
+        double maxAngle = isAtEdge ? 90 : 180;
+        maxAngle += minAngle;
+
+        double absTurnAngle = MathUtils.random(minAngle, maxAngle);
+        double headTurn = Utils.normalRelativeAngleDegrees(absTurnAngle - getHeading());
+        setTurnRight(headTurn);
+
+        double aheadDist = MathUtils.random(0, 3);  //reduce vel to not hit wall
+        setAhead(aheadDist);
+    }
+
+    public void checkBorders() {
+
+        double xLimit = getBattleFieldWidth() / 2;
+        double yLimit = getBattleFieldHeight() / 2;
+
+        double x = robotLocation.getX() - xLimit;
+        double y = robotLocation.getY() - yLimit;
+
+        boolean xMargin = xLimit - (Math.abs(x)) < Consts.WALL_MARGIN;
+        boolean yMargin = yLimit - (Math.abs(y)) < Consts.WALL_MARGIN;
+
+        double xSign = xMargin ? Math.signum(x) : 0;
+        double ySign = yMargin ? Math.signum(y) : 0;
+
+        if (xMargin || yMargin)
+            avoidBorders(xSign, ySign);
+
     }
 
     public void moveRobot() {
@@ -170,9 +218,18 @@ public class Autobot extends AdvancedRobot {
 
         //TODO: ajustar enemyHeat minimo para mover mais
 
+        //cool down enemy gun
         enemyBot.passTurn(getGunCoolingRate());
 
+        // set default movement attributes
         moveRandomly();
+        checkBorders();
+
+        //if enemy any of following events occurs, override movement attributes
+        if (enemyBot.isGunReady()) { // enemy gun will shoot any time now. do not move
+            setAhead(0);
+            return;
+        }
 
         boolean isEnemyClose = enemyBot.getDistance() < Consts.SAFE_DISTANCE;
         if (isEnemyClose) {
@@ -182,57 +239,12 @@ public class Autobot extends AdvancedRobot {
         }
 
 
-        if (enemyBot.isGunReady()) { // enemy gun will shoot any time now. do not move
-            setAhead(0);
-            return;
-        }
-
-        // enemy gun is cooling down, move randomly
-
         if (getTurnRemaining() > 0) {   //still turning, go slowly
             setAhead(1);
             return;
         }
-
-
-        // aux variables
-        double xLimit = getBattleFieldWidth() / 2;
-        double yLimit = getBattleFieldHeight() / 2;
-
-        double x = robotLocation.getX() - xLimit;
-        double y = robotLocation.getY() - yLimit;
-
-        boolean xMargin = xLimit - (Math.abs(x)) < Consts.WALL_MARGIN;
-        boolean yMargin = yLimit - (Math.abs(y)) < Consts.WALL_MARGIN;
-
-
-        if (xMargin || yMargin) {
-            // next to borders, consider changing
-
-            double maxAngle = 180;
-            double aheadDist = MathUtils.random(0, 3);  //reduce vel to not hit wall
-
-            //consider moving back if facing wall
-
-            if (xMargin && yMargin) {
-                maxAngle = 90;
-                xMargin = Math.signum(x) * Math.signum(y) > 1;  // minAngle in those edges is equal to xMargin, otherwise equal to yMargin
-            }
-
-            double minAngle = xMargin ? Math.acos(-1 * Math.signum(x)) : Math.asin(Math.signum(y));
-
-            minAngle = Math.toDegrees(minAngle);
-            maxAngle += minAngle;
-
-            double absTurnAngle = MathUtils.random(minAngle, maxAngle);
-            double headTurn = Utils.normalRelativeAngleDegrees(absTurnAngle - getHeading());
-
-            setTurnRight(headTurn);
-            setAhead(aheadDist);
-
-        }
-
-
     }
 
 }
+
+
