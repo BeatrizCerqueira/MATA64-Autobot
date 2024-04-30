@@ -31,8 +31,8 @@ public class Enemy {
         heading = e.getHeading();
         velocity = e.getVelocity();
 
-        energy = e.getEnergy();
         identifyEnemyBullets(energy - e.getEnergy());
+        energy = e.getEnergy();
 
         setLocation(myBot);
     }
@@ -77,6 +77,7 @@ public class Enemy {
     }
 
     public void passTurn(double gunCoolingRate) {
+        System.out.println(heat);
         heat = Math.max(heat - gunCoolingRate, 0); // if negative, 0
     }
 

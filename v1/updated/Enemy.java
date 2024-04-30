@@ -30,9 +30,9 @@ public class Enemy {
         distance = e.getDistance();
         heading = e.getHeading();
         velocity = e.getVelocity();
-
-        energy = e.getEnergy();
+        
         identifyEnemyBullets(energy - e.getEnergy());
+        energy = e.getEnergy();
 
         setLocation(myBot);
     }
