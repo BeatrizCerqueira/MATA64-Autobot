@@ -18,6 +18,8 @@ public class Enemy {
     double heading;
     double velocity;
 
+    boolean isScanned = false;
+
     public Enemy() {
         energy = Consts.INITIAL_ENERGY;
         heat = Consts.INITIAL_GUN_HEAT;
@@ -35,6 +37,7 @@ public class Enemy {
         energy = e.getEnergy();
 
         setLocation(myBot);
+        isScanned = true;
     }
 
     public double getAngle() {
@@ -85,4 +88,7 @@ public class Enemy {
         return heat < 0.3;
     }
 
+    public boolean isScanned() {
+        return isScanned;
+    }
 }

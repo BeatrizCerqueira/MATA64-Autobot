@@ -25,9 +25,9 @@ public class Autobot extends AdvancedRobot {
 
         //noinspection InfiniteLoopStatement
         do {
-            robotLocation = new Point2D.Double(getX(), getY());
+            nextTurn();
 
-            if (getRadarTurnRemaining() == 0.0)
+            if (getRadarTurnRemaining() == 0.0) //poderia ir pra funcao especifica do radar...
                 setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
 
             moveRobot();
@@ -218,12 +218,13 @@ public class Autobot extends AdvancedRobot {
 
         //TODO: ajustar enemyHeat minimo para mover mais
 
-        //cool down enemy gun
-        enemyBot.passTurn(getGunCoolingRate());
-
         // set default movement attributes
         moveRandomly();
         checkBorders();
+
+        // if enemy bot not scanned, skip next methods
+        if (!enemyBot.isScanned())
+            return;
 
         //if enemy any of following events occurs, override movement attributes
         if (enemyBot.isGunReady()) { // enemy gun will shoot any time now. do not move
@@ -238,11 +239,19 @@ public class Autobot extends AdvancedRobot {
             return;
         }
 
-
         if (getTurnRemaining() > 0) {   //still turning, go slowly
             setAhead(1);
             return;
         }
+
+    }
+
+    public void nextTurn() {
+        // update myRobot location
+        robotLocation = new Point2D.Double(getX(), getY());
+
+        //cool down enemy gun
+        enemyBot.passTurn(getGunCoolingRate());
     }
 
 }
