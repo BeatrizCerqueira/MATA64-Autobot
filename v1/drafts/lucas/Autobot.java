@@ -15,8 +15,6 @@ public class Autobot extends AdvancedRobot {
 
     Enemy enemyBot = new Enemy();
 
-    boolean ouch = false;
-
     public void run() {
 
         setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
@@ -37,18 +35,15 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void onHitByBullet(HitByBulletEvent e) {
-        // Done! Mudar direção ao levar dano (evitar tiros)
-        // ? prioridade eventos parede > tiro > scanned
-        // TODO: Aprimorar - mover na perpendicular?
+        // setTurn? perpendicular ao inimigo? verificar borda
+        ahead(10);
 
-        setAhead(50);
-
+//        double headTurn = MathUtils.random(30, 90) * Math.signum(MathUtils.random(-1, 1));
+//        setTurnRight(headTurn);
     }
 
     public void onHitWall(HitWallEvent e) {
-        // DONE! Mudar direção ao colidir com parede
-        turnRight(MathUtils.random(30, 90) * Math.signum(MathUtils.random(-1, 1)));
-
+        checkBorders();
     }
 
     public void onScannedRobot(ScannedRobotEvent e) {
@@ -71,7 +66,7 @@ public class Autobot extends AdvancedRobot {
         Draw.drawCircle(g, getX(), getY(), Consts.SAFE_DISTANCE);
     }
 
-    // Class for Radar/Gun:
+    // # Class for Radar/Gun:
 
     private void setRadarTurn() {
 
@@ -134,7 +129,7 @@ public class Autobot extends AdvancedRobot {
 
     }
 
-    // Class for Movements:
+    // # Class for Movements:
 
     public void moveRandomly() {
         // set default movement attributes, considering robot is at center of arena
@@ -147,6 +142,24 @@ public class Autobot extends AdvancedRobot {
         // ahead
         double aheadDist = MathUtils.random(0, 20);   //distance to move forward
         setAhead(aheadDist);
+    }
+
+    public void checkBorders() {
+        double xLimit = getBattleFieldWidth() / 2;
+        double yLimit = getBattleFieldHeight() / 2;
+
+        double x = robotLocation.getX() - xLimit;
+        double y = robotLocation.getY() - yLimit;
+
+        boolean xMargin = xLimit - (Math.abs(x)) < Consts.WALL_MARGIN;
+        boolean yMargin = yLimit - (Math.abs(y)) < Consts.WALL_MARGIN;
+
+        if (xMargin || yMargin) {
+            double xSign = xMargin ? Math.signum(x) : 0;
+            double ySign = yMargin ? Math.signum(y) : 0;
+            avoidBorders(xSign, ySign);
+        }
+
     }
 
     public void avoidBorders(double xSign, double ySign) {
@@ -182,61 +195,47 @@ public class Autobot extends AdvancedRobot {
         setAhead(aheadDist);
     }
 
-    public void checkBorders() {
-        double xLimit = getBattleFieldWidth() / 2;
-        double yLimit = getBattleFieldHeight() / 2;
 
-        double x = robotLocation.getX() - xLimit;
-        double y = robotLocation.getY() - yLimit;
-
-        boolean xMargin = xLimit - (Math.abs(x)) < Consts.WALL_MARGIN;
-        boolean yMargin = yLimit - (Math.abs(y)) < Consts.WALL_MARGIN;
-
-
-        if (xMargin || yMargin) {
-            double xSign = xMargin ? Math.signum(x) : 0;
-            double ySign = yMargin ? Math.signum(y) : 0;
-            avoidBorders(xSign, ySign);
+    /**
+     * If enemy gun is ready, setAhead(0)
+     */
+    public void checkEnemyGunReady() {
+        if (enemyBot.isGunReady()) { // enemy gun will shoot any time now. do not move
+            setAhead(0);
         }
+    }
 
+    public void checkEnemyIsClose() {
+        boolean isEnemyClose = enemyBot.getDistance() < Consts.SAFE_DISTANCE;
+        if (isEnemyClose) {
+            setAhead(50);
+        }
     }
 
     public void moveRobot() {
 
         //WIP se estiver mais perto, ande mais (se dist < X, ande o dobro)
-
         //WIP estrategia defensiva de colisão (fugir do inimigo)
-
         //TODO: outras formas do inimigo perder energia (dano por tiro/colisão c parede)
         //          if  onBulletHit / energia<< e vel<<
-
         //TODO: aumentar distancia de fuga proporcional a distancia do robo inimigo
-
         //TODO: ajustar enemyHeat minimo para mover mais
 
-        // set default movement attributes
-        moveRandomly();
-        checkBorders();
+        // prioridade eventos parede > tiro > scanned
+
+        // set movement attributes (turn and ahead)
+
+        // set distance and turn
+        moveRandomly();         // default behavior - less priority
+        checkBorders();         // turn to escape borders - max priority
 
         // if enemy bot not scanned, skip next methods
         if (!enemyBot.isScanned())
             return;
 
-        if (getTurnRemaining() > 0) {   //still turning, go slowly
-            setAhead(1);
-        }
-
-        //if enemy any of following events occurs, override movement attributes
-        if (enemyBot.isGunReady()) { // enemy gun will shoot any time now. do not move
-            setAhead(0);
-        }
-
-        boolean isEnemyClose = enemyBot.getDistance() < Consts.SAFE_DISTANCE;
-        if (isEnemyClose) {
-            setAhead(50);
-            // borders previously considered
-        }
-
+        // Override setAhead
+        checkEnemyGunReady();
+        checkEnemyIsClose();
     }
 
     public void nextTurn() {
