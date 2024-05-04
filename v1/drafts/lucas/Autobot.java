@@ -35,11 +35,11 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void onHitByBullet(HitByBulletEvent e) {
-        // setTurn? perpendicular ao inimigo? verificar borda
+        // TODO: setTurn perpendicular ao inimigo
+        //  verificar borda?
+
         ahead(10);
 
-//        double headTurn = MathUtils.random(30, 90) * Math.signum(MathUtils.random(-1, 1));
-//        setTurnRight(headTurn);
     }
 
     public void onHitWall(HitWallEvent e) {
@@ -227,7 +227,7 @@ public class Autobot extends AdvancedRobot {
 
         // set distance and turn
         moveRandomly();         // default behavior - less priority
-        checkBorders();         // turn to escape borders - max priority
+        checkBorders();         // turn to escape borders - max priority - setTurn final
 
         // if enemy bot not scanned, skip next methods
         if (!enemyBot.isScanned())
