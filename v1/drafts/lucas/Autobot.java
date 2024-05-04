@@ -17,6 +17,8 @@ public class Autobot extends AdvancedRobot {
 
     public void run() {
 
+        Prolog.checkSolution();
+
         setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
         setAdjustRadarForGunTurn(true);
         setAdjustGunForRobotTurn(true);
@@ -206,7 +208,8 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void checkEnemyIsClose() {
-        boolean isEnemyClose = enemyBot.getDistance() < Consts.SAFE_DISTANCE;
+//        boolean isEnemyClose = enemyBot.getDistance() < Consts.SAFE_DISTANCE;
+        boolean isEnemyClose = Prolog.isEnemyClose(enemyBot.getDistance(), Consts.SAFE_DISTANCE);
         if (isEnemyClose) {
             setAhead(50);
         }

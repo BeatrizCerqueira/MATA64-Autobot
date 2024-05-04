@@ -13,8 +13,8 @@ public class BattleRunner {
         RobocodeEngine.setLogMessagesEnabled(true);
 
         // Create the RobocodeEngine
-//        RobocodeEngine engine = new RobocodeEngine(); // Run from current working directory
-        RobocodeEngine engine = new RobocodeEngine(new java.io.File("C:/robocode")); // Run from C:/Robocode
+        RobocodeEngine engine = new RobocodeEngine(); // Run from current working directory
+//        RobocodeEngine engine = new RobocodeEngine(new java.io.File("C:/robocode")); // Run from C:/Robocode
 
         // Add our own battle listener to the RobocodeEngine
         engine.addBattleListener(new BattleObserver());
