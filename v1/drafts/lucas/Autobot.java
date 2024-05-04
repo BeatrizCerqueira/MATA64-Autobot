@@ -15,7 +15,7 @@ public class Autobot extends AdvancedRobot {
 
     Enemy enemyBot = new Enemy();
 
-//	double headTurn = 0;
+    boolean ouch = false;
 
     public void run() {
 
@@ -41,11 +41,7 @@ public class Autobot extends AdvancedRobot {
         // ? prioridade eventos parede > tiro > scanned
         // TODO: Aprimorar - mover na perpendicular?
 
-        double headTurn = MathUtils.random(30, 90) * Math.signum(MathUtils.random(-1, 1));
-
-        out.println("HIT! Turn " + headTurn);
-        turnRight(headTurn);
-        ahead(40);
+        setAhead(50);
 
     }
 
@@ -187,7 +183,6 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void checkBorders() {
-
         double xLimit = getBattleFieldWidth() / 2;
         double yLimit = getBattleFieldHeight() / 2;
 
@@ -197,11 +192,12 @@ public class Autobot extends AdvancedRobot {
         boolean xMargin = xLimit - (Math.abs(x)) < Consts.WALL_MARGIN;
         boolean yMargin = yLimit - (Math.abs(y)) < Consts.WALL_MARGIN;
 
-        double xSign = xMargin ? Math.signum(x) : 0;
-        double ySign = yMargin ? Math.signum(y) : 0;
 
-        if (xMargin || yMargin)
+        if (xMargin || yMargin) {
+            double xSign = xMargin ? Math.signum(x) : 0;
+            double ySign = yMargin ? Math.signum(y) : 0;
             avoidBorders(xSign, ySign);
+        }
 
     }
 
@@ -226,22 +222,19 @@ public class Autobot extends AdvancedRobot {
         if (!enemyBot.isScanned())
             return;
 
+        if (getTurnRemaining() > 0) {   //still turning, go slowly
+            setAhead(1);
+        }
+
         //if enemy any of following events occurs, override movement attributes
         if (enemyBot.isGunReady()) { // enemy gun will shoot any time now. do not move
             setAhead(0);
-            return;
         }
 
         boolean isEnemyClose = enemyBot.getDistance() < Consts.SAFE_DISTANCE;
         if (isEnemyClose) {
-            // moveAwayFromEnemy();
-            ahead(100);
-            return;
-        }
-
-        if (getTurnRemaining() > 0) {   //still turning, go slowly
-            setAhead(1);
-            return;
+            setAhead(50);
+            // borders previously considered
         }
 
     }

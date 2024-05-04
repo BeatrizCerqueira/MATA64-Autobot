@@ -80,7 +80,6 @@ public class Enemy {
     }
 
     public void passTurn(double gunCoolingRate) {
-        System.out.println(heat);
         heat = Math.max(heat - gunCoolingRate, 0); // if negative, 0
     }
 

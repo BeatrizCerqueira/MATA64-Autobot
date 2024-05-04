@@ -13,8 +13,8 @@ public class BattleRunner {
         RobocodeEngine.setLogMessagesEnabled(true);
 
         // Create the RobocodeEngine
-        RobocodeEngine engine = new RobocodeEngine(); // Run from current working directory
-//        RobocodeEngine engine = new RobocodeEngine(new java.io.File("C:/robocode")); // Run from C:/Robocode
+//        RobocodeEngine engine = new RobocodeEngine(); // Run from current working directory
+        RobocodeEngine engine = new RobocodeEngine(new java.io.File("C:/robocode")); // Run from C:/Robocode
 
         // Add our own battle listener to the RobocodeEngine
         engine.addBattleListener(new BattleObserver());
@@ -23,10 +23,10 @@ public class BattleRunner {
         engine.setVisible(false);
 
         // Setup the battle specification
-
         int numberOfRounds = 5;
         BattlefieldSpecification battlefield = new BattlefieldSpecification(800, 600); // 800x600
-        RobotSpecification[] selectedRobots = engine.getLocalRepository("sample.RamFire,sample.Corners");
+//        RobotSpecification[] selectedRobots = engine.getLocalRepository("sample.RamFire,sample.Corners");
+        RobotSpecification[] selectedRobots = engine.getLocalRepository();
 
         BattleSpecification battleSpec = new BattleSpecification(numberOfRounds, battlefield, selectedRobots);
 
