@@ -40,7 +40,6 @@ public class Autobot extends AdvancedRobot {
     public void onHitByBullet(HitByBulletEvent e) {
         // TODO: setTurn perpendicular ao inimigo
         //  verificar borda?
-
         ahead(10);
 
     }

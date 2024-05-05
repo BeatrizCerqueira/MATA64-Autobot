@@ -9,8 +9,7 @@ public class Prolog {
     public static void main(String[] args) {
         // For testing purposes only
         checkHasSolution("C:/robocode/Prolog.pl");
-        System.out.println("Teste");
-        System.out.println(isEnemyClose(30, 20));
+        System.out.println("Initializating Test...");
     }
 
     static void checkHasSolution(String filepath) {
@@ -37,7 +36,6 @@ public class Prolog {
     // # Conditions
     static boolean isEnemyClose(double EnemyDistance, double LimitDistance) {
         // isEnemyClose(EnemyDistance, LimitDistance) :- less(EnemyDistance, LimitDistance)
-
         Term[] terms = new Term[]{
                 new org.jpl7.Float(EnemyDistance),
                 new org.jpl7.Float(LimitDistance)
@@ -46,7 +44,7 @@ public class Prolog {
         return hasSolution("isEnemyClose", terms);
     }
 
-    
+
     // # Utils
     private static boolean hasSolution(String ruleName, Term[] terms) {
         Query q = new Query(ruleName, terms);
