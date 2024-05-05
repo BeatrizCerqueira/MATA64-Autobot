@@ -21,9 +21,12 @@ public class MathUtils {
     }
 
     public static double random(double start, double end) {
+        return start + Math.random() * ((end - start + 1));
+    }
+
+    public static int random(int start, int end) {
         Random rand = new Random();
         return rand.nextInt((int) (end - start + 1)) + start;
-//        return min + Math.random() * ((max - min + 1));
     }
 
 
