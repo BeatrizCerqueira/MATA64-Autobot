@@ -5,7 +5,7 @@ import java.util.List;
 
 import static autobot.v1.drafts.lucas.auxy.MathUtils.random;
 
-public class GeneticAlgorithm {
+public class GeneticAlgorithmDec {
 
     /*
      *
@@ -20,18 +20,19 @@ public class GeneticAlgorithm {
      */
 
     private static int populationSize;
+    private static int minValue;
     private static int maxValue;
-    private static String Genes;
+//    private static int Genes;
 
     List<Individual> population = new ArrayList<>();
     int generation = 0;
 
 
-    public GeneticAlgorithm() {
+    public GeneticAlgorithmDec() {
         // Default values
         populationSize = 5;
+        minValue = 20;
         maxValue = 200;
-        Genes = Integer.toBinaryString(maxValue);
 
         // Initialize GA
         initializePopulation();
@@ -40,33 +41,28 @@ public class GeneticAlgorithm {
     private void initializePopulation() {
         // create initial population
         for (int i = 0; i < populationSize; i++) {
-            String chromosome = createChromosome();
+            int chromosome = createChromosome();
             population.add(new Individual(chromosome));
         }
     }
 
-    private static String createChromosome() {
-        int len = Genes.length();
-        StringBuilder chromosome = new StringBuilder();
-        for (int i = 0; i < len; i++) {
-            chromosome.append(mutateGene());
-        }
+    private static int createChromosome() {
+        int chromosome = mutateGene();
 
-        String chromosomeStr = chromosome.toString();
-
-        if (isValid(chromosomeStr))
-            return chromosomeStr;
+        if (isValid(chromosome))
+            return chromosome;
         else
             return createChromosome();
     }
 
-    private static char mutateGene() {
-        return (char) (random(0, 1) + '0');
+    private static int mutateGene() {
+        return random(minValue, maxValue);
 
     }
 
-    private static boolean isValid(String chromosome) {
-        return Integer.parseInt(chromosome, 2) <= maxValue;
+    private static boolean isValid(int chromosome) {
+
+        return (chromosome >= minValue) && (chromosome <= maxValue);
     }
 
 
@@ -78,10 +74,10 @@ public class GeneticAlgorithm {
     } //WIP
 
     private static class Individual implements Comparable<Individual> {
-        String chromosome;
+        int chromosome;
         int fitness;
 
-        Individual(String chromosome) {
+        Individual(int chromosome) {
             this.chromosome = chromosome;
             fitness = calFitness();
         }
@@ -101,20 +97,16 @@ public class GeneticAlgorithm {
     // ====== DEBUG ======
     public static void main(String[] args) {
 
-        GeneticAlgorithm GA = new GeneticAlgorithm();
+        GeneticAlgorithmDec GA = new GeneticAlgorithmDec();
         GA.printPopulation();
 
     }
 
     private void printPopulation() {
-        System.out.println("G: " + Genes);
-
         for (int i = 0; i < population.size(); i++) {
-            String chromosome = population.get(i).chromosome;
+            int chromosome = population.get(i).chromosome;
             System.out.print(i + ": ");
-            System.out.print(chromosome);
-            System.out.print(" = ");
-            System.out.println(Integer.parseInt(chromosome, 2));
+            System.out.println(chromosome);
         }
     }
 
