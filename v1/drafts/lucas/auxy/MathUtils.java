@@ -1,6 +1,7 @@
 package autobot.v1.drafts.lucas.auxy;
 
 import java.awt.geom.Point2D;
+import java.util.Random;
 
 public class MathUtils {
 
@@ -19,8 +20,10 @@ public class MathUtils {
         return Point2D.distance(A.getX(), A.getY(), B.getX(), B.getY());
     }
 
-    public static double random(double min, double max) {
-        return min + Math.random() * ((max - min + 1));
+    public static double random(double start, double end) {
+        Random rand = new Random();
+        return rand.nextInt((int) (end - start + 1)) + start;
+//        return min + Math.random() * ((max - min + 1));
     }
 
 
