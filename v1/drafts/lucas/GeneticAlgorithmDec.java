@@ -1,6 +1,7 @@
 package autobot.v1.drafts.lucas;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static autobot.v1.drafts.lucas.auxy.MathUtils.random;
@@ -22,10 +23,11 @@ public class GeneticAlgorithmDec {
     private static int populationSize;
     private static int minValue;
     private static int maxValue;
-//    private static int Genes;
+
 
     List<Individual> population = new ArrayList<>();
     int generation = 0;
+    int currentChromosome = 0;
 
 
     public GeneticAlgorithmDec() {
@@ -33,10 +35,20 @@ public class GeneticAlgorithmDec {
         populationSize = 5;
         minValue = 20;
         maxValue = 200;
+        // Initialize GA
+        initializePopulation();
+    }
+
+    public GeneticAlgorithmDec(int minValue, int maxValue) {
+        // Default values
+        populationSize = 5;
+        this.minValue = minValue;
+        this.maxValue = maxValue;
 
         // Initialize GA
         initializePopulation();
     }
+
 
     private void initializePopulation() {
         // create initial population
@@ -44,6 +56,9 @@ public class GeneticAlgorithmDec {
             int chromosome = createChromosome();
             population.add(new Individual(chromosome));
         }
+
+        // order to fit?
+
     }
 
     private static int createChromosome() {
@@ -61,17 +76,32 @@ public class GeneticAlgorithmDec {
     }
 
     private static boolean isValid(int chromosome) {
-
         return (chromosome >= minValue) && (chromosome <= maxValue);
     }
 
 
-    private void converge() {
-//        parents = selectParents();
-//        newPopulation = newGeneration(parents);
-//        mutate();
-//        checkFitness();
-    } //WIP
+    public int getNextChromosome() {
+        return population.get(currentChromosome).chromosome;
+    }
+
+    public void setFitScore(int score) {
+        population.get(currentChromosome).setFitness(score);
+        nextChromosome();
+
+    }
+
+    public void nextChromosome() {
+        currentChromosome++;
+        if (currentChromosome == populationSize) {
+            currentChromosome = 0;
+            newGeneration();
+        }
+    }
+
+    private void newGeneration() {
+        Collections.sort(population);
+        printPopulation();
+    }
 
     private static class Individual implements Comparable<Individual> {
         int chromosome;
@@ -79,36 +109,38 @@ public class GeneticAlgorithmDec {
 
         Individual(int chromosome) {
             this.chromosome = chromosome;
-            fitness = calFitness();
         }
 
         @Override
         public int compareTo(Individual o) {
-            return Integer.compare(this.fitness, o.fitness);
+            // Ascending order
+            return Integer.compare(o.fitness, this.fitness);
         }
 
-        // Calculate fitness score,
-        private int calFitness() {
-            return 0;
+        // Calculate fitness score
+        public void setFitness(int fitness) {
+            this.fitness = fitness;
         }
     }
 
-
     // ====== DEBUG ======
     public static void main(String[] args) {
-
-        GeneticAlgorithmDec GA = new GeneticAlgorithmDec();
-        GA.printPopulation();
-
+        GeneticAlgorithmDec GA = new GeneticAlgorithmDec(); //criei a população
+        for (int i = 0; i < populationSize; i++) {
+            int chromo = GA.getNextChromosome();
+            GA.setFitScore(random(1, 5));
+        }
     }
 
     private void printPopulation() {
         for (int i = 0; i < population.size(); i++) {
             int chromosome = population.get(i).chromosome;
+            int score = population.get(i).fitness;
             System.out.print(i + ": ");
-            System.out.println(chromosome);
+            System.out.print(chromosome);
+            System.out.print(" - ");
+            System.out.print(score);
+            System.out.println();
         }
     }
-
-
 }

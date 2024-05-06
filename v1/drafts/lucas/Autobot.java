@@ -18,7 +18,7 @@ public class Autobot extends AdvancedRobot {
     public void run() {
 
         Prolog.checkHasSolution("Prolog.pl");
-        Prolog.setBattle(getBattleFieldWidth(), getBattleFieldHeight());
+//        Prolog.setBattle(getBattleFieldWidth(), getBattleFieldHeight());
 
         setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
         setAdjustRadarForGunTurn(true);

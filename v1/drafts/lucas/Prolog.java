@@ -63,6 +63,12 @@ public class Prolog {
         q.hasSolution();
     }
 
+    private static void addFact(String ruleName, String value) {
+        String query = String.format("assert(%s(%s))", ruleName, value);
+        Query q = new Query(query);
+        q.hasSolution();
+    }
+
     private static String getOneSolution(String ruleName) {
         Query q = new Query(ruleName + "(X)");
         return q.oneSolution().get("X").toString();
