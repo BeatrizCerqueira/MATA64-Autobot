@@ -49,30 +49,19 @@ public class GeneticAlgorithmDec {
         initializePopulation();
     }
 
-
     private void initializePopulation() {
-        // create initial population
         for (int i = 0; i < populationSize; i++) {
             int chromosome = createChromosome();
             population.add(new Individual(chromosome));
         }
-
-        // order to fit?
-
     }
 
     private static int createChromosome() {
-        int chromosome = mutateGene();
-
-        if (isValid(chromosome))
-            return chromosome;
-        else
-            return createChromosome();
+        return random(minValue, maxValue);
     }
 
     private static int mutateGene() {
-        return random(minValue, maxValue);
-
+        return random(0, 1);
     }
 
     private static boolean isValid(int chromosome) {
@@ -80,7 +69,7 @@ public class GeneticAlgorithmDec {
     }
 
 
-    public int getNextChromosome() {
+    public int getChromosome() {
         return population.get(currentChromosome).chromosome;
     }
 
@@ -127,7 +116,7 @@ public class GeneticAlgorithmDec {
     public static void main(String[] args) {
         GeneticAlgorithmDec GA = new GeneticAlgorithmDec(); //criei a população
         for (int i = 0; i < populationSize; i++) {
-            int chromo = GA.getNextChromosome();
+            int chromo = GA.getChromosome();
             GA.setFitScore(random(1, 5));
         }
     }
