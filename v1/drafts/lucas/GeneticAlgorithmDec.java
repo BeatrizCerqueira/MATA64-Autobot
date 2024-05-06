@@ -26,6 +26,7 @@ public class GeneticAlgorithmDec {
 
 
     List<Individual> population = new ArrayList<>();
+    List<Individual> nextGeneration = new ArrayList<>();
     int generation = 0;
     int currentChromosome = 0;
 
@@ -60,8 +61,8 @@ public class GeneticAlgorithmDec {
         return random(minValue, maxValue);
     }
 
-    private static int mutateGene() {
-        return random(0, 1);
+    private static char mutateGene() {
+        return (char) (random(0, 1) + '0');
     }
 
     private static boolean isValid(int chromosome) {
@@ -89,7 +90,43 @@ public class GeneticAlgorithmDec {
 
     private void newGeneration() {
         Collections.sort(population);
+
+        generation++;
+        System.out.println();
+        System.out.println("Gen" + generation);
         printPopulation();
+
+        elitism();
+        crossover();
+
+    }
+
+    public void elitism() {
+        double elitismRate = 20;
+        // X% of fittest population goes to the next generation
+        int range = (int) ((elitismRate * populationSize) / 100);
+        for (int i = 0; i < range; i++)
+            nextGeneration.add(population.get(i));
+
+    }
+
+    public void crossover() {
+        // crossover between X% of fittest population
+        double crossoverRate = 60;
+        int crossoverRange = (int) (crossoverRate * populationSize) / 100;
+
+        int range = populationSize - nextGeneration.size();
+        for (int i = 0; i < range; i++) {
+
+            int r = random(0, crossoverRange);
+            Individual parent1 = population.get(r);
+
+            r = random(0, crossoverRange);
+            Individual parent2 = population.get(r);
+
+            Individual child = Individual.mate(parent1, parent2);
+            nextGeneration.add(child);
+        }
     }
 
     private static class Individual implements Comparable<Individual> {
@@ -110,15 +147,57 @@ public class GeneticAlgorithmDec {
         public void setFitness(int fitness) {
             this.fitness = fitness;
         }
+
+        public static Individual mate(Individual parent1, Individual parent2) {
+            int mutationRate = 6;
+            int p2InheritRate = (100 - mutationRate);
+            int p1InheritRate = p2InheritRate / 2;
+
+
+            StringBuilder strChildChromosome = new StringBuilder();
+
+            String strParent1 = Integer.toBinaryString(parent1.chromosome);
+            String strParent2 = Integer.toBinaryString(parent2.chromosome);
+
+
+            for (int i = 0; i < strParent1.length(); i++) {
+                //check probabily for taking gene of par1, par2 or mutation
+                int prob = random(0, 100);
+                char gene;
+
+                if (prob < p1InheritRate)
+                    gene = strParent1.charAt(i);
+
+                else if (prob < p2InheritRate)
+                    gene = strParent2.charAt(i);
+
+                else
+                    gene = mutateGene();
+
+                strChildChromosome.append(gene);
+            }
+
+            int childChromosome = Integer.parseInt(strChildChromosome.toString(), 2);
+
+            if (isValid(childChromosome))
+                return new Individual(childChromosome);
+
+            return mate(parent1, parent2);
+        }
     }
 
     // ====== DEBUG ======
     public static void main(String[] args) {
-        GeneticAlgorithmDec GA = new GeneticAlgorithmDec(); //criei a população
-        for (int i = 0; i < populationSize; i++) {
+
+        GeneticAlgorithmDec GA = new GeneticAlgorithmDec();
+        int generations = 5;
+
+        for (int i = 0; i < populationSize * generations; i++) {
             int chromo = GA.getChromosome();
             GA.setFitScore(random(1, 5));
         }
+        GA.printPopulation();
+
     }
 
     private void printPopulation() {
