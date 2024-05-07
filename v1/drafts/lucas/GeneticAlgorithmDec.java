@@ -69,23 +69,22 @@ public class GeneticAlgorithmDec {
         return (chromosome >= minValue) && (chromosome <= maxValue);
     }
 
-
-    public int getChromosome() {
-        return population.get(currentChromosome).chromosome;
+    public int getNextChromosome() {
+        int chromosome = population.get(currentChromosome).chromosome;
+        updateCurrentChromosome();
+        return chromosome;
     }
 
-    public void setFitScore(int score) {
-        population.get(currentChromosome).setFitness(score);
-        nextChromosome();
-
-    }
-
-    public void nextChromosome() {
+    public void updateCurrentChromosome() {
         currentChromosome++;
         if (currentChromosome == populationSize) {
             currentChromosome = 0;
             newGeneration();
         }
+    }
+
+    public void setFitScore(int score) {
+        population.get(currentChromosome).setFitness(score);
     }
 
     private void newGeneration() {
@@ -193,7 +192,7 @@ public class GeneticAlgorithmDec {
         int generations = 5;
 
         for (int i = 0; i < populationSize * generations; i++) {
-            int chromo = GA.getChromosome();
+            int chromo = GA.getNextChromosome();
             GA.setFitScore(random(1, 5));
         }
         GA.printPopulation();

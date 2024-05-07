@@ -259,6 +259,18 @@ public class Autobot extends AdvancedRobot {
         // setScore()
     }
 
+    public void genetic_escapeEnemy() {
+        //evaluate for 10(?) turns
+
+        //if turnsToEvaluate = 0
+        ////if gene !=null
+        //////setScore(energyDecreased)
+
+        ////safeDist,aheadDist = getNextGene()
+        ////setScore(initialEnergy)
+
+
+    }
 
 }
 
