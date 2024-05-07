@@ -249,6 +249,17 @@ public class Autobot extends AdvancedRobot {
         enemyBot.passTurn(getGunCoolingRate());
     }
 
+    public void genetic_escapeBullet() {
+        // getNextGene()
+
+        // how many turns to evaluate
+        int turnsToFitness = enemyBot.getTurnsToBullet();  // how many turns enemy bullet takes to reaches, considering extra turns for escaping
+
+        // if turnsToFitness=0,
+        // setScore()
+    }
+
+
 }
 
 

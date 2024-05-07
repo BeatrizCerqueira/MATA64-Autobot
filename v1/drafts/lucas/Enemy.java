@@ -20,6 +20,8 @@ public class Enemy {
 
     boolean isScanned = false;
 
+    int turnsToBullet = 0;  // how many turns a bullet takes to reaches other bot, considering extra turns for escaping
+
     public Enemy() {
         energy = Consts.INITIAL_ENERGY;
         heat = Consts.INITIAL_GUN_HEAT;
@@ -39,6 +41,7 @@ public class Enemy {
         setLocation(myBot);
         isScanned = true;
     }
+
 
     public double getAngle() {
         return angle;
@@ -74,13 +77,16 @@ public class Enemy {
         // if so, update heat
 
         boolean hasEnemyFired = energyDecreased > 0 && energyDecreased <= 3;
-        if (hasEnemyFired)
+        if (hasEnemyFired) {
             heat = 1 + (energyDecreased / 5);
+            fire(energyDecreased);
+        }
 
     }
 
     public void passTurn(double gunCoolingRate) {
         heat = Math.max(heat - gunCoolingRate, 0); // if negative, 0
+        turnsToBullet = Math.max(turnsToBullet - 1, 0);
     }
 
     public boolean isGunReady() {
@@ -89,5 +95,20 @@ public class Enemy {
 
     public boolean isScanned() {
         return isScanned;
+    }
+
+    public void fire(double firepower) {
+        double bulletVelocity = 20 - 3 * firepower;
+        int turnsUntilEnemy = (int) (distance / bulletVelocity);           // how many turns it will take to bullet reach current bot position
+        int escapeDistance = turnsUntilEnemy / 8;                          // when bullet reaches position, bot may not be there, he may have runned X distance
+        int turnsToEscape = (int) (escapeDistance / bulletVelocity);
+
+        turnsToBullet = turnsUntilEnemy + turnsToEscape;
+    }
+
+    public int getTurnsToBullet() {
+        int ans = turnsToBullet;
+        turnsToBullet = 0;
+        return ans;
     }
 }
