@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class Prolog {
     public static void main(String[] args) {
-        test();
+        // test();
     }
 
     private static String queryBuilder(String ruleName, String... values) {
