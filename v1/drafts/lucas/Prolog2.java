@@ -9,17 +9,11 @@ import java.util.List;
 
 public class Prolog2 {
     public static void main(String[] args) {
-        System.out.println("\n============== STRING ===================");
+        checkHasSolution("C:/robocode/Prolog.pl");
         testStr();
-        System.out.println("\n============== DOUBLE ===================");
         testDouble();
     }
 
-//    private static String queryBuilder(String ruleName, String... values) {
-//        String valuesStr = String.join(", ", values);
-//        return String.format("%s(%s)", ruleName, valuesStr);
-//    }
-//
 //    private static String queryBuilderWithVars(String ruleName, String... values) {
 //        String valuesStr;
 //        if (values.length == 0) {
@@ -50,6 +44,8 @@ public class Prolog2 {
     // ============================ TEST ============================
 
     static void testStr() {
+        System.out.println("\n============== STRING ===================");
+
         System.out.println("\n=================================");
         System.out.println("Adding facts...");
 
@@ -103,6 +99,8 @@ public class Prolog2 {
     }
 
     static void testDouble() {
+        System.out.println("\n============== DOUBLE ===================");
+
         System.out.println("\n=================================");
         System.out.println("Adding facts...");
 
@@ -157,25 +155,17 @@ public class Prolog2 {
 
     // ============================= OLD =============================
 
+    // TODO: untested
     static void checkHasSolution(String filepath) {
-        String goal = String.format("consult('%s').", filepath);
-        if (!Query.hasSolution(goal)) {
+        if (!Query.hasSolution("consult", toTermArr(filepath))) {
             System.out.println("Consult failed");
         }
     }
 
+    // TODO: untested
     static boolean isEnemyClose(double EnemyDistance, double LimitDistance) {
         // isEnemyClose(EnemyDistance, LimitDistance) :- less(EnemyDistance, LimitDistance)
-        Term[] terms = new Term[]{
-                new org.jpl7.Float(EnemyDistance),
-                new org.jpl7.Float(LimitDistance)
-        };
-        return hasSolution("isEnemyClose", terms);
-    }
-
-    private static boolean hasSolution(String ruleName, Term[] terms) {
-        Query q = new Query(ruleName, terms);
-        return q.hasSolution();
+        return isValid("isEnemyClose", EnemyDistance, LimitDistance);
     }
 
     ///////////////////////////////////////////////////////////////////////////
