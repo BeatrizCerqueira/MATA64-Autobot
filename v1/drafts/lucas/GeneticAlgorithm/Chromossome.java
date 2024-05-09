@@ -1,5 +1,8 @@
 package autobot.v1.drafts.lucas.GeneticAlgorithm;
 
+import org.apache.commons.lang3.SerializationUtils;
+
+import java.util.ArrayList;
 import java.util.List;
 
 //private static class Individual implements Comparable<GeneticAlgorithmDec.Individual> {
@@ -7,10 +10,14 @@ public class Chromossome implements Comparable<Chromossome> {
     List<Gene> genes;
     int fitness;
 
-    Chromossome(List<Gene> genes) {
+    public Chromossome(List<Gene> baseGenes) {
+        List<Gene> genes = SerializationUtils.clone((ArrayList<Gene>) baseGenes);
+
+        for (Gene gene : genes)
+            gene.mutate();
+
         this.genes = genes;
     }
-
 
     @Override
     public int compareTo(Chromossome o) {

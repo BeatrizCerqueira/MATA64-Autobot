@@ -1,7 +1,5 @@
 package autobot.v1.drafts.lucas.GeneticAlgorithm;
 
-import org.apache.commons.lang3.SerializationUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,23 +16,25 @@ public class Algorithm {
     public Algorithm(List<Gene> genes) {
         // Initialize GA
         initializePopulation(genes);
+        printPopulation();
     }
 
     private void initializePopulation(List<Gene> genes) {
         for (int i = 0; i < populationSize; i++) {
-            population.add(newChromossome(genes));
+            population.add(new Chromossome(genes));
         }
     }
 
-    private Chromossome newChromossome(List<Gene> originalGenes) {
-        List<Gene> newGenes = SerializationUtils.clone((ArrayList<Gene>) originalGenes);
-
-        for (Gene gene : newGenes)
-            gene.mutate();
-
-        return new Chromossome(newGenes);
+    private void printPopulation() {
+        for (Chromossome individual : population) {
+            for (Gene gene : individual.genes) {
+                System.out.print(gene.getDescription());
+                System.out.print(" ");
+                System.out.println(gene.getValue());
+            }
+            System.out.println();
+        }
     }
-
 
     // ====== DEBUG ======
     public static void main(String[] args) {

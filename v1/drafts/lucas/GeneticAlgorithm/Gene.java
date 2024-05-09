@@ -20,13 +20,23 @@ public class Gene implements Serializable {
         return (value >= minValue) && (value <= maxValue);
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public void setValue(int val) {
+        value = val;
     }
 
     public void mutate() {
-        this.value = random(minValue, maxValue);
+        value = random(minValue, maxValue);
     }
+
+    public int getValue() {
+        return value;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    //getvalue
 
 
 }
