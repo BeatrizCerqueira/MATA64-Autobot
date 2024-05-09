@@ -30,6 +30,10 @@ public class Chromossome implements Comparable<Chromossome> {
         this.fitness = fitness;
     }
 
+    public static Chromossome mate(Chromossome parent1, Chromossome parent2) {
+        return parent1;
+    }
+
 //    public static Chromossome mate(Chromossome parent1, Chromossome parent2) {
 //        int mutationRate = 6;
 //        int p2InheritRate = (100 - mutationRate);

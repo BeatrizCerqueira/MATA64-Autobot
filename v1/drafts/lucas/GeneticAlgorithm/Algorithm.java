@@ -1,9 +1,18 @@
 package autobot.v1.drafts.lucas.GeneticAlgorithm;
 
+import org.apache.commons.lang3.SerializationUtils;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import static autobot.v1.drafts.lucas.auxy.MathUtils.random;
+
 public class Algorithm {
+    // Rates must be between 0 and 1. Determines probability of occurs
+    private static final double ELITISM_RATE = 0.2;
+    private static final double CROSSOVER_RATE = 0.40;
+    private static final double MUTATION_RATE = 0.05;
 
     private static int populationSize = 5;
 
@@ -11,12 +20,11 @@ public class Algorithm {
     List<Chromossome> nextGeneration = new ArrayList<>();
 
     int generation = 0;
-    int currentChromosome = 0;
+    int currentChromosomeIndex = -1;
 
     public Algorithm(List<Gene> genes) {
         // Initialize GA
         initializePopulation(genes);
-        printPopulation();
     }
 
     private void initializePopulation(List<Gene> genes) {
@@ -27,6 +35,7 @@ public class Algorithm {
 
     private void printPopulation() {
         for (Chromossome individual : population) {
+            System.out.println("Score: " + individual.fitness);
             for (Gene gene : individual.genes) {
                 System.out.print(gene.getDescription());
                 System.out.print(" ");
@@ -36,8 +45,63 @@ public class Algorithm {
         }
     }
 
+    public void setScore(int score) {
+        population.get(currentChromosomeIndex).setFitness(score);
+    }
+
+    public Chromossome getChromossome() {
+        currentChromosomeIndex++;
+        if (currentChromosomeIndex >= populationSize) {
+            generation++;
+            System.out.println("# Generation: " + generation + '\n');
+            printPopulation();
+            newGeneration();
+        }
+        return population.get(currentChromosomeIndex);
+    }
+
+    private void newGeneration() {
+        Collections.sort(population);
+
+
+        elitism();
+        crossover();
+
+        currentChromosomeIndex = 0;
+        population = SerializationUtils.clone((ArrayList<Chromossome>) nextGeneration);
+        nextGeneration = new ArrayList<>();
+
+    }
+
+    public void elitism() {
+        // X% of fittest population goes to the next generation
+        int range = (int) (ELITISM_RATE * populationSize);
+        for (int i = 0; i < range; i++)
+            nextGeneration.add(population.get(i));
+    }
+
+    public void crossover() {
+        // crossover between X% of fittest population and 1-X% of unfittest
+
+        int populationRange = populationSize - nextGeneration.size(); // how many individuals left to complete population
+        for (int i = 0; i < populationRange; i++) {
+
+            int crossoverRange = (int) random(0, CROSSOVER_RATE);
+            Chromossome parent1 = population.get(crossoverRange);
+
+            crossoverRange = (int) random(0, 1 - CROSSOVER_RATE);
+            Chromossome parent2 = population.get(crossoverRange);
+
+            Chromossome child = Chromossome.mate(parent1, parent2);
+            //TODO: may mutate child
+            nextGeneration.add(child);
+        }
+    }
+
+
     // ====== DEBUG ======
     public static void main(String[] args) {
+
 
         List<Gene> genes = new ArrayList<>();
 
@@ -47,6 +111,12 @@ public class Algorithm {
 
         Algorithm GA = new Algorithm(genes);
 
+        Chromossome chromo = GA.getChromossome(); //1st
+        for (int i = 0; i < populationSize * 3; i++) {
+            GA.setScore(random(1, 20));
+            chromo = GA.getChromossome();
+        }
+//        Chromosome c = GA.getChromossome();
 
         // -----------
 
