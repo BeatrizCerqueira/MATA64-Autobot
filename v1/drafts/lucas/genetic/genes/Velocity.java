@@ -1,7 +1,5 @@
 package autobot.v1.drafts.lucas.genetic.genes;
 
-import autobot.v1.drafts.lucas.genetic.Gene;
-
 public class Velocity extends Gene {
 
     // TODO: Mover para consts
@@ -21,7 +19,12 @@ public class Velocity extends Gene {
     }
 
     public Velocity(Velocity copy) {
-        super(copy);
+        super.copy(copy);
+    }
+
+    @Override
+    public Velocity copy() {
+        return new Velocity(this);
     }
 
 }
