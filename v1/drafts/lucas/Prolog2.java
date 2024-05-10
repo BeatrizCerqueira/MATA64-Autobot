@@ -10,41 +10,13 @@ import java.util.Map;
 
 public class Prolog2 {
     public static void main(String[] args) {
-        checkHasSolution("C:/robocode/Prolog.pl");
-        testStr();
-        testDouble();
-
-        System.out.println("\n=================================");
-        addFact("amigos", "bia", 1.0);
-        System.out.println(isValid("amigos", "bia", 1.0));
+//        checkHasSolution("C:/robocode/Prolog.pl");
+//        testStr();
+//        testDouble();
+//        System.out.println("\n=================================");
+//        addFact("amigos", "bia", 1.0);
+//        System.out.println(isValid("amigos", "bia", 1.0));
     }
-
-//    private static String queryBuilderWithVars(String ruleName, String... values) {
-//        String valuesStr;
-//        if (values.length == 0) {
-//            valuesStr = "X";
-//        } else {
-//            valuesStr = String.join(", ", values).replace("null", "X");
-//        }
-//        return String.format("%s(%s)", ruleName, valuesStr);
-//    }
-//
-//    private static String getOneSolution(String ruleName, String... values) {
-//        String query = queryBuilderWithVars(ruleName, values);
-//        System.out.print(query + " = ");
-//        Query q = new Query(query);
-//        return q.hasSolution() ? q.oneSolution().get("X").toString() : null;
-//    }
-//
-//    private static List<String> getAllSolutions(String ruleName, String... values) {
-//        List<String> solutions = new ArrayList<>();
-//        String query = queryBuilderWithVars(ruleName, values);
-//        System.out.print(query + " = ");
-//        Query q = new Query(query);
-//        for (Map<String, Term> solution : q.allSolutions())
-//            solutions.add(solution.get("X").toString());
-//        return solutions;
-//    }
 
     // ============================ TEST ============================
 
@@ -158,7 +130,7 @@ public class Prolog2 {
         System.out.println(getAllSolutions("feliz"));
     }
 
-    // ============================= OLD =============================
+    // ============================= Robocode =============================
 
     // TODO: untested
     static void checkHasSolution(String filepath) {
@@ -173,7 +145,7 @@ public class Prolog2 {
         return isValid("isEnemyClose", EnemyDistance, LimitDistance);
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // ============================= Utils =============================
 
     @SafeVarargs
     private static <T> Term[] toTermArr(T... values) {
@@ -199,7 +171,6 @@ public class Prolog2 {
         Term[] terms = toTermArr(values);
         Term fact = new Compound(ruleName, terms);
         Query q = new Query("assert", fact);
-        System.out.println(q);
         q.hasSolution();
     }
 
@@ -207,7 +178,6 @@ public class Prolog2 {
     private static <T> boolean isValid(String ruleName, T... values) {
         Term[] terms = toTermArr(values);
         Query q = new Query(ruleName, terms);
-        System.out.print(q + " = ");
         return q.hasSolution();
     }
 
@@ -215,7 +185,6 @@ public class Prolog2 {
     private static <T> String getOneSolution(String ruleName, T... values) {
         Term[] terms = toTermArr(values);
         Query q = new Query(ruleName, terms);
-        System.out.print(q + " = ");
         return q.hasSolution() ? q.oneSolution().get("X").toString() : null;
     }
 
@@ -224,7 +193,6 @@ public class Prolog2 {
         List<String> solutions = new ArrayList<>();
         Term[] terms = toTermArr(values);
         Query q = new Query(ruleName, terms);
-        System.out.print(q + " = ");
         for (Map<String, Term> solution : q.allSolutions())
             solutions.add(solution.get("X").toString());
         return solutions;
