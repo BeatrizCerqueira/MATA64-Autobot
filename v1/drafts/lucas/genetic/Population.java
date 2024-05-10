@@ -1,4 +1,4 @@
-package autobot.v1.drafts.lucas.geneticAlgorithm;
+package autobot.v1.drafts.lucas.genetic;
 
 import java.util.ArrayList;
 import java.util.Collections;

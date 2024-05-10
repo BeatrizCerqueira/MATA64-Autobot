@@ -1,4 +1,8 @@
-package autobot.v1.drafts.lucas.geneticAlgorithm;
+package autobot.v1.drafts.lucas.genetic;
+
+import autobot.v1.drafts.lucas.genetic.genes.BordersMargin;
+import autobot.v1.drafts.lucas.genetic.genes.SafeDistance;
+import autobot.v1.drafts.lucas.genetic.genes.Velocity;
 
 import java.io.Serializable;
 import java.util.HashMap;

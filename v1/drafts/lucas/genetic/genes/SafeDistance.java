@@ -1,4 +1,6 @@
-package autobot.v1.drafts.lucas.geneticAlgorithm;
+package autobot.v1.drafts.lucas.genetic.genes;
+
+import autobot.v1.drafts.lucas.genetic.Gene;
 
 public class SafeDistance extends Gene {
 

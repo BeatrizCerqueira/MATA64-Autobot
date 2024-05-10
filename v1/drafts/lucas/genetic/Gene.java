@@ -1,4 +1,4 @@
-package autobot.v1.drafts.lucas.geneticAlgorithm;
+package autobot.v1.drafts.lucas.genetic;
 
 import java.io.Serializable;
 
@@ -8,9 +8,9 @@ public class Gene implements Serializable {
     // TODO: Mover para consts
     private static final double MUTATION_RATE = 0.05;
 
-    int value;
-    int minValue;
-    int maxValue;
+    protected int value;
+    protected int minValue;
+    protected int maxValue;
 
     public Gene() {
         mutate();
