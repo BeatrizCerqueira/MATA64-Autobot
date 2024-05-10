@@ -1,4 +1,4 @@
-package autobot.v1.drafts.lucas.GeneticAlgorithm;
+package autobot.v1.drafts.lucas.geneticAlgorithm;
 
 import java.io.Serializable;
 

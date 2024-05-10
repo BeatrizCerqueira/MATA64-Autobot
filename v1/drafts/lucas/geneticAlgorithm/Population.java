@@ -1,4 +1,4 @@
-package autobot.v1.drafts.lucas.GeneticAlgorithm;
+package autobot.v1.drafts.lucas.geneticAlgorithm;
 
 import org.apache.commons.lang3.SerializationUtils;
 
@@ -8,7 +8,7 @@ import java.util.List;
 
 import static autobot.v1.drafts.lucas.auxy.MathUtils.random;
 
-public class Algorithm {
+public class Population {
     // Rates must be between 0 and 1. Determines probability of occurs
     private static final double ELITISM_RATE = 0.4;
     private static final double CROSSOVER_RATE = 0.4;
@@ -22,7 +22,7 @@ public class Algorithm {
     int generation = 0;
     int currentChromosomeIndex = -1;
 
-    public Algorithm(List<Gene> genes) {
+    public Population(List<Gene> genes) {
         // Initialize GA
         initializePopulation(genes);
     }
@@ -112,7 +112,7 @@ public class Algorithm {
         genes.add(new Gene("safeDistance", 40, 1000));
         genes.add(new Gene("bordersMargin", 10, 300));
 
-        Algorithm GA = new Algorithm(genes);
+        Population GA = new Population(genes);
 
         Chromossome chromo = GA.getChromossome(); //1st
         for (int i = 0; i < populationSize * 3; i++) {

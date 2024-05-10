@@ -1,4 +1,4 @@
-package autobot.v1.drafts.lucas.GeneticAlgorithm;
+package autobot.v1.drafts.lucas.geneticAlgorithm;
 
 import org.apache.commons.lang3.SerializationUtils;
 
