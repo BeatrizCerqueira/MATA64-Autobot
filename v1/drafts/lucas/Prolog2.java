@@ -170,19 +170,64 @@ public class Prolog2 {
 
     ///////////////////////////////////////////////////////////////////////////
 
-    static Term[] toTermArr(Double... values) {
+//    static Term[] toTermArr(Double... values) {
+//        List<Term> termsList = new ArrayList<>();
+//        for (Double value : values) termsList.add(new org.jpl7.Float(value));
+//        return termsList.toArray(new Term[0]);
+//    }
+//
+//    static Term[] toTermArr(String... values) {
+//        List<Term> termsList = new ArrayList<>();
+//        for (String value : values) termsList.add(new org.jpl7.Atom(value));
+//        return termsList.toArray(new Term[0]);
+//    }
+//
+//    private static void addFact(String ruleName, String... values) {
+//        Term[] terms = toTermArr(values);
+//        Term fact = new Compound(ruleName, terms);
+//        Query q = new Query("assert", fact);
+//        System.out.println(q);
+//        q.hasSolution();
+//    }
+//
+//    private static void addFact(String ruleName, Double... values) {
+//        Term[] terms = toTermArr(values);
+//        Term fact = new Compound(ruleName, terms);
+//        Query q = new Query("assert", fact);
+//        System.out.println(q);
+//        q.hasSolution();
+//    }
+//
+//    static boolean isValid(String ruleName, Double... values) {
+//        Term[] terms = toTermArr(values);
+//        Query q = new Query(ruleName, terms);
+//        System.out.print(q + " = ");
+//        return q.hasSolution();
+//    }
+//
+//    static boolean isValid(String ruleName, String... values) {
+//        Term[] terms = toTermArr(values);
+//        Query q = new Query(ruleName, terms);
+//        System.out.print(q + " = ");
+//        return q.hasSolution();
+//    }
+//
+
+    @SafeVarargs
+    static <T> Term[] toTermArr(T... values) {
         List<Term> termsList = new ArrayList<>();
-        for (Double value : values) termsList.add(new org.jpl7.Float(value));
+        for (T value : values) {
+            if (value instanceof Double) {
+                termsList.add(new org.jpl7.Float((Double) value));
+            } else if (value instanceof String) {
+                termsList.add(new org.jpl7.Atom((String) value));
+            }
+        }
         return termsList.toArray(new Term[0]);
     }
 
-    static Term[] toTermArr(String... values) {
-        List<Term> termsList = new ArrayList<>();
-        for (String value : values) termsList.add(new org.jpl7.Atom(value));
-        return termsList.toArray(new Term[0]);
-    }
-
-    private static void addFact(String ruleName, String... values) {
+    @SafeVarargs
+    private static <T> void addFact(String ruleName, T... values) {
         Term[] terms = toTermArr(values);
         Term fact = new Compound(ruleName, terms);
         Query q = new Query("assert", fact);
@@ -190,22 +235,8 @@ public class Prolog2 {
         q.hasSolution();
     }
 
-    private static void addFact(String ruleName, Double... values) {
-        Term[] terms = toTermArr(values);
-        Term fact = new Compound(ruleName, terms);
-        Query q = new Query("assert", fact);
-        System.out.println(q);
-        q.hasSolution();
-    }
-
-    static boolean isValid(String ruleName, Double... values) {
-        Term[] terms = toTermArr(values);
-        Query q = new Query(ruleName, terms);
-        System.out.print(q + " = ");
-        return q.hasSolution();
-    }
-
-    static boolean isValid(String ruleName, String... values) {
+    @SafeVarargs
+    static <T> boolean isValid(String ruleName, T... values) {
         Term[] terms = toTermArr(values);
         Query q = new Query(ruleName, terms);
         System.out.print(q + " = ");
