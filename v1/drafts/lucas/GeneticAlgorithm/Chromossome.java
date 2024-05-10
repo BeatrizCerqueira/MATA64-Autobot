@@ -2,22 +2,39 @@ package autobot.v1.drafts.lucas.GeneticAlgorithm;
 
 import org.apache.commons.lang3.SerializationUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static autobot.v1.drafts.lucas.auxy.MathUtils.random;
+
 //private static class Individual implements Comparable<GeneticAlgorithmDec.Individual> {
-public class Chromossome implements Comparable<Chromossome> {
+public class Chromossome implements Comparable<Chromossome>, Serializable {
     List<Gene> genes;
     int fitness;
 
-    public Chromossome(List<Gene> baseGenes) {
-        List<Gene> genes = SerializationUtils.clone((ArrayList<Gene>) baseGenes);
+//    public Chromossome(List<Gene> baseGenes) {
+//        List<Gene> genes = SerializationUtils.clone((ArrayList<Gene>) baseGenes);
+//
+//        for (Gene gene : genes)
+//            gene.mutate();
+//
+//        this.genes = genes;
+//    }
 
-        for (Gene gene : genes)
-            gene.mutate();
-
+    public Chromossome(List<Gene> genes) {
         this.genes = genes;
     }
+
+    public void initialize() {
+        List<Gene> newGenes = SerializationUtils.clone((ArrayList<Gene>) genes);
+
+        for (Gene gene : newGenes)
+            gene.mutate();
+
+        this.genes = newGenes;
+    }
+
 
     @Override
     public int compareTo(Chromossome o) {
@@ -31,45 +48,31 @@ public class Chromossome implements Comparable<Chromossome> {
     }
 
     public static Chromossome mate(Chromossome parent1, Chromossome parent2) {
-        return parent1;
+//        Chromossome child = new Chromossome(genes);
+
+        List<Gene> childGenes = new ArrayList<>();
+
+        for (int i = 0; i < parent1.genes.size(); i++) {
+
+            int selectedParent = random(1, 2);
+
+            Gene selectedGene;
+
+            if (selectedParent < 2) {
+                selectedGene = parent1.genes.get(i);
+
+            } else {
+                selectedGene = parent2.genes.get(i);
+            }
+
+            selectedGene = SerializationUtils.clone(selectedGene);
+            childGenes.add(selectedGene);
+
+//            childGenes.get(i).mutate();
+
+        }
+        return new Chromossome(childGenes);
     }
 
-//    public static Chromossome mate(Chromossome parent1, Chromossome parent2) {
-//        int mutationRate = 6;
-//        int p2InheritRate = (100 - mutationRate);
-//        int p1InheritRate = p2InheritRate / 2;
-//
-//
-//        StringBuilder strChildChromosome = new StringBuilder();
-//
-//        String strParent1 = Integer.toBinaryString(parent1.value);
-//        String strParent2 = Integer.toBinaryString(parent2.value);
-//
-//
-//        for (int i = 0; i < strParent1.length(); i++) {
-//            //check probabily for taking gene of par1, par2 or mutation
-//            int prob = random(0, 100);
-//            char gene;
-//
-//            if (prob < p1InheritRate)
-//                gene = strParent1.charAt(i);
-//
-//            else if (prob < p2InheritRate)
-//                gene = strParent2.charAt(i);
-//
-//            else
-//                gene = 0;
-////                gene = mutateGene();
-//
-//            strChildChromosome.append(gene);
-//        }
-//
-//        int childChromosome = Integer.parseInt(strChildChromosome.toString(), 2);
-//
-//        if (Gene.isValid(childChromosome))
-//            return new Chromossome(childChromosome);
-//
-//        return mate(parent1, parent2);
-//    }
 }
 

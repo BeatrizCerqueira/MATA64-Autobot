@@ -10,8 +10,8 @@ import static autobot.v1.drafts.lucas.auxy.MathUtils.random;
 
 public class Algorithm {
     // Rates must be between 0 and 1. Determines probability of occurs
-    private static final double ELITISM_RATE = 0.2;
-    private static final double CROSSOVER_RATE = 0.40;
+    private static final double ELITISM_RATE = 0.4;
+    private static final double CROSSOVER_RATE = 0.4;
     private static final double MUTATION_RATE = 0.05;
 
     private static int populationSize = 5;
@@ -29,7 +29,9 @@ public class Algorithm {
 
     private void initializePopulation(List<Gene> genes) {
         for (int i = 0; i < populationSize; i++) {
-            population.add(new Chromossome(genes));
+            Chromossome chromossome = new Chromossome(genes);
+            chromossome.initialize();
+            population.add(chromossome);
         }
     }
 
@@ -63,7 +65,6 @@ public class Algorithm {
     private void newGeneration() {
         Collections.sort(population);
 
-
         elitism();
         crossover();
 
@@ -86,11 +87,13 @@ public class Algorithm {
         int populationRange = populationSize - nextGeneration.size(); // how many individuals left to complete population
         for (int i = 0; i < populationRange; i++) {
 
-            int crossoverRange = (int) random(0, CROSSOVER_RATE);
-            Chromossome parent1 = population.get(crossoverRange);
+            int crossoverRange = (int) (CROSSOVER_RATE * populationSize);
 
-            crossoverRange = (int) random(0, 1 - CROSSOVER_RATE);
-            Chromossome parent2 = population.get(crossoverRange);
+            int indexP1 = random(0, crossoverRange);
+            Chromossome parent1 = population.get(indexP1);
+
+            int indexP2 = random((populationSize - crossoverRange), populationSize - 1);
+            Chromossome parent2 = population.get(indexP2);
 
             Chromossome child = Chromossome.mate(parent1, parent2);
             //TODO: may mutate child
