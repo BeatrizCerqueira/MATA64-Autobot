@@ -35,7 +35,23 @@ public class Chromossome implements Comparable<Chromossome>, Serializable {
         return genes;
     }
 
-    // Calculate fitness score
+    private int getGeneValue(String key) {
+        return genes.get(key).getValue();
+    }
+
+    public int getVelocity() {
+        return getGeneValue("velocity");
+    }
+
+    public int getSafeDistance() {
+        return getGeneValue("safeDistance");
+    }
+
+    public int getBordersMargin() {
+        return getGeneValue("bordersMargin");
+    }
+
+    // TODO: (Maybe) move the calculation of the fitness score to here
     public void setFitness(int fitness) {
         this.fitness = fitness;
     }

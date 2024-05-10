@@ -102,6 +102,12 @@ public class Population {
 
         Chromossome currentChromossome = population.getNextChromossome(); //1st
 
+        // To access chromossome data
+        int velocity = currentChromossome.getVelocity();
+        int safeDistance = currentChromossome.getSafeDistance();
+        int bordersMargin = currentChromossome.getBordersMargin();
+
+
         for (int i = 0; i < POPULATION_SIZE * 3; i++) {
             currentChromossome.setFitness(random(1, 20));
             currentChromossome = population.getNextChromossome();
