@@ -132,16 +132,14 @@ public class Prolog2 {
 
     // ============================= Robocode =============================
 
-    // TODO: untested
     static void checkHasSolution(String filepath) {
         if (!Query.hasSolution("consult", toTermArr(filepath))) {
             System.out.println("Consult failed");
         }
     }
 
-    // TODO: untested
+    // isEnemyClose(EnemyDistance, LimitDistance) :- less(EnemyDistance, LimitDistance)
     static boolean isEnemyClose(double EnemyDistance, double LimitDistance) {
-        // isEnemyClose(EnemyDistance, LimitDistance) :- less(EnemyDistance, LimitDistance)
         return isValid("isEnemyClose", EnemyDistance, LimitDistance);
     }
 
