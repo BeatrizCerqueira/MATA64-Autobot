@@ -23,21 +23,21 @@ public class Population {
     private static final int CROSSOVER_FIRST_PARENT_COUNT = (int) (CROSSOVER_FIRST_PARENT_RATE * POPULATION_SIZE);
     private static final int CROSSOVER_SECOND_PARENT_COUNT = (int) (CROSSOVER_SECOND_PARENT_RATE * POPULATION_SIZE);
 
-    List<Chromossome> currentGeneration = new ArrayList<>();
-    List<Chromossome> nextGeneration = new ArrayList<>();
+    List<Chromosome> currentGeneration = new ArrayList<>();
+    List<Chromosome> nextGeneration = new ArrayList<>();
 
     int generation = 0;
     int currentChromosomeIndex = -1;
 
     public Population() {
         for (int i = 0; i < POPULATION_SIZE; i++) {
-            Chromossome chromossome = new Chromossome();
-            currentGeneration.add(chromossome);
+            Chromosome chromosome = new Chromosome();
+            currentGeneration.add(chromosome);
         }
     }
 
 //    private void printPopulation() {
-//        for (Chromossome individual : population) {
+//        for (Chromosome individual : population) {
 //            System.out.println("Score: " + individual.fitness);
 //            for (Gene gene : individual.genes) {
 //                System.out.print(gene.getDescription());
@@ -48,7 +48,7 @@ public class Population {
 //        }
 //    }
 
-    public Chromossome getNextChromossome() {
+    public Chromosome getNextChromosome() {
         currentChromosomeIndex++;
         if (currentChromosomeIndex >= POPULATION_SIZE) newGeneration();
         return currentGeneration.get(currentChromosomeIndex);
@@ -65,8 +65,8 @@ public class Population {
 
         currentGeneration.clear();
 
-        for (Chromossome chromossome : nextGeneration)
-            currentGeneration.add(new Chromossome(chromossome.getGenes()));
+        for (Chromosome chromosome : nextGeneration)
+            currentGeneration.add(new Chromosome(chromosome.getGenes()));
 
         nextGeneration.clear();
     }
@@ -83,12 +83,12 @@ public class Population {
         for (int i = 0; i < CROSSOVER_COUNT; i++) {
 
             int indexP1 = random(0, CROSSOVER_FIRST_PARENT_COUNT - 1);
-            Chromossome parent1 = currentGeneration.get(indexP1);
+            Chromosome parent1 = currentGeneration.get(indexP1);
 
             int indexP2 = random(CROSSOVER_SECOND_PARENT_COUNT, POPULATION_SIZE - 1);
-            Chromossome parent2 = currentGeneration.get(indexP2);
+            Chromosome parent2 = currentGeneration.get(indexP2);
 
-            Chromossome child = Chromossome.generateChild(parent1, parent2);
+            Chromosome child = Chromosome.generateChild(parent1, parent2);
 
             nextGeneration.add(child);
         }
@@ -100,17 +100,17 @@ public class Population {
 
         Population population = new Population();
 
-        Chromossome currentChromossome = population.getNextChromossome(); //1st
+        Chromosome currentChromosome = population.getNextChromosome(); //1st
 
-        // To access chromossome data
-        int velocity = currentChromossome.getVelocity();
-        int safeDistance = currentChromossome.getSafeDistance();
-        int bordersMargin = currentChromossome.getBordersMargin();
+        // To access chromosome data
+        int velocity = currentChromosome.getVelocity();
+        int safeDistance = currentChromosome.getSafeDistance();
+        int bordersMargin = currentChromosome.getBordersMargin();
 
 
         for (int i = 0; i < POPULATION_SIZE * 3; i++) {
-            currentChromossome.setFitness(random(1, 20));
-            currentChromossome = population.getNextChromossome();
+            currentChromosome.setFitness(random(1, 20));
+            currentChromosome = population.getNextChromosome();
         }
 
         // -----------

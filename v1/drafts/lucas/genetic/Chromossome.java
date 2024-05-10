@@ -11,12 +11,12 @@ import java.util.Map;
 
 import static autobot.v1.drafts.lucas.auxy.MathUtils.random;
 
-public class Chromossome implements Comparable<Chromossome>, Serializable {
+public class Chromosome implements Comparable<Chromosome>, Serializable {
 
     Map<String, Gene> genes;
     int fitness;
 
-    public Chromossome() {
+    public Chromosome() {
 
         Map<String, Gene> genes = new HashMap<>();
 
@@ -27,7 +27,7 @@ public class Chromossome implements Comparable<Chromossome>, Serializable {
         this.genes = genes;
     }
 
-    public Chromossome(Map<String, Gene> genes) {
+    public Chromosome(Map<String, Gene> genes) {
         this.genes = genes;
     }
 
@@ -56,20 +56,20 @@ public class Chromossome implements Comparable<Chromossome>, Serializable {
         this.fitness = fitness;
     }
 
-    public static Chromossome generateChild(Chromossome parent1, Chromossome parent2) {
+    public static Chromosome generateChild(Chromosome parent1, Chromosome parent2) {
         Map<String, Gene> childGenes = new HashMap<>();
-        List<Chromossome> parents = List.of(parent1, parent2);
+        List<Chromosome> parents = List.of(parent1, parent2);
         for (String key : parent1.genes.keySet()) {
             int selectedParent = random(0, 1);
             Gene selectedGene = new Gene(parents.get(selectedParent).genes.get(key));
             selectedGene.randomlyMutate();
             childGenes.put(key, selectedGene);
         }
-        return new Chromossome(childGenes);
+        return new Chromosome(childGenes);
     }
 
     @Override
-    public int compareTo(Chromossome o) {
+    public int compareTo(Chromosome o) {
         // Ascending order
         return Integer.compare(o.fitness, this.fitness);
     }
