@@ -35,6 +35,15 @@ public class Chromossome implements Comparable<Chromossome>, Serializable {
         this.genes = newGenes;
     }
 
+    public void mutate(double mutationRate) {
+        int probability = random(0, 100);
+
+        if (probability < (mutationRate * 100)) {
+            int geneIndex = random(0, genes.size() - 1);
+            genes.get(geneIndex).mutate();
+        }
+
+    }
 
     @Override
     public int compareTo(Chromossome o) {
@@ -73,6 +82,7 @@ public class Chromossome implements Comparable<Chromossome>, Serializable {
         }
         return new Chromossome(childGenes);
     }
+
 
 }
 

@@ -96,7 +96,7 @@ public class Algorithm {
             Chromossome parent2 = population.get(indexP2);
 
             Chromossome child = Chromossome.mate(parent1, parent2);
-            //TODO: may mutate child
+            child.mutate(MUTATION_RATE);
             nextGeneration.add(child);
         }
     }
