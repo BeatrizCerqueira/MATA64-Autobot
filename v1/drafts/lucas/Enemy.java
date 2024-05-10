@@ -79,7 +79,7 @@ public class Enemy {
         boolean hasEnemyFired = energyDecreased > 0 && energyDecreased <= 3;
         if (hasEnemyFired) {
             heat = 1 + (energyDecreased / 5);
-            fire(energyDecreased);
+//            fire(energyDecreased);
         }
 
     }
@@ -97,18 +97,19 @@ public class Enemy {
         return isScanned;
     }
 
-    public void fire(double firepower) {
-        double bulletVelocity = 20 - 3 * firepower;
-        int turnsUntilEnemy = (int) (distance / bulletVelocity);           // how many turns it will take to bullet reach current bot position
-        int escapeDistance = turnsUntilEnemy / 8;                          // when bullet reaches position, bot may not be there, he may have runned X distance
-        int turnsToEscape = (int) (escapeDistance / bulletVelocity);
 
-        turnsToBullet = turnsUntilEnemy + turnsToEscape;
-    }
+//    public void fire(double firepower) {
+//        double bulletVelocity = 20 - 3 * firepower;
+//        int turnsUntilEnemy = (int) (distance / bulletVelocity);           // how many turns it will take to bullet reach current bot position
+//        int escapeDistance = turnsUntilEnemy / 8;                          // when bullet reaches position, bot may not be there, he may have runned X distance
+//        int turnsToEscape = (int) (escapeDistance / bulletVelocity);
+//
+//        turnsToBullet = turnsUntilEnemy + turnsToEscape;
+//    }
 
-    public int getTurnsToBullet() {
-        int ans = turnsToBullet;
-        turnsToBullet = 0;
-        return ans;
-    }
+//    public int getTurnsToBullet() {
+//        int ans = turnsToBullet;
+//        turnsToBullet = 0;
+//        return ans;
+//    }
 }
