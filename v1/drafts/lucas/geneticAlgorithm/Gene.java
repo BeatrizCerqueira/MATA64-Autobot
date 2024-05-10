@@ -5,38 +5,40 @@ import java.io.Serializable;
 import static autobot.v1.drafts.lucas.auxy.MathUtils.random;
 
 public class Gene implements Serializable {
-    String description;
+    // TODO: Mover para consts
+    private static final double MUTATION_RATE = 0.05;
+
+    int value;
     int minValue;
     int maxValue;
-    int value;
 
-    public Gene(String description, int minValue, int maxValue) {
-        this.description = description;
-        this.minValue = minValue;
-        this.maxValue = maxValue;
+    public Gene() {
+        mutate();
     }
 
-    public boolean isValid(int value) {
-        return (value >= minValue) && (value <= maxValue);
+    public Gene(int value) {
+        this.value = value;
     }
 
-    public void setValue(int val) {
-        value = val;
-    }
-
-    public void mutate() {
-        value = random(minValue, maxValue);
+    public Gene(Gene copy) {
+        this.value = copy.value;
+        this.minValue = copy.value;
+        this.maxValue = copy.value;
     }
 
     public int getValue() {
-        return value;
+        return this.value;
     }
 
-    public String getDescription() {
-        return description;
+    private void mutate() {
+        this.value = random(minValue, maxValue);
     }
 
-    //getvalue
-
+    public void randomlyMutate() {
+        int randomNum = random(0, 100);
+        if (randomNum < (MUTATION_RATE * 100)) {
+            mutate();
+        }
+    }
 
 }
