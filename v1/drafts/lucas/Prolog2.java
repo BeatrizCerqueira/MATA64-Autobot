@@ -13,6 +13,10 @@ public class Prolog2 {
         checkHasSolution("C:/robocode/Prolog.pl");
         testStr();
         testDouble();
+
+        System.out.println("\n=================================");
+        addFact("amigos", "bia", 1.0);
+        System.out.println(isValid("amigos", "bia", 1.0));
     }
 
 //    private static String queryBuilderWithVars(String ruleName, String... values) {
@@ -175,7 +179,7 @@ public class Prolog2 {
     private static <T> Term[] toTermArr(T... values) {
         List<Term> termsList = new ArrayList<>();
         if (values.length == 0) {
-            termsList.add(new org.jpl7.Atom("X"));
+            termsList.add(new org.jpl7.Variable("X"));
         } else {
             for (T value : values) {
                 if (value instanceof Double) {
@@ -183,7 +187,7 @@ public class Prolog2 {
                 } else if (value instanceof String) {
                     termsList.add(new org.jpl7.Atom((String) value));
                 } else if (value == null) {
-                    termsList.add(new org.jpl7.Atom("X"));
+                    termsList.add(new org.jpl7.Variable("X"));
                 }
             }
         }
