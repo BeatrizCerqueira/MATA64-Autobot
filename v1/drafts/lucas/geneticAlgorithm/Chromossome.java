@@ -3,33 +3,23 @@ package autobot.v1.drafts.lucas.geneticAlgorithm;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static autobot.v1.drafts.lucas.auxy.MathUtils.random;
 
-//private static class Individual implements Comparable<GeneticAlgorithmDec.Individual> {
 public class Chromossome implements Comparable<Chromossome>, Serializable {
-    List<Gene> genes;
+    Map<String, Gene> genes;
     int fitness;
 
-//    public Chromossome(List<Gene> baseGenes) {
-//        List<Gene> genes = SerializationUtils.clone((ArrayList<Gene>) baseGenes);
-//
-//        for (Gene gene : genes)
-//            gene.mutate();
-//
-//        this.genes = genes;
-//    }
-
-    public Chromossome(List<Gene> genes) {
+    public Chromossome(Map<String, Gene> genes) {
         this.genes = genes;
     }
 
     public void initialize() {
-        List<Gene> newGenes = SerializationUtils.clone((ArrayList<Gene>) genes);
+        Map<String, Gene> newGenes = SerializationUtils.clone((HashMap<String, Gene>) genes);
 
-        for (Gene gene : newGenes)
+        for (Gene gene : newGenes.values())
             gene.mutate();
 
         this.genes = newGenes;
@@ -39,10 +29,10 @@ public class Chromossome implements Comparable<Chromossome>, Serializable {
         int probability = random(0, 100);
 
         if (probability < (mutationRate * 100)) {
-            int geneIndex = random(0, genes.size() - 1);
-            genes.get(geneIndex).mutate();
+            Object[] keys = genes.keySet().toArray();
+            String randomKey = (String) keys[random(0, keys.length - 1)];
+            genes.get(randomKey).mutate();
         }
-
     }
 
     @Override
@@ -57,32 +47,21 @@ public class Chromossome implements Comparable<Chromossome>, Serializable {
     }
 
     public static Chromossome mate(Chromossome parent1, Chromossome parent2) {
-//        Chromossome child = new Chromossome(genes);
+        Map<String, Gene> childGenes = new HashMap<>();
 
-        List<Gene> childGenes = new ArrayList<>();
-
-        for (int i = 0; i < parent1.genes.size(); i++) {
-
+        for (String key : parent1.genes.keySet()) {
             int selectedParent = random(1, 2);
-
             Gene selectedGene;
 
             if (selectedParent < 2) {
-                selectedGene = parent1.genes.get(i);
-
+                selectedGene = parent1.genes.get(key);
             } else {
-                selectedGene = parent2.genes.get(i);
+                selectedGene = parent2.genes.get(key);
             }
 
             selectedGene = SerializationUtils.clone(selectedGene);
-            childGenes.add(selectedGene);
-
-//            childGenes.get(i).mutate();
-
+            childGenes.put(key, selectedGene);
         }
         return new Chromossome(childGenes);
     }
-
-
 }
-
