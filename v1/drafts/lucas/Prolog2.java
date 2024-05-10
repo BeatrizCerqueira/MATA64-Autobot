@@ -174,11 +174,17 @@ public class Prolog2 {
     @SafeVarargs
     private static <T> Term[] toTermArr(T... values) {
         List<Term> termsList = new ArrayList<>();
-        for (T value : values) {
-            if (value instanceof Double) {
-                termsList.add(new org.jpl7.Float((Double) value));
-            } else if (value instanceof String) {
-                termsList.add(new org.jpl7.Atom((String) value));
+        if (values.length == 0) {
+            termsList.add(new org.jpl7.Atom("X"));
+        } else {
+            for (T value : values) {
+                if (value instanceof Double) {
+                    termsList.add(new org.jpl7.Float((Double) value));
+                } else if (value instanceof String) {
+                    termsList.add(new org.jpl7.Atom((String) value));
+                } else if (value == null) {
+                    termsList.add(new org.jpl7.Atom("X"));
+                }
             }
         }
         return termsList.toArray(new Term[0]);
