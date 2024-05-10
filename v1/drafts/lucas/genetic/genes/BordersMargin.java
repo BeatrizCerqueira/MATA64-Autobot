@@ -9,15 +9,15 @@ public class BordersMargin extends Gene {
     private static final int MAX_VALUE = 300;
 
     public BordersMargin() {
-        super();
         super.minValue = MIN_VALUE;
         super.maxValue = MAX_VALUE;
+        super.mutate();
     }
 
     public BordersMargin(int value) {
-        super(value);
         super.minValue = MIN_VALUE;
         super.maxValue = MAX_VALUE;
+        super.value = value;
     }
 
     public BordersMargin(BordersMargin copy) {

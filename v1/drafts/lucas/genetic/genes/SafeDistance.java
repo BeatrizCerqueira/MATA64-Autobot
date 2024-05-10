@@ -9,15 +9,15 @@ public class SafeDistance extends Gene {
     private static final int MAX_VALUE = 1000;
 
     public SafeDistance() {
-        super();
         super.minValue = MIN_VALUE;
         super.maxValue = MAX_VALUE;
+        super.mutate();
     }
 
     public SafeDistance(int value) {
-        super(value);
         super.minValue = MIN_VALUE;
         super.maxValue = MAX_VALUE;
+        super.value = value;
     }
 
     public SafeDistance(SafeDistance copy) {

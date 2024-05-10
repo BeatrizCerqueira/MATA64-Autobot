@@ -9,15 +9,15 @@ public class Velocity extends Gene {
     private static final int MAX_VALUE = 20;
 
     public Velocity() {
-        super();
         super.minValue = MIN_VALUE;
         super.maxValue = MAX_VALUE;
+        super.mutate();
     }
 
     public Velocity(int value) {
-        super(value);
         super.minValue = MIN_VALUE;
         super.maxValue = MAX_VALUE;
+        super.value = value;
     }
 
     public Velocity(Velocity copy) {

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import static autobot.v1.drafts.lucas.auxy.MathUtils.random;
 
+
 public class Gene implements Serializable {
     // TODO: Mover para consts
     private static final double MUTATION_RATE = 0.05;
@@ -13,11 +14,6 @@ public class Gene implements Serializable {
     protected int maxValue;
 
     public Gene() {
-        mutate();
-    }
-
-    public Gene(int value) {
-        this.value = value;
     }
 
     public Gene(Gene copy) {
@@ -30,7 +26,7 @@ public class Gene implements Serializable {
         return this.value;
     }
 
-    private void mutate() {
+    protected void mutate() {
         this.value = random(minValue, maxValue);
     }
 
