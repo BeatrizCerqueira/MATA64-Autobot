@@ -15,8 +15,12 @@ public class Autobot extends AdvancedRobot {
 
     Enemy enemyBot = new Enemy();
 
-    public void run() {
+    // Genetic Algorithm Variables:
+    int turnsCount = 0;
+    private static final double TURNS_TO_EVALUATE = 10;
 
+
+    public void run() {
 
         Prolog2.checkHasSolution("Prolog.pl");
 
@@ -254,6 +258,15 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void checkGA() {
+
+
+        turnsCount++;
+
+        if (turnsCount >= TURNS_TO_EVALUATE) {
+            //getNextChromossome
+            //setScore(initialEnergy)
+        }
+
         //evaluate for X(10?) turns
 
         //if turnsToEvaluate = 0
@@ -263,6 +276,10 @@ public class Autobot extends AdvancedRobot {
         ////safeDist,aheadDist = getNextGene()
         ////setScore(initialEnergy)
 
+
+    }
+
+    public void initializeGA() {
 
     }
 

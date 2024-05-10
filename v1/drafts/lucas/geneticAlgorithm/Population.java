@@ -53,13 +53,17 @@ public class Population {
 
     public Chromossome getChromossome() {
         currentChromosomeIndex++;
+        checkNewGeneration();
+        return population.get(currentChromosomeIndex);
+    }
+
+    private void checkNewGeneration() {
         if (currentChromosomeIndex >= populationSize) {
             generation++;
             System.out.println("# Generation: " + generation + '\n');
             printPopulation();
             newGeneration();
         }
-        return population.get(currentChromosomeIndex);
     }
 
     private void newGeneration() {
@@ -114,12 +118,11 @@ public class Population {
 
         Population GA = new Population(genes);
 
-        Chromossome chromo = GA.getChromossome(); //1st
+        Chromossome chromossome = GA.getChromossome(); //1st
         for (int i = 0; i < populationSize * 3; i++) {
             GA.setScore(random(1, 20));
-            chromo = GA.getChromossome();
+            chromossome = GA.getChromossome();
         }
-//        Chromosome c = GA.getChromossome();
 
         // -----------
 
