@@ -10,7 +10,7 @@ public class Population {
     // Rates must be between 0 and 1. Determines probability of occurs
 
     // TODO: Mover para consts
-    private static final int POPULATION_SIZE = 5;
+    private static final int POPULATION_SIZE = 10;
 
     private static final double ELITISM_RATE = 0.4;
     private static final double CROSSOVER_RATE = (1 - ELITISM_RATE);
@@ -55,6 +55,8 @@ public class Population {
     }
 
     private void newGeneration() {
+        System.out.println("=== NEW GENERATION ===");
+
         generation++;
         currentChromosomeIndex = 0;
 
@@ -107,24 +109,10 @@ public class Population {
         int safeDistance = currentChromosome.getSafeDistance();
         int bordersMargin = currentChromosome.getBordersMargin();
 
-
         for (int i = 0; i < POPULATION_SIZE * 3; i++) {
             currentChromosome.setFitness(random(1, 20));
             currentChromosome = population.getNextChromosome();
         }
-
-        // -----------
-
-//        GeneticAlgorithm GA = new GeneticAlgorithm(genes);
-//        int generations = 5;
-//
-//        for (int i = 0; i < populationSize * generations; i++) {
-//            int chromo = GA.getNextChromosome();
-//            GA.setFitScore(random(1, 5));
-//        }
-//        GA.printPopulation();
-
+        
     }
-
-
 }

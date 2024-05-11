@@ -3,6 +3,8 @@ package autobot.v1.drafts.lucas;
 import autobot.v1.drafts.lucas.auxy.Consts;
 import autobot.v1.drafts.lucas.auxy.Draw;
 import autobot.v1.drafts.lucas.auxy.MathUtils;
+import autobot.v1.drafts.lucas.genetic.Chromosome;
+import autobot.v1.drafts.lucas.genetic.Population;
 import robocode.*;
 import robocode.util.Utils;
 
@@ -16,9 +18,14 @@ public class Autobot extends AdvancedRobot {
     Enemy enemyBot = new Enemy();
 
     // Genetic Algorithm Variables:
-    int turnsCount = 0;
-    private static final double TURNS_TO_EVALUATE = 10;
-
+    private static final int TURNS_TO_EVALUATE = 10;
+    int turnsCount = TURNS_TO_EVALUATE;
+    int velocityGA;
+    int safeDistanceGA;
+    int bordersMarginGA;
+    Population population = new Population();
+    Chromosome currentChromosome;  // = population.getNextChromosome()
+    double energyBeforeFitness = 100; //max
 
     public void run() {
 
@@ -146,8 +153,9 @@ public class Autobot extends AdvancedRobot {
         setTurnRight(headTurn);
 
         // ahead
-        double aheadDist = MathUtils.random(0, 20);   //distance to move forward
-        setAhead(aheadDist);
+//        double aheadDist = MathUtils.random(0, 20);   //distance to move forward
+//        setAhead(aheadDist);
+        setAhead(velocityGA);
     }
 
     public void checkBorders() {
@@ -157,8 +165,10 @@ public class Autobot extends AdvancedRobot {
         double x = robotLocation.getX() - xLimit;
         double y = robotLocation.getY() - yLimit;
 
-        boolean xMargin = xLimit - (Math.abs(x)) < Consts.WALL_MARGIN;
-        boolean yMargin = yLimit - (Math.abs(y)) < Consts.WALL_MARGIN;
+//        boolean xMargin = xLimit - (Math.abs(x)) < Consts.WALL_MARGIN;
+//        boolean yMargin = yLimit - (Math.abs(y)) < Consts.WALL_MARGIN;
+        boolean xMargin = xLimit - (Math.abs(x)) < bordersMarginGA;
+        boolean yMargin = yLimit - (Math.abs(y)) < bordersMarginGA;
 
         if (xMargin || yMargin) {
             double xSign = xMargin ? Math.signum(x) : 0;
@@ -213,7 +223,9 @@ public class Autobot extends AdvancedRobot {
 
     public void checkEnemyIsClose() {
 //        boolean isEnemyClose = enemyBot.getDistance() < Consts.SAFE_DISTANCE;
-        boolean isEnemyClose = Prolog2.isEnemyClose(enemyBot.getDistance(), Consts.SAFE_DISTANCE);
+//        boolean isEnemyClose = Prolog2.isEnemyClose(enemyBot.getDistance(), Consts.SAFE_DISTANCE);
+        boolean isEnemyClose = Prolog2.isEnemyClose(enemyBot.getDistance(), safeDistanceGA);
+
         if (isEnemyClose) {
             setAhead(50);
         }
@@ -253,34 +265,45 @@ public class Autobot extends AdvancedRobot {
         enemyBot.passTurn(getGunCoolingRate());
 
         // apply genetic algorithm
-        checkGA();
+        updateGA();
 
     }
 
-    public void checkGA() {
-
+    public void updateGA() {
+        // first population should be desconsidered?
+        // first 30 turns there are no way of getting hit...
 
         turnsCount++;
+//        out.println("turn " + turnsCount);
 
         if (turnsCount >= TURNS_TO_EVALUATE) {
-            //getNextChromossome
-            //setScore(initialEnergy)
+
+            int fitness = (int) (energyBeforeFitness - getEnergy());
+
+            if (currentChromosome != null) {
+                out.println(" score " + fitness);
+                currentChromosome.setFitness(fitness); //pass energyDif
+            }
+
+            currentChromosome = population.getNextChromosome();
+            updateValuesGA();
+
+            turnsCount = 0;
+            energyBeforeFitness = getEnergy();
         }
-
-        //evaluate for X(10?) turns
-
-        //if turnsToEvaluate = 0
-        ////if gene !=null
-        //////setScore(energyDecreased)
-
-        ////safeDist,aheadDist = getNextGene()
-        ////setScore(initialEnergy)
-
-
     }
 
-    public void initializeGA() {
 
+    public void updateValuesGA() {
+        // To access chromosome data
+        velocityGA = currentChromosome.getVelocity();
+        safeDistanceGA = currentChromosome.getSafeDistance();
+        bordersMarginGA = currentChromosome.getBordersMargin();
+        System.out.print("Chromosome <");
+        System.out.print(" vel: " + velocityGA);
+        System.out.print(", saf: " + safeDistanceGA);
+        System.out.print(", bor: " + bordersMarginGA);
+        System.out.print("> ");
     }
 
 }

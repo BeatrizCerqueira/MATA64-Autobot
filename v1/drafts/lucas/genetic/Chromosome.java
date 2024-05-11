@@ -71,6 +71,6 @@ public class Chromosome implements Comparable<Chromosome>, Serializable {
     @Override
     public int compareTo(Chromosome o) {
         // Ascending order
-        return Integer.compare(o.fitness, this.fitness);
+        return Integer.compare(this.fitness, o.fitness);
     }
 }
