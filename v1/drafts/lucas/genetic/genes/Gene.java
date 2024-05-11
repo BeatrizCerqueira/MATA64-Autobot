@@ -6,7 +6,7 @@ import static autobot.v1.drafts.lucas.auxy.MathUtils.random;
 
 public abstract class Gene implements Serializable {
     // TODO: Mover para consts
-    private static final double MUTATION_RATE = 0.05;
+    private static final double MUTATION_RATE = 0.1;
 
     int value;
     int minValue;
@@ -16,8 +16,8 @@ public abstract class Gene implements Serializable {
 
     void copy(Gene copy) {
         this.value = copy.value;
-        this.minValue = copy.value;
-        this.maxValue = copy.value;
+        this.minValue = copy.minValue;
+        this.maxValue = copy.maxValue;
     }
 
     void mutate() {
