@@ -34,6 +34,8 @@ public class Autobot extends AdvancedRobot {
 
         Prolog2.checkHasSolution("Prolog.pl");
         GeneticAlgorithm.init();
+        enablePrintFlags();
+        changeRobotColors();
 
         setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
         setAdjustRadarForGunTurn(true);
@@ -51,6 +53,7 @@ public class Autobot extends AdvancedRobot {
 
         } while (true);
     }
+
 
     public void onHitByBullet(HitByBulletEvent e) {
         // TODO: setTurn perpendicular ao inimigo
@@ -298,6 +301,16 @@ public class Autobot extends AdvancedRobot {
         bordersMarginGA = GeneticAlgorithm.getBordersMargin();
     }
 
+    private void enablePrintFlags() {
+        GeneticAlgorithm.enablePrintTestingChromosomes();
+        GeneticAlgorithm.enablePrintGenerationScoring();
+    }
+
+    private void changeRobotColors() {
+        setBodyColor(Color.BLACK);
+        setGunColor(Color.BLACK);
+        setRadarColor(Color.white);
+    }
 }
 
 

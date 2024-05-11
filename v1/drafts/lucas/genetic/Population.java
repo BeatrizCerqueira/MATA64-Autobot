@@ -8,7 +8,7 @@ import static autobot.v1.drafts.lucas.auxy.Consts.*;
 import static autobot.v1.drafts.lucas.auxy.MathUtils.random;
 
 public class Population {
-    // Rates must be between 0 and 1. Determines probability of occurs
+    private boolean enablePrints = false;
 
     List<Chromosome> currentGeneration = new ArrayList<>();
     List<Chromosome> nextGeneration = new ArrayList<>();
@@ -47,7 +47,8 @@ public class Population {
         currentChromosomeIndex = 0;
 
         Collections.sort(currentGeneration);
-//        printGeneration();
+        if (enablePrints)
+            printGeneration();
 
         elitism();
         crossover();
@@ -83,6 +84,9 @@ public class Population {
         }
     }
 
+    public void enablePrints() {
+        this.enablePrints = true;
+    }
 
     // ====== DEBUG ======
     public static void main(String[] args) {

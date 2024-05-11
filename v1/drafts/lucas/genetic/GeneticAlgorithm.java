@@ -3,6 +3,8 @@ package autobot.v1.drafts.lucas.genetic;
 import static autobot.v1.drafts.lucas.auxy.Consts.TURNS_TO_EVALUATE;
 
 public class GeneticAlgorithm {
+    private static boolean enablePrints = false;
+
     static int turnsCount = 1;
 
     static Chromosome currentChromosome;
@@ -27,14 +29,10 @@ public class GeneticAlgorithm {
 
             energyBeforeFitness = currentEnergy;
             currentChromosome = population.getNextChromosome();
-            printCurrentChromosome();
+            if (enablePrints)
+                printCurrentChromosome();
 
         }
-    }
-
-    private static void printCurrentChromosome() {
-        System.out.print("# Testing ");
-        currentChromosome.printChromosome();
     }
 
     public static int getVelocity() {
@@ -47,6 +45,19 @@ public class GeneticAlgorithm {
 
     public static int getBordersMargin() {
         return currentChromosome.getBordersMargin();
+    }
+
+    private static void printCurrentChromosome() {
+        System.out.print("# Testing ");
+        currentChromosome.printChromosome();
+    }
+
+    public static void enablePrintTestingChromosomes() {
+        GeneticAlgorithm.enablePrints = true;
+    }
+
+    public static void enablePrintGenerationScoring() {
+        population.enablePrints();
     }
 
     public static void main(String[] args) {

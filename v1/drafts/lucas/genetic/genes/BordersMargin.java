@@ -3,7 +3,7 @@ package autobot.v1.drafts.lucas.genetic.genes;
 public class BordersMargin extends Gene {
 
     // TODO: Mover para consts
-    private static final int MIN_VALUE = 20;
+    private static final int MIN_VALUE = 25;
     private static final int MAX_VALUE = 100;
 
     public BordersMargin() {
