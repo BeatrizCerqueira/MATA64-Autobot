@@ -54,22 +54,6 @@ public class Move2 extends AdvancedRobot {
 
     public void moveRobot() {
 
-        //TODO: Mudar direção ao levar dano (evitar tiros)
-        //TODO: Mudar direção ao colidir com parede
-        //          prioridade eventos parede > tiro > scanned
-
-        //TODO: se estiver mais perto, ande mais (se dist < X, ande o dobro)
-
-        //TODO: estrategia defensiva de colisão (fugir do inimigo)
-
-        //TODO: outras formas do inimigo perder energia (dano por tiro/colisão c parede)
-        //          if  onBulletHit / energia<< e vel<<
-
-        //TODO: aumentar distancia de fuga proporcional a distancia do robo inimigo
-
-        //TODO: ajustar enemyHeat minimo para mover mais
-
-
         double maxHeadTurn = (10 - (0.75 * getVelocity())); //max robot can turn considering its velocity
         double headTurn = random(-1 * maxHeadTurn, maxHeadTurn);    //random relative angle to turn
 
@@ -132,8 +116,6 @@ public class Move2 extends AdvancedRobot {
 
 
     public void onScannedRobot(ScannedRobotEvent e) {
-
-        //TODO: fire algorithm
 
         // # Variables and calculations
 

@@ -26,7 +26,7 @@ public class Autobot extends AdvancedRobot {
 
         Prolog2.checkHasSolution("Prolog.pl");
         GeneticAlgorithm.init();
-//        enablePrintGA();
+        enablePrintGA();
         changeRobotColors();
 
         setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
@@ -290,7 +290,7 @@ public class Autobot extends AdvancedRobot {
     }
 
     private void enablePrintGA() {
-        GeneticAlgorithm.enablePrintTestingChromosomes();
+//        GeneticAlgorithm.enablePrintTestingChromosomes();
         GeneticAlgorithm.enablePrintGenerationScoring();
     }
 
