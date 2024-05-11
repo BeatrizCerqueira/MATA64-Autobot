@@ -1,32 +1,26 @@
-package autobot.v1.drafts.lucas.genetic;
+package autobot.v1.drafts.lucas.genetic.genes;
 
 import java.io.Serializable;
 
 import static autobot.v1.drafts.lucas.auxy.MathUtils.random;
 
-
-public class Gene implements Serializable {
+public abstract class Gene implements Serializable {
     // TODO: Mover para consts
     private static final double MUTATION_RATE = 0.05;
 
-    protected int value;
-    protected int minValue;
-    protected int maxValue;
+    int value;
+    int minValue;
+    int maxValue;
 
-    public Gene() {
-    }
+    public abstract Gene copy();
 
-    public Gene(Gene copy) {
+    void copy(Gene copy) {
         this.value = copy.value;
         this.minValue = copy.value;
         this.maxValue = copy.value;
     }
 
-    public int getValue() {
-        return this.value;
-    }
-
-    protected void mutate() {
+    void mutate() {
         this.value = random(minValue, maxValue);
     }
 
@@ -35,6 +29,10 @@ public class Gene implements Serializable {
         if (randomNum < (MUTATION_RATE * 100)) {
             mutate();
         }
+    }
+
+    public int getValue() {
+        return this.value;
     }
 
 }

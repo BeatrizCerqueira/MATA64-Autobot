@@ -1,7 +1,5 @@
 package autobot.v1.drafts.lucas.genetic.genes;
 
-import autobot.v1.drafts.lucas.genetic.Gene;
-
 public class SafeDistance extends Gene {
 
     // TODO: Mover para consts
@@ -21,6 +19,11 @@ public class SafeDistance extends Gene {
     }
 
     public SafeDistance(SafeDistance copy) {
-        super(copy);
+        super.copy(copy);
+    }
+
+    @Override
+    public SafeDistance copy() {
+        return new SafeDistance(this);
     }
 }

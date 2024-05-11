@@ -1,6 +1,7 @@
 package autobot.v1.drafts.lucas.genetic;
 
 import autobot.v1.drafts.lucas.genetic.genes.BordersMargin;
+import autobot.v1.drafts.lucas.genetic.genes.Gene;
 import autobot.v1.drafts.lucas.genetic.genes.SafeDistance;
 import autobot.v1.drafts.lucas.genetic.genes.Velocity;
 
@@ -61,7 +62,7 @@ public class Chromosome implements Comparable<Chromosome>, Serializable {
         List<Chromosome> parents = List.of(parent1, parent2);
         for (String key : parent1.genes.keySet()) {
             int selectedParent = random(0, 1);
-            Gene selectedGene = new Gene(parents.get(selectedParent).genes.get(key));
+            Gene selectedGene = parents.get(selectedParent).genes.get(key).copy();
             selectedGene.randomlyMutate();
             childGenes.put(key, selectedGene);
         }

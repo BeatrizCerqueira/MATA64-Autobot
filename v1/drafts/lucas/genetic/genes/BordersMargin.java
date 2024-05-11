@@ -1,7 +1,5 @@
 package autobot.v1.drafts.lucas.genetic.genes;
 
-import autobot.v1.drafts.lucas.genetic.Gene;
-
 public class BordersMargin extends Gene {
 
     // TODO: Mover para consts
@@ -21,7 +19,12 @@ public class BordersMargin extends Gene {
     }
 
     public BordersMargin(BordersMargin copy) {
-        super(copy);
+        super.copy(copy);
+    }
+
+    @Override
+    public BordersMargin copy() {
+        return new BordersMargin(this);
     }
 
 }
