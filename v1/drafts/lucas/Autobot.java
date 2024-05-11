@@ -18,6 +18,7 @@ public class Autobot extends AdvancedRobot {
     Enemy enemyBot = new Enemy();
 
     // Genetic Algorithm Variables:
+    private static final int TURNS_TO_INIT_GA = 20;
     private static final int TURNS_TO_EVALUATE = 10;
     int turnsCount = TURNS_TO_EVALUATE;
     int velocityGA;
@@ -50,12 +51,15 @@ public class Autobot extends AdvancedRobot {
 
     public void onHitByBullet(HitByBulletEvent e) {
         // TODO: setTurn perpendicular ao inimigo
-        //  verificar borda?
+        // TODO verificar bordas para não andar em direção a parede. ahead negativo nesses casos
+        // usar prolog?
+
         ahead(10);
 
     }
 
     public void onHitWall(HitWallEvent e) {
+        back(20);
         checkBorders();
     }
 
@@ -76,7 +80,7 @@ public class Autobot extends AdvancedRobot {
 
         // Draw robot's security zone
         g.setColor(Color.green);
-        Draw.drawCircle(g, getX(), getY(), Consts.SAFE_DISTANCE);
+        Draw.drawCircle(g, getX(), getY(), safeDistanceGA);
     }
 
     // # Class for Radar/Gun:
@@ -227,7 +231,7 @@ public class Autobot extends AdvancedRobot {
         boolean isEnemyClose = Prolog2.isEnemyClose(enemyBot.getDistance(), safeDistanceGA);
 
         if (isEnemyClose) {
-            setAhead(50);
+            setAhead(20);
         }
     }
 
@@ -273,15 +277,16 @@ public class Autobot extends AdvancedRobot {
         // first population should be desconsidered?
         // first 30 turns there are no way of getting hit...
 
+        if (getTime() < TURNS_TO_INIT_GA)   //on initial turns is not possible to evaluate any data, since both guns are hot and no harm can be done
+            return;
+
         turnsCount++;
-//        out.println("turn " + turnsCount);
 
         if (turnsCount >= TURNS_TO_EVALUATE) {
 
             int fitness = (int) (energyBeforeFitness - getEnergy());
 
             if (currentChromosome != null) {
-                out.println(" score " + fitness);
                 currentChromosome.setFitness(fitness); //pass energyDif
             }
 
@@ -299,11 +304,9 @@ public class Autobot extends AdvancedRobot {
         velocityGA = currentChromosome.getVelocity();
         safeDistanceGA = currentChromosome.getSafeDistance();
         bordersMarginGA = currentChromosome.getBordersMargin();
-        System.out.print("Chromosome <");
-        System.out.print(" vel: " + velocityGA);
-        System.out.print(", saf: " + safeDistanceGA);
-        System.out.print(", bor: " + bordersMarginGA);
-        System.out.print("> ");
+
+        System.out.print("Testing");
+        currentChromosome.printChromosome();
     }
 
 }

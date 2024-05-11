@@ -74,4 +74,14 @@ public class Chromosome implements Comparable<Chromosome>, Serializable {
         // Ascending order
         return Integer.compare(this.fitness, o.fitness);
     }
+
+    public void printChromosome() {
+        System.out.print("Chromosome <");
+        System.out.print(" vel: " + getVelocity());
+        System.out.print(", saf: " + getSafeDistance());
+        System.out.print(", bor: " + getBordersMargin());
+        System.out.print("> ");
+        System.out.print("Score: ");
+        System.out.println(fitness);
+    }
 }

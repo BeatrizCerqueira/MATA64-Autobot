@@ -10,9 +10,9 @@ public class Population {
     // Rates must be between 0 and 1. Determines probability of occurs
 
     // TODO: Mover para consts
-    private static final int POPULATION_SIZE = 10;
+    private static final int POPULATION_SIZE = 8;
 
-    private static final double ELITISM_RATE = 0.4;
+    private static final double ELITISM_RATE = 0;
     private static final double CROSSOVER_RATE = (1 - ELITISM_RATE);
 
     private static final double CROSSOVER_FIRST_PARENT_RATE = 0.4;
@@ -36,17 +36,16 @@ public class Population {
         }
     }
 
-//    private void printPopulation() {
-//        for (Chromosome individual : population) {
-//            System.out.println("Score: " + individual.fitness);
-//            for (Gene gene : individual.genes) {
-//                System.out.print(gene.getDescription());
-//                System.out.print(" ");
-//                System.out.println(gene.getValue());
-//            }
-//            System.out.println();
-//        }
-//    }
+    public void printGeneration() {
+        System.out.print("Generation: ");
+        System.out.println(generation);
+
+        for (Chromosome individual : currentGeneration) {
+            individual.printChromosome();
+        }
+        System.out.println();
+
+    }
 
     public Chromosome getNextChromosome() {
         currentChromosomeIndex++;
@@ -61,6 +60,7 @@ public class Population {
         currentChromosomeIndex = 0;
 
         Collections.sort(currentGeneration);
+        printGeneration();
 
         elitism();
         crossover();
@@ -110,9 +110,9 @@ public class Population {
         int bordersMargin = currentChromosome.getBordersMargin();
 
         for (int i = 0; i < POPULATION_SIZE * 3; i++) {
-            currentChromosome.setFitness(random(1, 20));
+            currentChromosome.setFitness(random(-10, 10));
             currentChromosome = population.getNextChromosome();
         }
-        
+
     }
 }
