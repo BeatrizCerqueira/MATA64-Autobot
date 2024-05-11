@@ -74,7 +74,6 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void onPaint(Graphics2D g) {
-
         // Draw robot's security zone
         g.setColor(Color.green);
         Draw.drawCircle(g, getX(), getY(), safeDistanceGA);
