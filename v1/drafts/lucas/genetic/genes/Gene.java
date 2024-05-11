@@ -2,7 +2,7 @@ package autobot.v1.drafts.lucas.genetic.genes;
 
 import java.io.Serializable;
 
-import static autobot.v1.drafts.lucas.auxy.Consts.MUTATION_RATE;
+import static autobot.v1.drafts.lucas.auxy.Consts.MUTATION_PROBABILITY;
 import static autobot.v1.drafts.lucas.auxy.MathUtils.random;
 
 public abstract class Gene implements Serializable {
@@ -24,7 +24,7 @@ public abstract class Gene implements Serializable {
 
     public void randomlyMutate() {
         int randomNum = random(0, 100);
-        if (randomNum < (MUTATION_RATE * 100)) {
+        if (randomNum < (MUTATION_PROBABILITY * 100)) {
             mutate();
         }
     }

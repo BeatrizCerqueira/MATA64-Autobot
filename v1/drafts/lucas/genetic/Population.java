@@ -71,10 +71,10 @@ public class Population {
 
         for (int i = 0; i < CROSSOVER_COUNT; i++) {
 
-            int indexP1 = random(0, CROSSOVER_FIRST_PARENT_COUNT - 1);
+            int indexP1 = random(0, CROSSOVER_PARENT1_COUNT - 1);
             Chromosome parent1 = currentGeneration.get(indexP1);
 
-            int indexP2 = random(CROSSOVER_SECOND_PARENT_COUNT, POPULATION_SIZE - 1);
+            int indexP2 = random(CROSSOVER_PARENT2_COUNT, POPULATION_SIZE - 1);
             Chromosome parent2 = currentGeneration.get(indexP2);
 
             Chromosome child = Chromosome.generateChild(parent1, parent2);

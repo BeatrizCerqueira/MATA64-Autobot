@@ -6,16 +6,23 @@ public class Consts {
     // Genetic Algorithm consts
     public static final int POPULATION_SIZE = 8;
 
-    public static final double MUTATION_RATE = 0.05;
-    private static final double ELITISM_RATE = 0;
-    private static final double CROSSOVER_RATE = (1 - ELITISM_RATE);
+    public static final double MUTATION_PROBABILITY = 0.05;
 
-    private static final double CROSSOVER_FIRST_PARENT_RATE = 0.4;
-    private static final double CROSSOVER_SECOND_PARENT_RATE = (1 - CROSSOVER_FIRST_PARENT_RATE);
+    // Percentage of individuals passed to next generations by each method
+    private static final double ELITISM_PERCENTAGE = 0;
+    private static final double CROSSOVER_PERCENTAGE = (1 - ELITISM_PERCENTAGE);
 
-    public static final int ELITISM_COUNT = (int) (ELITISM_RATE * POPULATION_SIZE);
-    public static final int CROSSOVER_COUNT = (int) (CROSSOVER_RATE * POPULATION_SIZE);
-    public static final int CROSSOVER_FIRST_PARENT_COUNT = (int) (CROSSOVER_FIRST_PARENT_RATE * POPULATION_SIZE);
-    public static final int CROSSOVER_SECOND_PARENT_COUNT = (int) (CROSSOVER_SECOND_PARENT_RATE * POPULATION_SIZE);
+    // How many individuals will pass to next generation according to each method
+    public static final int ELITISM_COUNT = (int) (ELITISM_PERCENTAGE * POPULATION_SIZE);
+    public static final int CROSSOVER_COUNT = (int) (CROSSOVER_PERCENTAGE * POPULATION_SIZE);
+
+    // Percentage for parent selection on crossover.
+    // Parent1 will be selected among CROSSOVER_PARENT1_RATE % of fittest individuals, Parent2 among the rest
+    private static final double CROSSOVER_PARENT1_RATE = 0.4;
+    private static final double CROSSOVER_PARENT2_RATE = (1 - CROSSOVER_PARENT1_RATE);
+
+    // How many individuals are in each group for crossover
+    public static final int CROSSOVER_PARENT1_COUNT = (int) (CROSSOVER_PARENT1_RATE * POPULATION_SIZE);
+    public static final int CROSSOVER_PARENT2_COUNT = (int) (CROSSOVER_PARENT2_RATE * POPULATION_SIZE);
 
 }
