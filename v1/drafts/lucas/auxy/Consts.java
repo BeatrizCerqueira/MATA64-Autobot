@@ -6,6 +6,9 @@ public class Consts {
     // Genetic Algorithm consts
     public static final int POPULATION_SIZE = 8;
 
+    public static final int TURNS_TO_INIT_GA = 20; // How many turns until start evaluating chromosomes
+    public static final int TURNS_TO_EVALUATE = 10; // How many turns each evaluating cycle lasts
+
     public static final double MUTATION_PROBABILITY = 0.05;
 
     // Percentage of individuals passed to next generations by each method

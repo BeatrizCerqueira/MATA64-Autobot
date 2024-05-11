@@ -11,6 +11,9 @@ import robocode.util.Utils;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
+import static autobot.v1.drafts.lucas.auxy.Consts.TURNS_TO_EVALUATE;
+import static autobot.v1.drafts.lucas.auxy.Consts.TURNS_TO_INIT_GA;
+
 public class Autobot extends AdvancedRobot {
 
     Point2D robotLocation;
@@ -18,8 +21,6 @@ public class Autobot extends AdvancedRobot {
     Enemy enemyBot = new Enemy();
 
     // Genetic Algorithm Variables:
-    private static final int TURNS_TO_INIT_GA = 20;
-    private static final int TURNS_TO_EVALUATE = 10;
     int turnsCount = TURNS_TO_EVALUATE;
     int velocityGA;
     int safeDistanceGA;
@@ -274,8 +275,6 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void updateGA() {
-        // first population should be desconsidered?
-        // first 30 turns there are no way of getting hit...
 
         if (getTime() < TURNS_TO_INIT_GA) {   //on initial turns is not possible to evaluate any data, since both guns are hot and no harm can be done
             energyBeforeFitness = getEnergy();
