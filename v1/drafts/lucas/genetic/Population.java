@@ -4,24 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static autobot.v1.drafts.lucas.auxy.Consts.*;
 import static autobot.v1.drafts.lucas.auxy.MathUtils.random;
 
 public class Population {
     // Rates must be between 0 and 1. Determines probability of occurs
-
-    // TODO: Mover para consts
-    private static final int POPULATION_SIZE = 8;
-
-    private static final double ELITISM_RATE = 0;
-    private static final double CROSSOVER_RATE = (1 - ELITISM_RATE);
-
-    private static final double CROSSOVER_FIRST_PARENT_RATE = 0.4;
-    private static final double CROSSOVER_SECOND_PARENT_RATE = (1 - CROSSOVER_FIRST_PARENT_RATE);
-
-    private static final int ELITISM_COUNT = (int) (ELITISM_RATE * POPULATION_SIZE);
-    private static final int CROSSOVER_COUNT = (int) (CROSSOVER_RATE * POPULATION_SIZE);
-    private static final int CROSSOVER_FIRST_PARENT_COUNT = (int) (CROSSOVER_FIRST_PARENT_RATE * POPULATION_SIZE);
-    private static final int CROSSOVER_SECOND_PARENT_COUNT = (int) (CROSSOVER_SECOND_PARENT_RATE * POPULATION_SIZE);
 
     List<Chromosome> currentGeneration = new ArrayList<>();
     List<Chromosome> nextGeneration = new ArrayList<>();

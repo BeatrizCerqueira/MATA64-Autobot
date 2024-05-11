@@ -26,7 +26,7 @@ public class Autobot extends AdvancedRobot {
     int bordersMarginGA;
     Population population = new Population();
     Chromosome currentChromosome;  // = population.getNextChromosome()
-    double energyBeforeFitness = 100; //max
+    double energyBeforeFitness; //max
 
     public void run() {
 
@@ -277,8 +277,10 @@ public class Autobot extends AdvancedRobot {
         // first population should be desconsidered?
         // first 30 turns there are no way of getting hit...
 
-        if (getTime() < TURNS_TO_INIT_GA)   //on initial turns is not possible to evaluate any data, since both guns are hot and no harm can be done
+        if (getTime() < TURNS_TO_INIT_GA) {   //on initial turns is not possible to evaluate any data, since both guns are hot and no harm can be done
+            energyBeforeFitness = getEnergy();
             return;
+        }
 
         turnsCount++;
 
