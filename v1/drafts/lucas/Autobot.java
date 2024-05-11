@@ -3,16 +3,12 @@ package autobot.v1.drafts.lucas;
 import autobot.v1.drafts.lucas.auxy.Consts;
 import autobot.v1.drafts.lucas.auxy.Draw;
 import autobot.v1.drafts.lucas.auxy.MathUtils;
-import autobot.v1.drafts.lucas.genetic.Chromosome;
-import autobot.v1.drafts.lucas.genetic.Population;
+import autobot.v1.drafts.lucas.genetic.GeneticAlgorithm;
 import robocode.*;
 import robocode.util.Utils;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-
-import static autobot.v1.drafts.lucas.auxy.Consts.TURNS_TO_EVALUATE;
-import static autobot.v1.drafts.lucas.auxy.Consts.TURNS_TO_INIT_GA;
 
 public class Autobot extends AdvancedRobot {
 
@@ -21,17 +17,21 @@ public class Autobot extends AdvancedRobot {
     Enemy enemyBot = new Enemy();
 
     // Genetic Algorithm Variables:
-    int turnsCount = TURNS_TO_INIT_GA;
     int velocityGA;
     int safeDistanceGA;
     int bordersMarginGA;
-    Population population = new Population();
-    Chromosome currentChromosome;
-    double energyBeforeFitness;
+
+//    int turnsCount = TURNS_TO_INIT_GA;
+//    Population population = new Population();
+//    Chromosome currentChromosome;
+//    double energyBeforeFitness;
+
+//    GeneticAlgorithm.init();
 
     public void run() {
 
         Prolog2.checkHasSolution("Prolog.pl");
+        GeneticAlgorithm.init();
 
         setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
         setAdjustRadarForGunTurn(true);
@@ -216,7 +216,6 @@ public class Autobot extends AdvancedRobot {
         setAhead(aheadDist);
     }
 
-
     /**
      * If enemy gun is ready, setAhead(0)
      */
@@ -270,39 +269,16 @@ public class Autobot extends AdvancedRobot {
         enemyBot.passTurn(getGunCoolingRate());
 
         // apply genetic algorithm
-        updateGA();
+        ApplyGeneticAlogorithm();
 
     }
 
-    public void updateGA() {
+    public void ApplyGeneticAlogorithm() {
+        GeneticAlgorithm.updateGA(getEnergy());
 
-        turnsCount--;
-
-        if (turnsCount < 1) {
-
-            if (currentChromosome != null) {
-                double energyDiff = energyBeforeFitness - getEnergy(); // Calculate energy diff since last evaluation cycle
-                currentChromosome.setFitness(energyDiff);
-            }
-
-            energyBeforeFitness = getEnergy();
-
-            currentChromosome = population.getNextChromosome();
-            updateValuesGA();
-
-            turnsCount = TURNS_TO_EVALUATE;
-        }
-    }
-
-
-    public void updateValuesGA() {
-        // To access chromosome data
-        velocityGA = currentChromosome.getVelocity();
-        safeDistanceGA = currentChromosome.getSafeDistance();
-        bordersMarginGA = currentChromosome.getBordersMargin();
-
-//        System.out.print("Testing");
-//        currentChromosome.printChromosome();
+        velocityGA = GeneticAlgorithm.getVelocity();
+        safeDistanceGA = GeneticAlgorithm.getSafeDistance();
+        bordersMarginGA = GeneticAlgorithm.getBordersMargin();
     }
 
 }
