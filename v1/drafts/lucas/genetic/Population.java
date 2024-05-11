@@ -24,6 +24,7 @@ public class Population {
     }
 
     public void printGeneration() {
+        System.out.println("=== NEW GENERATION ===");
         System.out.print("Generation: ");
         System.out.println(generation);
 
@@ -41,13 +42,12 @@ public class Population {
     }
 
     private void newGeneration() {
-        System.out.println("=== NEW GENERATION ===");
 
         generation++;
         currentChromosomeIndex = 0;
 
         Collections.sort(currentGeneration);
-        printGeneration();
+//        printGeneration();
 
         elitism();
         crossover();

@@ -30,6 +30,8 @@ public class Autobot extends AdvancedRobot {
 
     public void run() {
 
+        out.println("HEY");
+
         Prolog2.checkHasSolution("Prolog.pl");
         GeneticAlgorithm.init();
 
@@ -60,7 +62,7 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void onHitWall(HitWallEvent e) {
-        back(20);
+//        back(20);
         checkBorders();
     }
 
@@ -77,11 +79,26 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void onPaint(Graphics2D g) {
+
+
         // robot size = 40
 
         // Draw robot's security zone
         g.setColor(Color.green);
         Draw.drawCircle(g, getX(), getY(), safeDistanceGA);
+
+        // Draw bordersMargin
+        int w = (int) getBattleFieldWidth();
+        int h = (int) getBattleFieldHeight();
+        int margin = bordersMarginGA;
+
+        g.setColor(new Color(0xff, 0x00, 0x00, 0x20));
+        g.fillRect(0, 0, margin, h);            // left
+        g.fillRect(0, 0, w, margin);            // bottom
+        g.fillRect(w - margin, 0, margin, h);   // right
+        g.fillRect(0, h - margin, w, margin);   // upper
+
+
     }
 
     // # Class for Radar/Gun:

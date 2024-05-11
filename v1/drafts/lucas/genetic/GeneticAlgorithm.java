@@ -27,7 +27,7 @@ public class GeneticAlgorithm {
 
             energyBeforeFitness = currentEnergy;
             currentChromosome = population.getNextChromosome();
-//            printCurrentChromosome();
+            printCurrentChromosome();
 
         }
     }

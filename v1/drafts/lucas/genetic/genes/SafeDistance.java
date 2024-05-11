@@ -4,7 +4,7 @@ public class SafeDistance extends Gene {
 
     // TODO: Mover para consts
     private static final int MIN_VALUE = 40;
-    private static final int MAX_VALUE = 1000;
+    private static final int MAX_VALUE = 800;
 
     public SafeDistance() {
         super.minValue = MIN_VALUE;
