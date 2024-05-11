@@ -21,20 +21,12 @@ public class Autobot extends AdvancedRobot {
     int safeDistanceGA;
     int bordersMarginGA;
 
-//    int turnsCount = TURNS_TO_INIT_GA;
-//    Population population = new Population();
-//    Chromosome currentChromosome;
-//    double energyBeforeFitness;
-
-//    GeneticAlgorithm.init();
 
     public void run() {
 
-        out.println("HEY");
-
         Prolog2.checkHasSolution("Prolog.pl");
         GeneticAlgorithm.init();
-        enablePrintFlags();
+//        enablePrintGA();
         changeRobotColors();
 
         setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
@@ -82,9 +74,6 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void onPaint(Graphics2D g) {
-
-
-        // robot size = 40
 
         // Draw robot's security zone
         g.setColor(Color.green);
@@ -216,8 +205,9 @@ public class Autobot extends AdvancedRobot {
         boolean isAtEdge = xMargin && yMargin;
 
         // at positive edges (2Q and 3Q), use same calc as xMargin
-        if (isAtEdge)   //      boolean xMargin = isAtEdge ? xSign * ySign > 1 : xSign != 0;
-            xMargin = xSign * ySign > 1;
+        if (isAtEdge) {
+            xMargin = (xSign * ySign) > 0;
+        }
 
         // If next to x borders, or in positive edges, use Math.acos(-x)
         // Otherwise, use Math.asin(y)
@@ -246,8 +236,6 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void checkEnemyIsClose() {
-//        boolean isEnemyClose = enemyBot.getDistance() < Consts.SAFE_DISTANCE;
-//        boolean isEnemyClose = Prolog2.isEnemyClose(enemyBot.getDistance(), Consts.SAFE_DISTANCE);
         boolean isEnemyClose = Prolog2.isEnemyClose(enemyBot.getDistance(), safeDistanceGA);
 
         if (isEnemyClose) {
@@ -270,7 +258,7 @@ public class Autobot extends AdvancedRobot {
 
         // set distance and turn
         moveRandomly();         // default behavior - less priority
-        checkBorders();         // turn to escape borders - max priority - setTurn final
+        checkBorders();         // turn to escape borders - setTurn
 
         // if enemy bot not scanned, skip next methods
         if (!enemyBot.isScanned())
@@ -301,7 +289,7 @@ public class Autobot extends AdvancedRobot {
         bordersMarginGA = GeneticAlgorithm.getBordersMargin();
     }
 
-    private void enablePrintFlags() {
+    private void enablePrintGA() {
         GeneticAlgorithm.enablePrintTestingChromosomes();
         GeneticAlgorithm.enablePrintGenerationScoring();
     }
