@@ -1,10 +1,12 @@
 package autobot.v1.drafts.lucas.genetic.genes;
 
+import static autobot.v1.drafts.lucas.auxy.Consts.SAFE_DISTANCE_MAX;
+import static autobot.v1.drafts.lucas.auxy.Consts.SAFE_DISTANCE_MIN;
+
 public class SafeDistance extends Gene {
 
-    // TODO: Mover para consts
-    private static final int MIN_VALUE = 40;
-    private static final int MAX_VALUE = 800;
+    private static final int MIN_VALUE = SAFE_DISTANCE_MIN;
+    private static final int MAX_VALUE = SAFE_DISTANCE_MAX;
 
     public SafeDistance() {
         super.minValue = MIN_VALUE;

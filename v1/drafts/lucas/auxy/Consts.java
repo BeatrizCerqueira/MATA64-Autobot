@@ -1,7 +1,9 @@
 package autobot.v1.drafts.lucas.auxy;
+// import static autobot.v1.drafts.lucas.auxy.Consts.
 
 public class Consts {
     public static final double RADAR_COVERAGE_DIST = 15.0; // Distance we want to scan from middle of enemy to either side
+
 
     // Genetic Algorithm consts
     public static final int POPULATION_SIZE = 8;
@@ -27,5 +29,16 @@ public class Consts {
     // How many individuals are in each group for crossover
     public static final int CROSSOVER_PARENT1_COUNT = (int) (CROSSOVER_PARENT1_RATE * POPULATION_SIZE);
     public static final int CROSSOVER_PARENT2_COUNT = (int) (CROSSOVER_PARENT2_RATE * POPULATION_SIZE);
+
+    // Limit values for each gene
+    public static final int BORDER_MARGIN_MIN = 30;
+    public static final int BORDER_MARGIN_MAX = 150;
+
+    public static final int SAFE_DISTANCE_MIN = 40;
+    public static final int SAFE_DISTANCE_MAX = 800;
+
+    public static final int VELOCITY_MIN = 0;
+    public static final int VELOCITY_MAX = 20;
+
 
 }

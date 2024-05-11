@@ -1,10 +1,12 @@
 package autobot.v1.drafts.lucas.genetic.genes;
 
+import static autobot.v1.drafts.lucas.auxy.Consts.VELOCITY_MAX;
+import static autobot.v1.drafts.lucas.auxy.Consts.VELOCITY_MIN;
+
 public class Velocity extends Gene {
 
-    // TODO: Mover para consts
-    private static final int MIN_VALUE = 0;
-    private static final int MAX_VALUE = 20;
+    private static final int MIN_VALUE = VELOCITY_MIN;
+    private static final int MAX_VALUE = VELOCITY_MAX;
 
     public Velocity() {
         super.minValue = MIN_VALUE;
