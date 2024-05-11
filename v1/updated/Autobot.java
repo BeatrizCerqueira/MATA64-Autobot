@@ -39,7 +39,6 @@ public class Autobot extends AdvancedRobot {
     public void onHitByBullet(HitByBulletEvent e) {
         // Done! Mudar direção ao levar dano (evitar tiros)
         // ? prioridade eventos parede > tiro > scanned
-        // TODO: Aprimorar - mover na perpendicular?
 
         double headTurn = MathUtils.random(30, 90) * Math.signum(MathUtils.random(-1, 1));
 
@@ -147,12 +146,6 @@ public class Autobot extends AdvancedRobot {
 
         //WIP estrategia defensiva de colisão (fugir do inimigo)
 
-        //TODO: outras formas do inimigo perder energia (dano por tiro/colisão c parede)
-        //          if  onBulletHit / energia<< e vel<<
-
-        //TODO: aumentar distancia de fuga proporcional a distancia do robo inimigo
-
-        //TODO: ajustar enemyHeat minimo para mover mais
 
         // moveAwayFromEnemy();
         if (enemyBot.getDistance() < Consts.SAFE_DISTANCE) {
