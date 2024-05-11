@@ -21,13 +21,13 @@ public class Autobot extends AdvancedRobot {
     Enemy enemyBot = new Enemy();
 
     // Genetic Algorithm Variables:
-    int turnsCount = TURNS_TO_EVALUATE;
+    int turnsCount = TURNS_TO_INIT_GA;
     int velocityGA;
     int safeDistanceGA;
     int bordersMarginGA;
     Population population = new Population();
-    Chromosome currentChromosome;  // = population.getNextChromosome()
-    double energyBeforeFitness; //max
+    Chromosome currentChromosome;
+    double energyBeforeFitness;
 
     public void run() {
 
@@ -276,26 +276,21 @@ public class Autobot extends AdvancedRobot {
 
     public void updateGA() {
 
-        if (getTime() < TURNS_TO_INIT_GA) {   //on initial turns is not possible to evaluate any data, since both guns are hot and no harm can be done
-            energyBeforeFitness = getEnergy();
-            return;
-        }
+        turnsCount--;
 
-        turnsCount++;
-
-        if (turnsCount >= TURNS_TO_EVALUATE) {
-
-            int fitness = (int) (energyBeforeFitness - getEnergy());
+        if (turnsCount < 1) {
 
             if (currentChromosome != null) {
-                currentChromosome.setFitness(fitness); //pass energyDif
+                double energyDiff = energyBeforeFitness - getEnergy(); // Calculate energy diff since last evaluation cycle
+                currentChromosome.setFitness(energyDiff);
             }
+
+            energyBeforeFitness = getEnergy();
 
             currentChromosome = population.getNextChromosome();
             updateValuesGA();
 
-            turnsCount = 0;
-            energyBeforeFitness = getEnergy();
+            turnsCount = TURNS_TO_EVALUATE;
         }
     }
 
@@ -306,8 +301,8 @@ public class Autobot extends AdvancedRobot {
         safeDistanceGA = currentChromosome.getSafeDistance();
         bordersMarginGA = currentChromosome.getBordersMargin();
 
-        System.out.print("Testing");
-        currentChromosome.printChromosome();
+//        System.out.print("Testing");
+//        currentChromosome.printChromosome();
     }
 
 }

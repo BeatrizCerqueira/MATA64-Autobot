@@ -15,7 +15,7 @@ import static autobot.v1.drafts.lucas.auxy.MathUtils.random;
 public class Chromosome implements Comparable<Chromosome>, Serializable {
 
     Map<String, Gene> genes;
-    int fitness;
+    double fitness;
 
     public Chromosome() {
 
@@ -53,7 +53,7 @@ public class Chromosome implements Comparable<Chromosome>, Serializable {
     }
 
     // TODO: (Maybe) move the calculation of the fitness score to here
-    public void setFitness(int fitness) {
+    public void setFitness(double fitness) {
         this.fitness = fitness;
     }
 
@@ -72,7 +72,7 @@ public class Chromosome implements Comparable<Chromosome>, Serializable {
     @Override
     public int compareTo(Chromosome o) {
         // Ascending order
-        return Integer.compare(this.fitness, o.fitness);
+        return Double.compare(this.fitness, o.fitness);
     }
 
     public void printChromosome() {
