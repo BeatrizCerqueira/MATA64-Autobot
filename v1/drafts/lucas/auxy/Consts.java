@@ -1,9 +1,13 @@
 package autobot.v1.drafts.lucas.auxy;
-// import static autobot.v1.drafts.lucas.auxy.Consts.
 
 public class Consts {
-    public static final double RADAR_COVERAGE_DIST = 15.0; // Distance we want to scan from middle of enemy to either side
+    public static final double INITIAL_ENERGY = 100;
+    public static final double INITIAL_GUN_HEAT = 3;
 
+    public static final double RADAR_COVERAGE_DIST = 15.0; // Distance we want to scan from middle of enemy to either side
+    public static final double WALL_MARGIN = 50.0;
+    public static final double MIN_LIFE_TO_FIRE = 10.0;
+    public static final int MAX_TURNS_TO_FIRE = 30;
 
     // Genetic Algorithm consts
     public static final int POPULATION_SIZE = 10;
@@ -39,6 +43,5 @@ public class Consts {
 
     public static final int VELOCITY_MIN = 0;
     public static final int VELOCITY_MAX = 20;
-
 
 }

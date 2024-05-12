@@ -1,14 +1,16 @@
-package autobot.v1.drafts.lucas;
+package autobot.v1.drafts.bia;
 
+import autobot.v1.drafts.lucas.auxy.Consts;
 import org.jpl7.Compound;
 import org.jpl7.Query;
 import org.jpl7.Term;
+import robocode.Rules;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Prolog2 {
+public class PrologBia {
     public static void main(String[] args) {
 //        checkHasSolution("C:/robocode/Prolog.pl");
 //        testStr();
@@ -132,16 +134,57 @@ public class Prolog2 {
 
     // ============================= Robocode =============================
 
-    static void checkHasSolution(String filepath) {
+    static void loadPrologFile(String filepath) {
         if (!Query.hasSolution("consult", toTermArr(filepath))) {
             System.out.println("Consult failed");
         }
     }
 
-    // isEnemyClose(EnemyDistance, LimitDistance) :- less(EnemyDistance, LimitDistance)
-    static boolean isEnemyClose(double EnemyDistance, double LimitDistance) {
-        return isValid("isEnemyClose", EnemyDistance, LimitDistance);
+    // isEnemyClose(EnemyDistance, SafeDistance) :- less(EnemyDistance, SafeDistance).
+    static boolean isEnemyClose(double enemyDistance, double safeDistance) {
+        return isValid("isEnemyClose", enemyDistance, safeDistance);
     }
+
+    //    isRadarTurnComplete(RadarTurnRemaining) :- equal(RadarTurnRemaining, 0.0).
+    static boolean isRadarTurnComplete(double radarTurnRemaining) {
+        return isValid("isRadarTurnComplete", radarTurnRemaining);
+    }
+
+    //    shouldFire(FirePowerToHit, Energy, Rules_MIN_BULLET_POWER, Rules_MAX_BULLET_POWER, Consts_MIN_LIFE_TO_FIRE) :-
+    //        greaterOrEqual(FirePowerToHit, Rules_MIN_BULLET_POWER),
+    //        lessOrEqual(FirePowerToHit, Rules_MAX_BULLET_POWER),
+    //        greater(Energy, Consts_MIN_LIFE_TO_FIRE).
+    public static boolean shouldFire(double firePowerNeededToHit, double energy) {
+        return isValid("shouldFire",
+                firePowerNeededToHit,
+                energy,
+                Rules.MIN_BULLET_POWER,
+                Rules.MAX_BULLET_POWER,
+                Consts.MIN_LIFE_TO_FIRE);
+    }
+
+
+    //    isInXMargin(X, XLimit, Consts_WALL_MARGIN) :- XAbs is abs(X), less((XLimit - XAbs), Consts_WALL_MARGIN).
+    static boolean isInXMargin(double x, double xLimit) {
+        return isValid("isInXMargin", x, xLimit, Consts.WALL_MARGIN);
+    }
+
+    //    isInYMargin(Y, YLimit, Consts_WALL_MARGIN) :- YAbs is abs(Y), less((YLimit - YAbs), Consts_WALL_MARGIN).
+    static boolean isInYMargin(double y, double yLimit) {
+        return isValid("isInYMargin", y, yLimit, Consts.WALL_MARGIN);
+    }
+
+
+    //    isGunReady(Heat) :- Heat < 0.3.
+    static boolean isGunReady(double heat) {
+        return isValid("isGunReady", heat);
+    }
+
+    // hasEnemyFired(EnergyDecreased) :- EnergyDecreased > 0, EnergyDecreased =< 3.
+    static boolean hasEnemyFired(double energyDecreased) {
+        return isValid("hasEnemyFired", energyDecreased);
+    }
+
 
     // ============================= Utils =============================
 

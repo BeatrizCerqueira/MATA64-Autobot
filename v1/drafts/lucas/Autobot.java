@@ -9,6 +9,8 @@ import robocode.util.Utils;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.util.List;
+import java.util.*;
 
 public class Autobot extends AdvancedRobot {
 
@@ -23,7 +25,7 @@ public class Autobot extends AdvancedRobot {
 
     public void run() {
 
-        Prolog2.checkHasSolution("Prolog.pl");
+        Prolog.loadPrologFile("robots/autobot/v1/drafts/lucas/Prolog.pl");
         GeneticAlgorithm.init();
 //        enablePrintGA();
         changeRobotColors();
@@ -36,7 +38,9 @@ public class Autobot extends AdvancedRobot {
         do {
             nextTurn();
 
-            if (getRadarTurnRemaining() == 0.0) //poderia ir pra funcao especifica do radar...
+            boolean isRadarTurnComplete = Prolog.isRadarTurnComplete(getRadarTurnRemaining());
+
+            if (isRadarTurnComplete) //poderia ir pra funcao especifica do radar...
                 setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
 
             moveRobot();
@@ -129,28 +133,40 @@ public class Autobot extends AdvancedRobot {
     }
 
     private void setFireTurn() {
+        
+        List<Map<String, Double>> history = new ArrayList<>();
 
-        int turns = 20;
+        for (int i = 1; i <= Consts.MAX_TURNS_TO_FIRE; i++) {
 
-        double enemyCurrentDistance = enemyBot.getDistance(); // e.getDistance();
-        double enemyMovedDistanceAfterTurns = enemyBot.getVelocity() * turns;
+            double enemyCurrentDistance = enemyBot.getDistance();
+            double enemyMovAfterTurns = enemyBot.getVelocity() * i;
 
+            double enemyMovDirection = enemyBot.getAngle() + 180 - enemyBot.getHeading();
+            double enemyMovDirectionRad = Math.toRadians(enemyMovDirection);
 
-        double angleDegree = enemyBot.getAngle() + 180 - enemyBot.getHeading();//getHeading() + e.getBearing() + 180 - e.getHeading();
-        double angleRadians = Math.toRadians(angleDegree);
+            double enemyDistanceAfterTurns =
+                    Math.sqrt
+                            (Math.pow(enemyCurrentDistance, 2) + Math.pow(enemyMovAfterTurns, 2)
+                                    - 2 * enemyCurrentDistance * enemyMovAfterTurns * Math.cos(enemyMovDirectionRad));
 
-        double enemyDistanceAfterTurns =
-                Math.sqrt
-                        (Math.pow(enemyCurrentDistance, 2) + Math.pow(enemyMovedDistanceAfterTurns, 2)
-                                - 2 * enemyCurrentDistance * enemyMovedDistanceAfterTurns * Math.cos(angleRadians));
+            double bulletVelocityNeededToHit = enemyDistanceAfterTurns / i;
+            double firePowerNeededToHit = (20 - bulletVelocityNeededToHit) / 3;
 
-        double firePowerToHit = (20 - (enemyDistanceAfterTurns / turns)) / 3;
+            boolean shouldFire = Prolog.shouldFire(firePowerNeededToHit, getEnergy());
 
-        if (firePowerToHit >= Rules.MIN_BULLET_POWER) {
-            double firePower = Math.min(firePowerToHit, Rules.MAX_BULLET_POWER);
-            setFire(firePower);
+            if (shouldFire) {
+                Map<String, Double> pair = new HashMap<>();
+                pair.put("distance", enemyDistanceAfterTurns);
+                pair.put("firePower", firePowerNeededToHit);
+                history.add(pair);
+            }
+
         }
 
+        if (!history.isEmpty()) {
+            history.sort(Comparator.comparing(m -> m.get("distance")));
+            setFire(history.get(0).get("firePower"));
+        }
     }
 
     // # Class for Movements:
@@ -233,8 +249,7 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void checkEnemyIsClose() {
-        boolean isEnemyClose = Prolog2.isEnemyClose(enemyBot.getDistance(), safeDistanceGA);
-
+        boolean isEnemyClose = Prolog.isEnemyClose(enemyBot.getDistance(), safeDistanceGA);
         if (isEnemyClose) {
             setAhead(20);
         }
@@ -273,13 +288,12 @@ public class Autobot extends AdvancedRobot {
         enemyBot.passTurn(getGunCoolingRate());
 
         // apply genetic algorithm
-        ApplyGeneticAlogorithm();
+        applyGeneticAlgorithm();
 
     }
 
-    public void ApplyGeneticAlogorithm() {
+    public void applyGeneticAlgorithm() {
         GeneticAlgorithm.updateGA(getEnergy());
-
         velocityGA = GeneticAlgorithm.getVelocity();
         safeDistanceGA = GeneticAlgorithm.getSafeDistance();
         bordersMarginGA = GeneticAlgorithm.getBordersMargin();
@@ -296,5 +310,3 @@ public class Autobot extends AdvancedRobot {
         setRadarColor(Color.white);
     }
 }
-
-

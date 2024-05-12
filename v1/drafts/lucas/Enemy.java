@@ -1,7 +1,7 @@
 package autobot.v1.drafts.lucas;
 
-import autobot.v1.updated.aux.Consts;
-import autobot.v1.updated.aux.MathUtils;
+import autobot.v1.drafts.lucas.auxy.Consts;
+import autobot.v1.drafts.lucas.auxy.MathUtils;
 import robocode.AdvancedRobot;
 import robocode.ScannedRobotEvent;
 
@@ -76,7 +76,8 @@ public class Enemy {
         // check enemy energy decrease to identify if enemy has fired
         // if so, update heat
 
-        boolean hasEnemyFired = energyDecreased > 0 && energyDecreased <= 3;
+        boolean hasEnemyFired = Prolog.hasEnemyFired(energyDecreased);
+
         if (hasEnemyFired) {
             heat = 1 + (energyDecreased / 5);
 //            fire(energyDecreased);
@@ -90,7 +91,7 @@ public class Enemy {
     }
 
     public boolean isGunReady() {
-        return heat < 0.3;
+        return Prolog.isGunReady(heat);
     }
 
     public boolean isScanned() {
