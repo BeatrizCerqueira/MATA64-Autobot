@@ -1,4 +1,4 @@
-package autobot.v1_lpo_e_ga.drafts.lucas.auxy;
+package autobot.auxy;
 
 public class Consts {
     public static final double INITIAL_ENERGY = 100;

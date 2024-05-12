@@ -1,11 +1,11 @@
-package autobot.v1_lpo_e_ga.drafts.lucas.genetic;
+package autobot.genetic;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static autobot.v1_lpo_e_ga.drafts.lucas.auxy.Consts.*;
-import static autobot.v1_lpo_e_ga.drafts.lucas.auxy.MathUtils.random;
+import static autobot.auxy.Consts.*;
+import static autobot.auxy.MathUtils.random;
 
 public class Population {
     private boolean enablePrints = false;

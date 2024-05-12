@@ -1,6 +1,6 @@
-package autobot.v1_lpo_e_ga.drafts.lucas.genetic;
+package autobot.genetic;
 
-import autobot.v1_lpo_e_ga.drafts.lucas.genetic.genes.Gene;
+import autobot.genetic.genes.Gene;
 
 import java.io.*;
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
-package autobot.v1_lpo_e_ga.drafts.updated;
+package autobot;
 
-import autobot.v1_lpo_e_ga.drafts.updated.aux.Consts;
-import autobot.v1_lpo_e_ga.drafts.updated.aux.MathUtils;
+import autobot.auxy.Consts;
+import autobot.auxy.MathUtils;
 import robocode.AdvancedRobot;
 import robocode.ScannedRobotEvent;
 
@@ -17,6 +17,10 @@ public class Enemy {
     double distance;
     double heading;
     double velocity;
+
+    boolean isScanned = false;
+
+    int turnsToBullet = 0;  // how many turns a bullet takes to reaches other bot, considering extra turns for escaping
 
     public Enemy() {
         energy = Consts.INITIAL_ENERGY;
@@ -35,7 +39,9 @@ public class Enemy {
         energy = e.getEnergy();
 
         setLocation(myBot);
+        isScanned = true;
     }
+
 
     public double getAngle() {
         return angle;
@@ -70,18 +76,41 @@ public class Enemy {
         // check enemy energy decrease to identify if enemy has fired
         // if so, update heat
 
-        boolean hasEnemyFired = energyDecreased > 0 && energyDecreased <= 3;
-        if (hasEnemyFired)
+        boolean hasEnemyFired = Prolog.hasEnemyFired(energyDecreased);
+
+        if (hasEnemyFired) {
             heat = 1 + (energyDecreased / 5);
+//            fire(energyDecreased);
+        }
 
     }
 
     public void passTurn(double gunCoolingRate) {
         heat = Math.max(heat - gunCoolingRate, 0); // if negative, 0
+        turnsToBullet = Math.max(turnsToBullet - 1, 0);
     }
 
     public boolean isGunReady() {
-        return heat < 0.3;
+        return Prolog.isGunReady(heat);
     }
 
+    public boolean isScanned() {
+        return isScanned;
+    }
+
+
+//    public void fire(double firepower) {
+//        double bulletVelocity = 20 - 3 * firepower;
+//        int turnsUntilEnemy = (int) (distance / bulletVelocity);           // how many turns it will take to bullet reach current bot position
+//        int escapeDistance = turnsUntilEnemy / 8;                          // when bullet reaches position, bot may not be there, he may have runned X distance
+//        int turnsToEscape = (int) (escapeDistance / bulletVelocity);
+//
+//        turnsToBullet = turnsUntilEnemy + turnsToEscape;
+//    }
+
+//    public int getTurnsToBullet() {
+//        int ans = turnsToBullet;
+//        turnsToBullet = 0;
+//        return ans;
+//    }
 }

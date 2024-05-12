@@ -1,7 +1,7 @@
-package autobot.v1_lpo_e_ga.drafts.lucas.genetic.genes;
+package autobot.genetic.genes;
 
-import static autobot.v1_lpo_e_ga.drafts.lucas.auxy.Consts.VELOCITY_MAX;
-import static autobot.v1_lpo_e_ga.drafts.lucas.auxy.Consts.VELOCITY_MIN;
+import static autobot.auxy.Consts.VELOCITY_MAX;
+import static autobot.auxy.Consts.VELOCITY_MIN;
 
 public class Velocity extends Gene {
 

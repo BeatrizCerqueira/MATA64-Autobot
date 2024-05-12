@@ -1,12 +1,11 @@
-package autobot.v1_lpo_e_ga.drafts.lucas.genetic.genes;
+package autobot.genetic.genes;
 
-import static autobot.v1_lpo_e_ga.drafts.lucas.auxy.Consts.BORDER_MARGIN_MAX;
-import static autobot.v1_lpo_e_ga.drafts.lucas.auxy.Consts.BORDER_MARGIN_MIN;
+import autobot.auxy.Consts;
 
 public class BordersMargin extends Gene {
 
-    private static final int MIN_VALUE = BORDER_MARGIN_MIN;
-    private static final int MAX_VALUE = BORDER_MARGIN_MAX;
+    private static final int MIN_VALUE = Consts.BORDER_MARGIN_MIN;
+    private static final int MAX_VALUE = Consts.BORDER_MARGIN_MAX;
 
     public BordersMargin() {
         super.minValue = MIN_VALUE;

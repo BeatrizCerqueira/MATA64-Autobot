@@ -1,6 +1,6 @@
-package autobot.v1_lpo_e_ga.drafts.updated.aux;
+package autobot.auxy;
 
-import autobot.v0_heuristicas.Bullet;
+import _autobot.old_versions.v0_heuristicas.Bullet;
 
 import java.awt.*;
 import java.awt.geom.Point2D;

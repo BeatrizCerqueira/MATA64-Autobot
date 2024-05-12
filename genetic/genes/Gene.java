@@ -1,9 +1,9 @@
-package autobot.v1_lpo_e_ga.drafts.lucas.genetic.genes;
+package autobot.genetic.genes;
 
 import java.io.Serializable;
 
-import static autobot.v1_lpo_e_ga.drafts.lucas.auxy.Consts.MUTATION_PROBABILITY;
-import static autobot.v1_lpo_e_ga.drafts.lucas.auxy.MathUtils.random;
+import static autobot.auxy.Consts.MUTATION_PROBABILITY;
+import static autobot.auxy.MathUtils.random;
 
 public abstract class Gene implements Serializable {
     int value;

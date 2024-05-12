@@ -1,6 +1,6 @@
-package autobot.v1_lpo_e_ga.drafts.lucas;
+package autobot;
 
-import autobot.v1_lpo_e_ga.drafts.lucas.auxy.Consts;
+import autobot.auxy.Consts;
 import org.jpl7.Compound;
 import org.jpl7.Query;
 import org.jpl7.Term;

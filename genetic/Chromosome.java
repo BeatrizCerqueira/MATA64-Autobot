@@ -1,16 +1,16 @@
-package autobot.v1_lpo_e_ga.drafts.lucas.genetic;
+package autobot.genetic;
 
-import autobot.v1_lpo_e_ga.drafts.lucas.genetic.genes.BordersMargin;
-import autobot.v1_lpo_e_ga.drafts.lucas.genetic.genes.Gene;
-import autobot.v1_lpo_e_ga.drafts.lucas.genetic.genes.SafeDistance;
-import autobot.v1_lpo_e_ga.drafts.lucas.genetic.genes.Velocity;
+import autobot.genetic.genes.Gene;
+import autobot.genetic.genes.BordersMargin;
+import autobot.genetic.genes.SafeDistance;
+import autobot.genetic.genes.Velocity;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static autobot.v1_lpo_e_ga.drafts.lucas.auxy.MathUtils.random;
+import static autobot.auxy.MathUtils.random;
 
 public class Chromosome implements Comparable<Chromosome>, Serializable {
 

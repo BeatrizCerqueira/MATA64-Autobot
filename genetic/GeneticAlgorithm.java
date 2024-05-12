@@ -1,8 +1,8 @@
-package autobot.v1_lpo_e_ga.drafts.lucas.genetic;
+package autobot.genetic;
 
 import java.util.List;
 
-import static autobot.v1_lpo_e_ga.drafts.lucas.auxy.Consts.TURNS_TO_EVALUATE;
+import static autobot.auxy.Consts.TURNS_TO_EVALUATE;
 
 public class GeneticAlgorithm {
     private static boolean enablePrints = false;
