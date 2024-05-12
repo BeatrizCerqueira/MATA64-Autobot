@@ -24,7 +24,7 @@ public class Population {
     }
 
     public void printGeneration() {
-        System.out.println("=== NEW GENERATION ===");
+        System.out.println("========");
         System.out.print("Generation: ");
         System.out.println(generation);
 
@@ -63,6 +63,7 @@ public class Population {
 
     public void elitism() {
         // X% of fittest population goes to the next generation
+        //TODO clonar cromossomo sem fitness
         for (int i = 0; i < ELITISM_COUNT; i++)
             nextGeneration.add(currentGeneration.get(i));
     }

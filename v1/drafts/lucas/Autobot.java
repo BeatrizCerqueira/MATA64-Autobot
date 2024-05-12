@@ -21,12 +21,11 @@ public class Autobot extends AdvancedRobot {
     int safeDistanceGA;
     int bordersMarginGA;
 
-
     public void run() {
 
         Prolog2.checkHasSolution("Prolog.pl");
         GeneticAlgorithm.init();
-        enablePrintGA();
+//        enablePrintGA();
         changeRobotColors();
 
         setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
@@ -52,8 +51,7 @@ public class Autobot extends AdvancedRobot {
         // TODO verificar bordas para não andar em direção a parede. ahead negativo nesses casos
         // usar prolog?
 
-        ahead(10);
-
+        ahead(20);
     }
 
     public void onHitWall(HitWallEvent e) {
@@ -244,14 +242,13 @@ public class Autobot extends AdvancedRobot {
 
     public void moveRobot() {
 
-        //WIP se estiver mais perto, ande mais (se dist < X, ande o dobro)
-        //WIP estrategia defensiva de colisão (fugir do inimigo)
         //TODO: outras formas do inimigo perder energia (dano por tiro/colisão c parede)
         //          if  onBulletHit / energia<< e vel<<
         //TODO: aumentar distancia de fuga proporcional a distancia do robo inimigo
         //TODO: ajustar enemyHeat minimo para mover mais
 
-        // prioridade eventos parede > tiro > scanned
+        // prioridade eventos EnemyIsClose > EnemyGunReady > default random
+
 
         // set movement attributes (turn and ahead)
 
