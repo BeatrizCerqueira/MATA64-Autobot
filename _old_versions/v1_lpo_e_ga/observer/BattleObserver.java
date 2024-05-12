@@ -1,4 +1,4 @@
-package _autobot.old_versions.v1_lpo_e_ga.observer;
+package autobot._old_versions.v1_lpo_e_ga.observer;
 
 import robocode.control.events.BattleAdaptor;
 import robocode.control.events.BattleCompletedEvent;

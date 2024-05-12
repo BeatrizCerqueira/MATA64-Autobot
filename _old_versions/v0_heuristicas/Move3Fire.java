@@ -1,4 +1,4 @@
-package _autobot.old_versions.v0_heuristicas;
+package autobot._old_versions.v0_heuristicas;
 
 import robocode.*;
 import robocode.util.Utils;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class Move3Fire extends AdvancedRobot {
 
     Point2D robotLocation;
-    ArrayList<_autobot.old_versions.v0_heuristicas.Bullet> bullets = new ArrayList<>();
+    ArrayList<autobot._old_versions.v0_heuristicas.Bullet> bullets = new ArrayList<>();
 
     Point2D enemyLocation;
     double enemyEnergy = 100;
@@ -159,7 +159,7 @@ public class Move3Fire extends AdvancedRobot {
         double energyDec = enemyEnergy - e.getEnergy();
 
         if (energyDec > 0 && energyDec <= 3) {
-            bullets.add(new _autobot.old_versions.v0_heuristicas.Bullet(enemyLocation, energyDec, e.getDistance()));
+            bullets.add(new autobot._old_versions.v0_heuristicas.Bullet(enemyLocation, energyDec, e.getDistance()));
             enemyHeat = 1 + (energyDec / 5);
         }
         enemyEnergy = e.getEnergy();

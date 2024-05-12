@@ -1,4 +1,4 @@
-package _autobot.old_versions.v1_lpo_e_ga.drafts.bia;
+package autobot._old_versions.v1_lpo_e_ga.drafts.bia;
 
 import autobot.auxy.Consts;
 import org.jpl7.Compound;

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * https://robocode.sourceforge.io/license/epl-v10.html
  */
-package _autobot.old_versions.v0_heuristicas;
+package autobot._old_versions.v0_heuristicas;
 
 
 import robocode.DeathEvent;

@@ -1,4 +1,4 @@
-package _autobot.old_versions.v1_lpo_e_ga.drafts.updated.aux;
+package autobot._old_versions.v1_lpo_e_ga.drafts.updated.aux;
 
 import java.awt.geom.Point2D;
 

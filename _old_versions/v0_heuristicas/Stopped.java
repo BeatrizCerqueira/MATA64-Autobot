@@ -1,4 +1,4 @@
-package _autobot.old_versions.v0_heuristicas;
+package autobot._old_versions.v0_heuristicas;
 
 import robocode.AdvancedRobot;
 
