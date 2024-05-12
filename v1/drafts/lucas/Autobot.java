@@ -27,8 +27,8 @@ public class Autobot extends AdvancedRobot {
 
         Prolog.loadPrologFile("robots/autobot/v1/drafts/lucas/Prolog.pl");
         GeneticAlgorithm.init();
-//        enablePrintGA();
         changeRobotColors();
+        enablePrintGA();
 
         setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
         setAdjustRadarForGunTurn(true);
@@ -48,7 +48,6 @@ public class Autobot extends AdvancedRobot {
 
         } while (true);
     }
-
 
     public void onHitByBullet(HitByBulletEvent e) {
         // TODO: setTurn perpendicular ao inimigo
@@ -72,6 +71,15 @@ public class Autobot extends AdvancedRobot {
         setFireTurn();
 
         setFire(1);
+
+    }
+
+    public void onRoundEnded(RoundEndedEvent event) {
+        GeneticAlgorithm.saveGeneticData();
+
+        if (getRoundNum() >= getNumRounds() - 1)
+            // Battle finished
+            GeneticAlgorithm.clearGeneticData();
 
     }
 
@@ -133,7 +141,7 @@ public class Autobot extends AdvancedRobot {
     }
 
     private void setFireTurn() {
-        
+
         List<Map<String, Double>> history = new ArrayList<>();
 
         for (int i = 1; i <= Consts.MAX_TURNS_TO_FIRE; i++) {
@@ -192,8 +200,6 @@ public class Autobot extends AdvancedRobot {
         double x = robotLocation.getX() - xLimit;
         double y = robotLocation.getY() - yLimit;
 
-//        boolean xMargin = xLimit - (Math.abs(x)) < Consts.WALL_MARGIN;
-//        boolean yMargin = yLimit - (Math.abs(y)) < Consts.WALL_MARGIN;
         boolean xMargin = xLimit - (Math.abs(x)) < bordersMarginGA;
         boolean yMargin = yLimit - (Math.abs(y)) < bordersMarginGA;
 
@@ -256,18 +262,9 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void moveRobot() {
+        // Set movement attributes (turn and ahead)
 
-        //TODO: outras formas do inimigo perder energia (dano por tiro/colisão c parede)
-        //          if  onBulletHit / energia<< e vel<<
-        //TODO: aumentar distancia de fuga proporcional a distancia do robo inimigo
-        //TODO: ajustar enemyHeat minimo para mover mais
-
-        // prioridade eventos EnemyIsClose > EnemyGunReady > default random
-
-
-        // set movement attributes (turn and ahead)
-
-        // set distance and turn
+        // Set distance and turn
         moveRandomly();         // default behavior - less priority
         checkBorders();         // turn to escape borders - setTurn
 
@@ -278,6 +275,8 @@ public class Autobot extends AdvancedRobot {
         // Override setAhead
         checkEnemyGunReady();
         checkEnemyIsClose();
+
+        // Events priority: EnemyIsClose > EnemyGunReady > default random
     }
 
     public void nextTurn() {
@@ -300,7 +299,8 @@ public class Autobot extends AdvancedRobot {
     }
 
     private void enablePrintGA() {
-//        GeneticAlgorithm.enablePrintTestingChromosomes();
+        GeneticAlgorithm.enablePrintTestingChromosomes();
+        System.out.println("====");
         GeneticAlgorithm.enablePrintGenerationScoring();
     }
 

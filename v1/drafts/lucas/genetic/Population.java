@@ -23,10 +23,16 @@ public class Population {
         }
     }
 
+    public Population(List<Chromosome> chromosomeList) {
+        currentGeneration.addAll(chromosomeList);
+    }
+
+
     public void printGeneration() {
-        System.out.println("========");
-        System.out.print("Generation: ");
-        System.out.println(generation);
+//        System.out.println("========");
+//        System.out.print("Generation: ");
+//        System.out.println(generation);
+
 
         for (Chromosome individual : currentGeneration) {
             individual.printChromosome();
@@ -87,6 +93,10 @@ public class Population {
 
     public void enablePrints() {
         this.enablePrints = true;
+    }
+
+    public List<Chromosome> getCurrentGeneration() {
+        return currentGeneration;
     }
 
     // ====== DEBUG ======
