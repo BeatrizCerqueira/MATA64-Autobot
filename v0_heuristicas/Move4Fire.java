@@ -1,6 +1,5 @@
-package autobot;
+package autobot.v0_heuristicas;
 
-import autobot.v0_heuristicas.Bullet;
 import robocode.*;
 import robocode.util.Utils;
 
@@ -8,10 +7,10 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-public class Autobot extends AdvancedRobot {
+public class Move4Fire extends AdvancedRobot {
 
     Point2D robotLocation;
-    ArrayList<autobot.v0_heuristicas.Bullet> bullets = new ArrayList<>();
+    ArrayList<Bullet> bullets = new ArrayList<>();
 
     Point2D enemyLocation;
     double enemyEnergy = 100;
@@ -179,7 +178,7 @@ public class Autobot extends AdvancedRobot {
         double energyDec = enemyEnergy - e.getEnergy();
 
         if (energyDec > 0 && energyDec <= 3) {
-            bullets.add(new autobot.v0_heuristicas.Bullet(enemyLocation, energyDec, e.getDistance()));
+            bullets.add(new Bullet(enemyLocation, energyDec, e.getDistance()));
             enemyHeat = 1 + (energyDec / 5);
         }
         enemyEnergy = e.getEnergy();

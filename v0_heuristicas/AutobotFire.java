@@ -1,6 +1,5 @@
-package autobot;
+package autobot.v0_heuristicas;
 
-import autobot.v0_heuristicas.Bullet;
 import robocode.*;
 import robocode.util.Utils;
 
@@ -8,10 +7,10 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-public class Autobot extends AdvancedRobot {
+public class AutobotFire extends AdvancedRobot {
 
     Point2D robotLocation;
-    ArrayList<autobot.v0_heuristicas.Bullet> bullets = new ArrayList<>();
+    ArrayList<Bullet> bullets = new ArrayList<>();
 
     Point2D enemyLocation;
     double enemyEnergy = 100;
@@ -50,6 +49,7 @@ public class Autobot extends AdvancedRobot {
         //WIP se estiver mais perto, ande mais (se dist < X, ande o dobro)
 
         //WIP estrategia defensiva de colisão (fugir do inimigo)
+
 
         double maxHeadTurn = (10 - (0.75 * getVelocity())); //max robot can turn considering its velocity
         double headTurn = random(-1 * maxHeadTurn, maxHeadTurn);    //random relative angle to turn
@@ -179,7 +179,7 @@ public class Autobot extends AdvancedRobot {
         double energyDec = enemyEnergy - e.getEnergy();
 
         if (energyDec > 0 && energyDec <= 3) {
-            bullets.add(new autobot.v0_heuristicas.Bullet(enemyLocation, energyDec, e.getDistance()));
+            bullets.add(new Bullet(enemyLocation, energyDec, e.getDistance()));
             enemyHeat = 1 + (energyDec / 5);
         }
         enemyEnergy = e.getEnergy();
