@@ -55,7 +55,7 @@ public class Prolog {
 
     //    isGunReady(Heat, Consts_GUN_HEAT_JUST_BEFORE_COOLING) :- less(Heat, Consts_GUN_HEAT_JUST_BEFORE_COOLING).
     public static boolean isGunReady(double heat) {
-        return isValid("isGunReady", Consts.GUN_HEAT_JUST_BEFORE_COOLING);
+        return isValid("isGunReady", heat, Consts.GUN_HEAT_JUST_BEFORE_COOLING);
     }
 
     //    hasEnemyFired(EnergyDecreased, Rules_MIN_BULLET_POWER, Rules_MAX_BULLET_POWER) :-

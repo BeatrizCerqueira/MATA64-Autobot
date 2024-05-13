@@ -1,5 +1,6 @@
 package autobot;
 
+
 import autobot.genetic.GeneticAlgorithm;
 import autobot.prolog.Prolog;
 import autobot.utils.Consts;
@@ -26,7 +27,7 @@ public class Autobot extends AdvancedRobot {
 
     public void run() {
 
-        Prolog.loadPrologFile("robots/autobot/v1/drafts/lucas/Prolog.pl");
+        Prolog.loadPrologFile("robots/autobot/prolog/Prolog.pl");
         GeneticAlgorithm.init();
         changeRobotColors();
 
