@@ -1,6 +1,6 @@
 package autobot.genetic.genes;
 
-import autobot.auxy.Consts;
+import autobot.aux.Consts;
 
 public class BordersMargin extends Gene {
 

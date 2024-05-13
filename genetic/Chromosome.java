@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static autobot.auxy.MathUtils.random;
+import static autobot.aux.MathUtils.random;
 
 public class Chromosome implements Comparable<Chromosome>, Serializable {
 

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static autobot.auxy.Consts.*;
-import static autobot.auxy.MathUtils.random;
+import static autobot.aux.Consts.*;
+import static autobot.aux.MathUtils.random;
 
 public class Population {
 

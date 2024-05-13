@@ -1,7 +1,7 @@
 package autobot.genetic.genes;
 
-import static autobot.auxy.Consts.VELOCITY_MAX;
-import static autobot.auxy.Consts.VELOCITY_MIN;
+import static autobot.aux.Consts.VELOCITY_MAX;
+import static autobot.aux.Consts.VELOCITY_MIN;
 
 public class Velocity extends Gene {
 

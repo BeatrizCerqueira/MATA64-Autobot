@@ -2,7 +2,7 @@ package autobot.genetic;
 
 import java.util.List;
 
-import static autobot.auxy.Consts.TURNS_TO_EVALUATE;
+import static autobot.aux.Consts.TURNS_TO_EVALUATE;
 
 public class GeneticAlgorithm {
 

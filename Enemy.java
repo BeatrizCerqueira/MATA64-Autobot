@@ -1,7 +1,7 @@
 package autobot;
 
-import autobot.auxy.Consts;
-import autobot.auxy.MathUtils;
+import autobot.aux.Consts;
+import autobot.aux.MathUtils;
 import autobot.prolog.Prolog;
 import robocode.AdvancedRobot;
 import robocode.ScannedRobotEvent;

@@ -19,7 +19,16 @@ isInXMargin(X, XLimit, Consts_WALL_MARGIN) :- XAbs is abs(X), less((XLimit - XAb
 
 isInYMargin(Y, YLimit, Consts_WALL_MARGIN) :- YAbs is abs(Y), less((YLimit - YAbs), Consts_WALL_MARGIN).
 
-isGunReady(Heat) :- less(Heat, 0.3).
+isAtBorder(X, XLimit, Y, YLimit, Consts_WALL_MARGIN) :-
+    isInXMargin(X, XLimit, Consts_WALL_MARGIN);
+    isInYMargin(Y, YLimit, Consts_WALL_MARGIN).
 
-hasEnemyFired(EnergyDecreased) :- greater(EnergyDecreased, 0), lessOrEqual(EnergyDecreased, 3).
+isAtEdge(X, XLimit, Y, YLimit, Consts_WALL_MARGIN) :-
+    isInXMargin(X, XLimit, Consts_WALL_MARGIN),
+    isInYMargin(Y, YLimit, Consts_WALL_MARGIN).
 
+isGunReady(Heat, Consts_GUN_HEAT_JUST_BEFORE_COOLING) :- less(Heat, Consts_GUN_HEAT_JUST_BEFORE_COOLING).
+
+hasEnemyFired(EnergyDecreased, Rules_MIN_BULLET_POWER, Rules_MAX_BULLET_POWER) :-
+   greaterOrEqual(EnergyDecreased, Rules_MIN_BULLET_POWER),
+   lessOrEqual(EnergyDecreased, Rules_MAX_BULLET_POWER).

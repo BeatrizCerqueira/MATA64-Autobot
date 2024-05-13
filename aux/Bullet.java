@@ -1,4 +1,4 @@
-package autobot.auxy;
+package autobot.aux;
 
 import java.awt.*;
 import java.awt.geom.Point2D;

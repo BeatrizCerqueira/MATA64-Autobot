@@ -1,6 +1,6 @@
 package autobot.prolog;
 
-import autobot.auxy.Consts;
+import autobot.aux.Consts;
 import org.jpl7.Compound;
 import org.jpl7.Query;
 import org.jpl7.Term;
@@ -53,17 +53,18 @@ public class Prolog {
         return isValid("isInYMargin", y, yLimit, Consts.WALL_MARGIN);
     }
 
-    //    isGunReady(Heat) :- Heat < 0.3.
+    //    isGunReady(Heat, Consts_GUN_HEAT_JUST_BEFORE_COOLING) :- less(Heat, Consts_GUN_HEAT_JUST_BEFORE_COOLING).
     public static boolean isGunReady(double heat) {
-        return isValid("isGunReady", heat);
+        return isValid("isGunReady", Consts.GUN_HEAT_JUST_BEFORE_COOLING);
     }
 
-    // hasEnemyFired(EnergyDecreased) :- EnergyDecreased > 0, EnergyDecreased =< 3.
+    //    hasEnemyFired(EnergyDecreased, Rules_MIN_BULLET_POWER, Rules_MAX_BULLET_POWER) :-
+    //        greaterOrEqual(EnergyDecreased, Rules_MIN_BULLET_POWER),
+    //        lessOrEqual(EnergyDecreased, Rules_MAX_BULLET_POWER).
     public static boolean hasEnemyFired(double energyDecreased) {
-        return isValid("hasEnemyFired", energyDecreased);
+        return isValid("hasEnemyFired", energyDecreased, Rules.MIN_BULLET_POWER, Rules.MAX_BULLET_POWER);
     }
-
-
+    
     // ============================= Utils =============================
 
     @SafeVarargs

@@ -1,8 +1,8 @@
 package autobot;
 
-import autobot.auxy.Consts;
-import autobot.auxy.Draw;
-import autobot.auxy.MathUtils;
+import autobot.aux.Consts;
+import autobot.aux.Draw;
+import autobot.aux.MathUtils;
 import autobot.genetic.GeneticAlgorithm;
 import autobot.prolog.Prolog;
 import robocode.*;
