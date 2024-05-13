@@ -2,8 +2,8 @@ package autobot.genetic.genes;
 
 import java.io.Serializable;
 
-import static autobot.aux.Consts.MUTATION_PROBABILITY;
-import static autobot.aux.MathUtils.random;
+import static autobot.utils.Consts.MUTATION_PROBABILITY;
+import static autobot.utils.MathUtils.random;
 
 public abstract class Gene implements Serializable {
     int value;

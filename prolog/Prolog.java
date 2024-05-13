@@ -1,6 +1,6 @@
 package autobot.prolog;
 
-import autobot.aux.Consts;
+import autobot.utils.Consts;
 import org.jpl7.Compound;
 import org.jpl7.Query;
 import org.jpl7.Term;
@@ -64,7 +64,7 @@ public class Prolog {
     public static boolean hasEnemyFired(double energyDecreased) {
         return isValid("hasEnemyFired", energyDecreased, Rules.MIN_BULLET_POWER, Rules.MAX_BULLET_POWER);
     }
-    
+
     // ============================= Utils =============================
 
     @SafeVarargs

@@ -1,4 +1,4 @@
-package autobot.aux;
+package autobot.utils;
 
 import java.awt.geom.Point2D;
 import java.util.Random;

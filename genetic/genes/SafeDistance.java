@@ -1,7 +1,7 @@
 package autobot.genetic.genes;
 
-import static autobot.aux.Consts.SAFE_DISTANCE_MAX;
-import static autobot.aux.Consts.SAFE_DISTANCE_MIN;
+import static autobot.utils.Consts.SAFE_DISTANCE_MAX;
+import static autobot.utils.Consts.SAFE_DISTANCE_MIN;
 
 public class SafeDistance extends Gene {
 

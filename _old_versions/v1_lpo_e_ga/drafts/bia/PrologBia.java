@@ -1,6 +1,6 @@
 package autobot._old_versions.v1_lpo_e_ga.drafts.bia;
 
-import autobot.aux.Consts;
+import autobot.utils.Consts;
 import org.jpl7.Compound;
 import org.jpl7.Query;
 import org.jpl7.Term;

@@ -1,4 +1,4 @@
-package autobot.aux;
+package autobot.utils;
 
 public class Consts {
     public static final double INITIAL_ENERGY = 100;
