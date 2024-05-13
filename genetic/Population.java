@@ -52,7 +52,6 @@ public class Population {
 
     public void elitism() {
         // X% of fittest population goes to the next generation
-        //TODO clonar cromossomo sem fitness
         for (int i = 0; i < ELITISM_COUNT; i++)
             nextGeneration.add(currentGeneration.get(i));
     }

@@ -66,8 +66,6 @@ public class Autobot extends AdvancedRobot {
         setGunTurn();
         setFireTurn();
 
-        setFire(1);
-
     }
 
     public void onRoundEnded(RoundEndedEvent event) {
