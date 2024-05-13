@@ -4,8 +4,6 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 
 public class Bullet {
-//	private int x0;
-//	private int y0;
 
     private Point2D initLocation;
     private double maxRad;

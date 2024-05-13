@@ -10,16 +10,11 @@ import java.util.Map;
 
 public class FileHandler {
 
-    private static final boolean enablePrints = false;
-
-
     static String separatorGeneValues = ";";
     static String separatorChromosomes = "---";
 
-    //    private static final String dir = "C:/robocode/robots/autobot";
     static final String filename = "historyGenetic.txt";
-    static String filepath = filename;  // + dir
-
+    static String filepath = filename;
 
     public static boolean fileExists() {
         return (new File(filepath)).exists();
@@ -27,9 +22,8 @@ public class FileHandler {
 
     public static void deleteFile() {
         File file = new File(filepath);
-        if (file.delete() && enablePrints)
+        if (file.delete())
             System.out.println("File deleted successfully.");
-
     }
 
     public static void saveToFile(Population population) {
@@ -43,10 +37,7 @@ public class FileHandler {
                 writer.write(separatorChromosomes); // Separator for chromosomes
                 writer.newLine();
             }
-
-            if (enablePrints)
-                System.out.println("File saved successfully.");
-
+            System.out.println("File saved successfully.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,8 +65,7 @@ public class FileHandler {
                 chromosomes.add(new Chromosome(genes));
             }
 
-            if (enablePrints)
-                System.out.println("File loaded successfully.");
+            System.out.println("File loaded successfully.");
 
         } catch (Exception e) {
             e.printStackTrace();

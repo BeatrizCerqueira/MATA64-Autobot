@@ -5,14 +5,12 @@ import java.util.List;
 import static autobot.auxy.Consts.TURNS_TO_EVALUATE;
 
 public class GeneticAlgorithm {
-    private static boolean enablePrints = false;
 
     static int turnsCount = 1; //TURNS_TO_INIT_GA
 
     static Chromosome currentChromosome;
     static double energyBeforeFitness;
     static Population population;
-
 
     public static void init() {
 
@@ -40,8 +38,6 @@ public class GeneticAlgorithm {
 
             energyBeforeFitness = currentEnergy;
             currentChromosome = population.getNextChromosome();
-            if (enablePrints)
-                printCurrentChromosome();
 
         }
     }
@@ -58,19 +54,6 @@ public class GeneticAlgorithm {
         return currentChromosome.getBordersMargin();
     }
 
-    private static void printCurrentChromosome() {
-        System.out.print("# Testing ");
-        currentChromosome.printChromosome();
-    }
-
-    public static void enablePrintTestingChromosomes() {
-        GeneticAlgorithm.enablePrints = true;
-    }
-
-    public static void enablePrintGenerationScoring() {
-        population.enablePrints();
-    }
-
     public static void saveGeneticData() {
         FileHandler.saveToFile(population);
     }
@@ -84,12 +67,5 @@ public class GeneticAlgorithm {
         FileHandler.deleteFile();
     }
 
-    public static void main(String[] args) {
-        clearGeneticData();
-        init();
-        saveGeneticData();
-        updateGA(100);
-
-    }
 }
 

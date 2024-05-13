@@ -26,8 +26,7 @@ public class MathUtils {
 
     public static int random(int start, int end) {
         Random rand = new Random();
-        return rand.nextInt((int) (end - start + 1)) + start;
+        return rand.nextInt(end - start + 1) + start;
     }
-
 
 }

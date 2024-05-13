@@ -2,6 +2,7 @@ package autobot;
 
 import autobot.auxy.Consts;
 import autobot.auxy.MathUtils;
+import autobot.prolog.Prolog;
 import robocode.AdvancedRobot;
 import robocode.ScannedRobotEvent;
 
@@ -28,7 +29,7 @@ public class Enemy {
     }
 
     public void scanned(AdvancedRobot myBot, ScannedRobotEvent e) {
-        //update enemy attributes on scanned event
+        // update enemy attributes on scanned event
 
         angle = myBot.getHeading() + e.getBearing();
         distance = e.getDistance();
@@ -41,7 +42,6 @@ public class Enemy {
         setLocation(myBot);
         isScanned = true;
     }
-
 
     public double getAngle() {
         return angle;
@@ -80,7 +80,6 @@ public class Enemy {
 
         if (hasEnemyFired) {
             heat = 1 + (energyDecreased / 5);
-//            fire(energyDecreased);
         }
 
     }
@@ -98,19 +97,4 @@ public class Enemy {
         return isScanned;
     }
 
-
-//    public void fire(double firepower) {
-//        double bulletVelocity = 20 - 3 * firepower;
-//        int turnsUntilEnemy = (int) (distance / bulletVelocity);           // how many turns it will take to bullet reach current bot position
-//        int escapeDistance = turnsUntilEnemy / 8;                          // when bullet reaches position, bot may not be there, he may have runned X distance
-//        int turnsToEscape = (int) (escapeDistance / bulletVelocity);
-//
-//        turnsToBullet = turnsUntilEnemy + turnsToEscape;
-//    }
-
-//    public int getTurnsToBullet() {
-//        int ans = turnsToBullet;
-//        turnsToBullet = 0;
-//        return ans;
-//    }
 }

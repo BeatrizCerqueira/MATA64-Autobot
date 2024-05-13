@@ -1,7 +1,7 @@
 package autobot.genetic;
 
-import autobot.genetic.genes.Gene;
 import autobot.genetic.genes.BordersMargin;
+import autobot.genetic.genes.Gene;
 import autobot.genetic.genes.SafeDistance;
 import autobot.genetic.genes.Velocity;
 
@@ -52,7 +52,6 @@ public class Chromosome implements Comparable<Chromosome>, Serializable {
         return getGeneValue("bordersMargin");
     }
 
-    // TODO: (Maybe) move the calculation of the fitness score to here
     public void setFitness(double fitness) {
         this.fitness = fitness;
     }
@@ -75,13 +74,4 @@ public class Chromosome implements Comparable<Chromosome>, Serializable {
         return Double.compare(o.fitness, this.fitness);
     }
 
-    public void printChromosome() {
-        System.out.print("Chromosome <");
-        System.out.print(" vel: " + getVelocity());
-        System.out.print(", saf: " + getSafeDistance());
-        System.out.print(", bor: " + getBordersMargin());
-        System.out.print("> ");
-        System.out.print("Score: ");
-        System.out.println(fitness);
-    }
 }

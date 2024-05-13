@@ -4,6 +4,7 @@ import autobot.auxy.Consts;
 import autobot.auxy.Draw;
 import autobot.auxy.MathUtils;
 import autobot.genetic.GeneticAlgorithm;
+import autobot.prolog.Prolog;
 import robocode.*;
 import robocode.util.Utils;
 
@@ -28,7 +29,6 @@ public class Autobot extends AdvancedRobot {
         Prolog.loadPrologFile("robots/autobot/v1/drafts/lucas/Prolog.pl");
         GeneticAlgorithm.init();
         changeRobotColors();
-        enablePrintGA();
 
         setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
         setAdjustRadarForGunTurn(true);
@@ -40,7 +40,7 @@ public class Autobot extends AdvancedRobot {
 
             boolean isRadarTurnComplete = Prolog.isRadarTurnComplete(getRadarTurnRemaining());
 
-            if (isRadarTurnComplete) //poderia ir pra funcao especifica do radar...
+            if (isRadarTurnComplete)
                 setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
 
             moveRobot();
@@ -50,15 +50,10 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void onHitByBullet(HitByBulletEvent e) {
-        // TODO: setTurn perpendicular ao inimigo
-        // TODO verificar bordas para não andar em direção a parede. ahead negativo nesses casos
-        // usar prolog?
-
         ahead(20);
     }
 
     public void onHitWall(HitWallEvent e) {
-//        back(20);
         checkBorders();
     }
 
@@ -102,7 +97,7 @@ public class Autobot extends AdvancedRobot {
 
     }
 
-    // # Class for Radar/Gun:
+    // # Radar/Gun:
 
     private void setRadarTurn() {
 
@@ -177,19 +172,15 @@ public class Autobot extends AdvancedRobot {
         }
     }
 
-    // # Class for Movements:
+    // # Movements:
 
     public void moveRandomly() {
         // set default movement attributes, considering robot is at center of arena
 
-        // turn
         double maxHeadTurn = (10 - (0.75 * getVelocity())); //max robot can turn considering its velocity
         double headTurn = MathUtils.random(-1 * maxHeadTurn, maxHeadTurn);    //random relative angle to turn
-        setTurnRight(headTurn);
 
-        // ahead
-//        double aheadDist = MathUtils.random(0, 20);   //distance to move forward
-//        setAhead(aheadDist);
+        setTurnRight(headTurn);
         setAhead(velocityGA);
     }
 
@@ -296,12 +287,6 @@ public class Autobot extends AdvancedRobot {
         velocityGA = GeneticAlgorithm.getVelocity();
         safeDistanceGA = GeneticAlgorithm.getSafeDistance();
         bordersMarginGA = GeneticAlgorithm.getBordersMargin();
-    }
-
-    private void enablePrintGA() {
-        GeneticAlgorithm.enablePrintTestingChromosomes();
-        System.out.println("====");
-        GeneticAlgorithm.enablePrintGenerationScoring();
     }
 
     private void changeRobotColors() {

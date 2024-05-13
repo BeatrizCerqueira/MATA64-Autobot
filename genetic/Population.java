@@ -8,7 +8,6 @@ import static autobot.auxy.Consts.*;
 import static autobot.auxy.MathUtils.random;
 
 public class Population {
-    private boolean enablePrints = false;
 
     List<Chromosome> currentGeneration = new ArrayList<>();
     List<Chromosome> nextGeneration = new ArrayList<>();
@@ -27,20 +26,6 @@ public class Population {
         currentGeneration.addAll(chromosomeList);
     }
 
-
-    public void printGeneration() {
-//        System.out.println("========");
-//        System.out.print("Generation: ");
-//        System.out.println(generation);
-
-
-        for (Chromosome individual : currentGeneration) {
-            individual.printChromosome();
-        }
-        System.out.println();
-
-    }
-
     public Chromosome getNextChromosome() {
         currentChromosomeIndex++;
         if (currentChromosomeIndex >= POPULATION_SIZE) newGeneration();
@@ -53,8 +38,6 @@ public class Population {
         currentChromosomeIndex = 0;
 
         Collections.sort(currentGeneration);
-        if (enablePrints)
-            printGeneration();
 
         elitism();
         crossover();
@@ -91,30 +74,8 @@ public class Population {
         }
     }
 
-    public void enablePrints() {
-        this.enablePrints = true;
-    }
-
     public List<Chromosome> getCurrentGeneration() {
         return currentGeneration;
     }
 
-    // ====== DEBUG ======
-    public static void main(String[] args) {
-
-        Population population = new Population();
-
-        Chromosome currentChromosome = population.getNextChromosome(); //1st
-
-        // To access chromosome data
-        int velocity = currentChromosome.getVelocity();
-        int safeDistance = currentChromosome.getSafeDistance();
-        int bordersMargin = currentChromosome.getBordersMargin();
-
-        for (int i = 0; i < POPULATION_SIZE * 3; i++) {
-            currentChromosome.setFitness(random(-10, 10));
-            currentChromosome = population.getNextChromosome();
-        }
-
-    }
 }
