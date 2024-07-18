@@ -1,3 +1,4 @@
+/*
 package autobot._old_versions.v1_lpo_e_ga.observer;
 
 import org.jgap.Configuration;
@@ -108,3 +109,4 @@ public class robocodeConfig extends FitnessFunction {
 
 
 }
+*/
