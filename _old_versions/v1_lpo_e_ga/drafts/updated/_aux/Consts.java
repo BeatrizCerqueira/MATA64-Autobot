@@ -1,4 +1,4 @@
-package autobot._old_versions.v1_lpo_e_ga.drafts.updated.aux;
+package autobot._old_versions.v1_lpo_e_ga.drafts.updated._aux;
 
 public class Consts {
     public static final double WALL_MARGIN = 50.0;

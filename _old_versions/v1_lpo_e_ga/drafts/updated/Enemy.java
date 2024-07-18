@@ -1,7 +1,7 @@
 package autobot._old_versions.v1_lpo_e_ga.drafts.updated;
 
-import autobot._old_versions.v1_lpo_e_ga.drafts.updated.aux.Consts;
-import autobot._old_versions.v1_lpo_e_ga.drafts.updated.aux.MathUtils;
+import autobot._old_versions.v1_lpo_e_ga.drafts.updated._aux.Consts;
+import autobot._old_versions.v1_lpo_e_ga.drafts.updated._aux.MathUtils;
 import robocode.AdvancedRobot;
 import robocode.ScannedRobotEvent;
 

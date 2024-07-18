@@ -1,8 +1,8 @@
 package autobot._old_versions.v1_lpo_e_ga.drafts.updated;
 
-import autobot._old_versions.v1_lpo_e_ga.drafts.updated.aux.Consts;
-import autobot._old_versions.v1_lpo_e_ga.drafts.updated.aux.Draw;
-import autobot._old_versions.v1_lpo_e_ga.drafts.updated.aux.MathUtils;
+import autobot._old_versions.v1_lpo_e_ga.drafts.updated._aux.Consts;
+import autobot._old_versions.v1_lpo_e_ga.drafts.updated._aux.Draw;
+import autobot._old_versions.v1_lpo_e_ga.drafts.updated._aux.MathUtils;
 import robocode.*;
 import robocode.util.Utils;
 
