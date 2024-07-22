@@ -1,15 +1,14 @@
 package autobot.prolog;
 
 import autobot.utils.Consts;
-import org.jpl7.Compound;
 import org.jpl7.Query;
 import org.jpl7.Term;
 import robocode.Rules;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+@SuppressWarnings("CommentedOutCode")
 public class Prolog {
 
     // ============================= Robocode =============================
@@ -41,16 +40,6 @@ public class Prolog {
                 Rules.MIN_BULLET_POWER,
                 Rules.MAX_BULLET_POWER,
                 Consts.MIN_LIFE_TO_FIRE);
-    }
-
-    //    isInXMargin(X, XLimit, Consts_WALL_MARGIN) :- XAbs is abs(X), less((XLimit - XAbs), Consts_WALL_MARGIN).
-    public static boolean isInXMargin(double x, double xLimit) {
-        return isValid("isInXMargin", x, xLimit, Consts.WALL_MARGIN);
-    }
-
-    //    isInYMargin(Y, YLimit, Consts_WALL_MARGIN) :- YAbs is abs(Y), less((YLimit - YAbs), Consts_WALL_MARGIN).
-    public static boolean isInYMargin(double y, double yLimit) {
-        return isValid("isInYMargin", y, yLimit, Consts.WALL_MARGIN);
     }
 
     //    isGunReady(Heat, Consts_GUN_HEAT_JUST_BEFORE_COOLING) :- less(Heat, Consts_GUN_HEAT_JUST_BEFORE_COOLING).
@@ -87,18 +76,19 @@ public class Prolog {
     }
 
     @SafeVarargs
+    private static <T> boolean isValid(String ruleName, T... values) {
+        Term[] terms = toTermArr(values);
+        Query q = new Query(ruleName, terms);
+        return q.hasSolution();
+    }
+
+/*
+    @SafeVarargs
     private static <T> void addFact(String ruleName, T... values) {
         Term[] terms = toTermArr(values);
         Term fact = new Compound(ruleName, terms);
         Query q = new Query("assert", fact);
         q.hasSolution();
-    }
-
-    @SafeVarargs
-    private static <T> boolean isValid(String ruleName, T... values) {
-        Term[] terms = toTermArr(values);
-        Query q = new Query(ruleName, terms);
-        return q.hasSolution();
     }
 
     @SafeVarargs
@@ -117,5 +107,6 @@ public class Prolog {
             solutions.add(solution.get("X").toString());
         return solutions;
     }
+*/
 
 }

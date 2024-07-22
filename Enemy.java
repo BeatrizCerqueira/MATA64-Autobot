@@ -63,13 +63,20 @@ public class Enemy {
         return velocity;
     }
 
+    public double getEnemyDistanceAfterTurns(int i) {
+        double enemyMovAfterTurns = getVelocity() * i;
+
+        double enemyMovDirection = getAngle() + 180 - getHeading();
+        double enemyMovDirectionRad = Math.toRadians(enemyMovDirection);
+
+        return Math.sqrt
+                (Math.pow(getDistance(), 2) + Math.pow(enemyMovAfterTurns, 2)
+                        - 2 * getDistance() * enemyMovAfterTurns * Math.cos(enemyMovDirectionRad));
+    }
+
     private void setLocation(AdvancedRobot myBot) {
         Point2D myBotLocation = new Point2D.Double(myBot.getX(), myBot.getY());
         location = MathUtils.getLocation(myBotLocation, getAngleRad(), distance);
-    }
-
-    public Point2D getLocation() {
-        return location;
     }
 
     private void identifyEnemyBullets(double energyDecreased) {

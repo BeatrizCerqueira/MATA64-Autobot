@@ -4,8 +4,8 @@ package autobot;
 import autobot.genetic.GeneticAlgorithm;
 import autobot.prolog.Prolog;
 import autobot.utils.Consts;
-import autobot.utils.Draw;
 import autobot.utils.MathUtils;
+import autobot.utils.draw.Draw;
 import robocode.*;
 import robocode.util.Utils;
 
@@ -140,16 +140,7 @@ public class Autobot extends AdvancedRobot {
 
         for (int i = 1; i <= Consts.MAX_TURNS_TO_FIRE; i++) {
 
-            double enemyCurrentDistance = enemyBot.getDistance();
-            double enemyMovAfterTurns = enemyBot.getVelocity() * i;
-
-            double enemyMovDirection = enemyBot.getAngle() + 180 - enemyBot.getHeading();
-            double enemyMovDirectionRad = Math.toRadians(enemyMovDirection);
-
-            double enemyDistanceAfterTurns =
-                    Math.sqrt
-                            (Math.pow(enemyCurrentDistance, 2) + Math.pow(enemyMovAfterTurns, 2)
-                                    - 2 * enemyCurrentDistance * enemyMovAfterTurns * Math.cos(enemyMovDirectionRad));
+            double enemyDistanceAfterTurns = enemyBot.getEnemyDistanceAfterTurns(i);
 
             double bulletVelocityNeededToHit = enemyDistanceAfterTurns / i;
             double firePowerNeededToHit = (20 - bulletVelocityNeededToHit) / 3;

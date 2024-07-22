@@ -3,6 +3,7 @@ package autobot.utils;
 import java.awt.geom.Point2D;
 import java.util.Random;
 
+@SuppressWarnings("CommentedOutCode")
 public class MathUtils {
 
     public static Point2D getLocation(Point2D initLocation, double angle, double distance) {
@@ -12,6 +13,7 @@ public class MathUtils {
 
     }
 
+/*
     public static double getAngle(Point2D A, Point2D B) {
         return Math.asin((B.getY() - A.getY()) / getDistance(A, B));
     }
@@ -19,6 +21,7 @@ public class MathUtils {
     public static double getDistance(Point2D A, Point2D B) {
         return Point2D.distance(A.getX(), A.getY(), B.getX(), B.getY());
     }
+*/
 
     public static double random(double start, double end) {
         return start + Math.random() * ((end - start + 1));

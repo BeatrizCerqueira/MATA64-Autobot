@@ -5,7 +5,6 @@ public class Consts {
     public static final double INITIAL_GUN_HEAT = 3;
 
     public static final double RADAR_COVERAGE_DIST = 15.0; // Distance we want to scan from middle of enemy to either side
-    public static final double WALL_MARGIN = 50.0;
     public static final double MIN_LIFE_TO_FIRE = 10.0;
     public static final double GUN_HEAT_JUST_BEFORE_COOLING = 0.3;
 
@@ -14,7 +13,6 @@ public class Consts {
     // Genetic Algorithm consts
     public static final int POPULATION_SIZE = 10;
 
-    public static final int TURNS_TO_INIT_GA = 20; // How many turns until start evaluating chromosomes
     public static final int TURNS_TO_EVALUATE = 10; // How many turns each evaluating cycle lasts
 
     public static final double MUTATION_PROBABILITY = 0.1;
