@@ -13,8 +13,8 @@ public class FileHandler {
     static String separatorGeneValues = ";";
     static String separatorChromosomes = "---";
 
-    static final String filename = "historyGenetic.txt";
-    static String filepath = filename;
+    static final String filename = "HistoryGenetic.txt";
+    static String filepath = "robots/autobot/genetic/" + filename;
 
     public static boolean fileExists() {
         return (new File(filepath)).exists();

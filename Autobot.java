@@ -28,7 +28,7 @@ public class Autobot extends AdvancedRobot {
     public void run() {
 
         Prolog.loadPrologFile("robots/autobot/prolog/Prolog.pl");
-        GeneticAlgorithm.init();
+        GeneticAlgorithm.init(getRoundNum());
         changeRobotColors();
 
         setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
@@ -291,6 +291,6 @@ public class Autobot extends AdvancedRobot {
     private void changeRobotColors() {
         setBodyColor(Color.BLACK);
         setGunColor(Color.BLACK);
-        setRadarColor(Color.white);
+        setRadarColor(Color.WHITE);
     }
 }

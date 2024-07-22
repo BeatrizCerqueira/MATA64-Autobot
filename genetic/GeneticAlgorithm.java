@@ -12,9 +12,13 @@ public class GeneticAlgorithm {
     static double energyBeforeFitness;
     static Population population;
 
-    public static void init() {
+    public static void init(int roundNum) {
 
         population = new Population();
+
+        if (roundNum == 0) {
+            FileHandler.deleteFile();
+        }
 
         // Check if there is file to load genetic data
         if (FileHandler.fileExists()) {
