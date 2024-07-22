@@ -1,6 +1,5 @@
 package autobot._old_versions.v0_heuristicas;
 
-import autobot.Enemy;
 import robocode.AdvancedRobot;
 import robocode.Rules;
 import robocode.ScannedRobotEvent;
