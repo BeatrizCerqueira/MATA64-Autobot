@@ -27,7 +27,7 @@ public class Autobot extends AdvancedRobot {
 
     public void run() {
 
-        Prolog.loadPrologFile("robots/autobot/prolog/Prolog.pl");
+        Prolog.loadPrologFile();
         GeneticAlgorithm.init(getRoundNum());
         changeRobotColors();
 

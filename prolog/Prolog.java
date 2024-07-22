@@ -11,9 +11,11 @@ import java.util.List;
 @SuppressWarnings("CommentedOutCode")
 public class Prolog {
 
+    private static final String filepath = "robots/autobot/prolog/Prolog.pl";
+
     // ============================= Robocode =============================
 
-    public static void loadPrologFile(String filepath) {
+    public static void loadPrologFile() {
         if (!Query.hasSolution("consult", toTermArr(filepath))) {
             System.out.println("Consult failed");
         }
