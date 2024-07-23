@@ -1,0 +1,36 @@
+FUNCTION_BLOCK poder_tiro
+
+VAR_INPUT				// Variáveis de entrada
+	distancia : REAL;
+END_VAR
+
+VAR_OUTPUT				// Variável de saída
+	poder : REAL;		// 0 à 3
+END_VAR
+
+FUZZIFY distancia	// Variáveis de entrada para Fuzzify 'distanciaDoRobo': {'perto', 'média' , 'longe'}
+	TERM perto := trape 0 0 150 300;
+	TERM media := trape 175 250 450 600;
+	TERM longe := trape 475 550 2000 2000;
+END_FUZZIFY
+
+DEFUZZIFY poder	// Variável de saída Defuzzify 'poder' : {'fraco', 'normal', 'forte' }
+	TERM fraco := trape 0.01 0.1 0.5 1.5;
+	TERM normal := trape 1 1.5 2 2.5;
+	TERM forte := trape 2 2.5 3 3;
+	METHOD : COG;		// Método 'Centro da gravidade'
+	DEFAULT := 1;		// Valor default 1 (se nenhuma das regras ativar o defuzzifier)
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;			// É comum utilizar o método MIN para o operador AND, e o método MAX para o operador OR.
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'max' accumulation method
+
+	RULE 1 : IF distancia IS perto THEN poder IS forte;
+	RULE 2 : IF distancia IS media THEN poder IS normal;
+	RULE 3 : IF distancia IS longe THEN poder IS fraco;
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
