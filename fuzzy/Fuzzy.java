@@ -28,7 +28,7 @@ public class Fuzzy {
         JFuzzyChart.get().chart(functionBlock);
     }
 
-    public static void setVariables(Variable[] variables) { // TODO: passar qtd indefinida de params (@Beatriz)
+    public static void setVariables(Variable... variables) {
         for (Variable variable : variables) {
             fis.setVariable(variable.getName(), variable.getValue());
         }
@@ -64,7 +64,7 @@ public class Fuzzy {
         Variable food = new Variable("food");
         service.setValue(3);
         food.setValue(7);
-        setVariables(new Variable[]{service, food});
+        setVariables(service, food);
 
         evaluate();
         printChart();  //TODO: Printar valores resultante da faixa no gráfico
