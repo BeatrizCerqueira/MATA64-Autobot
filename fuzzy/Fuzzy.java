@@ -62,8 +62,8 @@ public class Fuzzy {
         // Avalia valores específicos
         Variable service = new Variable("service");
         Variable food = new Variable("food");
-        service.setValue(3);
-        food.setValue(7);
+        service.setValue(10);
+        food.setValue(5);
         setVariables(service, food);
 
         evaluate();
@@ -97,7 +97,6 @@ public class Fuzzy {
         JFuzzyChart.get().chart(functionBlock);
 
         // Set inputs
-        // TODO: testar com valores diferentes
         fis.setVariable("service", 3);
         fis.setVariable("food", 7);
 

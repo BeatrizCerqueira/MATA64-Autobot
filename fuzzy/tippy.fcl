@@ -36,8 +36,8 @@ DEFUZZIFY tip
 	TERM cheap := (0,0) (5,1) (10,0);
 	TERM average := (10,0) (15,1) (20,0);
 	TERM generous := (20,0) (25,1) (30,0);
-	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method   // TODO: entender calculo
-	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier) //TODO: analisar //TODO: testar com valor 1
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method   // TODO: entender calculo do metodo escolhido no final
+	DEFAULT := 50;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
 
 // Inference rules
