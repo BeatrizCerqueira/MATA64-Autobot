@@ -1,4 +1,4 @@
-package autobot._others.fuzzy;
+package autobot._studying.fuzzy;
 
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;

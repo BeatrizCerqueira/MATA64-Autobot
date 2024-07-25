@@ -1,4 +1,4 @@
-package autobot._others.teacher_examples.tutorial_bayes_fuzzy.rfuzzy;
+package autobot._studying.teacher_examples.tutorial_bayes_fuzzy.rfuzzy;
 
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;

@@ -1,4 +1,4 @@
-package autobot._others.teacher_examples.tutorial_bayes_fuzzy.rbayes;
+package autobot._studying.teacher_examples.tutorial_bayes_fuzzy.rbayes;
 
 import org.eclipse.recommenders.jayes.BayesNet;
 import org.eclipse.recommenders.jayes.BayesNode;
