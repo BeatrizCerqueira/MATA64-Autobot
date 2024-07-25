@@ -3,6 +3,7 @@ package autobot._others.bayes;
 import org.eclipse.recommenders.jayes.BayesNet;
 import org.eclipse.recommenders.jayes.inference.junctionTree.JunctionTreeAlgorithm;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,5 +73,59 @@ public class Bayes {
         // Get the probability of Mary calling
         double[] maryCallsProbabilities = inference.getBeliefs(maryCalls);
         System.out.println("Probability of Mary Calling: " + maryCallsProbabilities[0]);
+    }
+
+    public static class Bayes {
+        public static void main(String[] args) {
+
+            BayesNet net = new BayesNet();
+
+            org.eclipse.recommenders.jayes.BayesNode node1 = net.createNode("node1");
+            org.eclipse.recommenders.jayes.BayesNode node2 = net.createNode("node2");
+
+            node2.setParents(Arrays.asList(node1));
+
+            node1.addOutcomes("true", "false");
+            node1.setProbabilities(0.2, 0.8);
+
+            node2.addOutcomes("one", "two", "three");
+            node2.setProbabilities(
+                    0.1, 0.4, 0.5,  // a == true
+                    0.3, 0.4, 0.3   // a == false
+            );
+
+            org.eclipse.recommenders.jayes.inference.IBayesInferer inferer = new JunctionTreeAlgorithm();
+            inferer.setNetwork(net);
+
+            System.out.println("A " + Arrays.toString(inferer.getBeliefs(node1)));
+            System.out.println("A " + Arrays.toString(inferer.getEvidence());
+
+
+            // loop
+
+            System.out.println("add inferencia 1");
+
+    //        Map<BayesNode, String> evidence = new HashMap<>();
+    //        evidence.put(node1, "true"); // Adiciona evidência para o nó 1
+    //        evidence.put(node2, "three"); // Adiciona evidência para o nó 2
+    //        inferer.setEvidence(evidence);
+            inferer.addEvidence(node1, "true");
+            inferer.addEvidence(node2, "two");
+
+            System.out.println("A " + Arrays.toString(inferer.getBeliefs(node1)));
+            System.out.println("B " + Arrays.toString(inferer.getBeliefs(node2)));
+
+
+            // ====================
+            System.out.println("====");
+            inferer.addEvidence(node1, "false");
+            inferer.addEvidence(node2, "one");
+
+            System.out.println("A " + Arrays.toString(inferer.getBeliefs(node1)));
+            System.out.println("B " + Arrays.toString(inferer.getBeliefs(node2)));
+
+
+        }
+
     }
 }
