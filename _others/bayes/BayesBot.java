@@ -7,8 +7,6 @@ import org.eclipse.recommenders.jayes.inference.IBayesInferer;
 import org.eclipse.recommenders.jayes.inference.junctionTree.JunctionTreeAlgorithm;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 public class BayesBot {
     public static void main(String[] args) {
@@ -17,8 +15,6 @@ public class BayesBot {
 
         a.addOutcomes("true", "false");
         a.setProbabilities(0.2, 0.8);
-
-        Arrays.asList(a);
 
         BayesNode b = net.createNode("b");
         b.addOutcomes("one", "two", "three");
@@ -46,15 +42,59 @@ public class BayesBot {
         IBayesInferer inferer = new JunctionTreeAlgorithm();
         inferer.setNetwork(net);
 
-        Map<BayesNode, String> evidence = new HashMap<>();
-        evidence.put(a, "false"); // Exemplo de evidência para o nó a
-        evidence.put(b, "three"); // Exemplo de evidência para o nó b
-        inferer.setEvidence(evidence);
+        // TODO: Test if Copilot can help us with the OS/Manufacturer/Symptom table
+        // TODO: How to update the probabilities of the nodes?
 
+/////////////////////////////////// Example 1:
+
+        System.out.println("===========================================");
         System.out.println("A " + Arrays.toString(inferer.getBeliefs(a)));
         System.out.println("B " + Arrays.toString(inferer.getBeliefs(b)));
         System.out.println("C " + Arrays.toString(inferer.getBeliefs(c)));
+//
+//        Map<BayesNode, String> evidence = new HashMap<>();
+//        evidence.put(a, "false");
+//        evidence.put(b, "three");
+//        inferer.setEvidence(evidence);
+//
+//        System.out.println("===========================================");
+//        System.out.println("A " + Arrays.toString(inferer.getBeliefs(a)));
+//        System.out.println("B " + Arrays.toString(inferer.getBeliefs(b)));
+//        System.out.println("C " + Arrays.toString(inferer.getBeliefs(c)));
+//
+//        Map<BayesNode, String> evidence2 = new HashMap<>();
+//        evidence2.put(a, "true");
+//        evidence2.put(b, "two");
+//        inferer.setEvidence(evidence2);
+//
+//        System.out.println("===========================================");
+//        System.out.println("A " + Arrays.toString(inferer.getBeliefs(a)));
+//        System.out.println("B " + Arrays.toString(inferer.getBeliefs(b)));
+//        System.out.println("C " + Arrays.toString(inferer.getBeliefs(c)));
 
+
+/////////////////////////////////// Example 2:
+
+//        System.out.println("===========================================");
+//        System.out.println("A " + Arrays.toString(inferer.getBeliefs(a)));
+//        System.out.println("B " + Arrays.toString(inferer.getBeliefs(b)));
+//        System.out.println("C " + Arrays.toString(inferer.getBeliefs(c)));
+//
+//        Map<BayesNode, String> evidence = new HashMap<>();
+//        evidence.put(a, "false");
+//        evidence.put(b, "three");
+//
+//        Map<BayesNode, String> evidence2 = new HashMap<>();
+//        evidence2.put(a, "true");
+//        evidence2.put(b, "two");
+//
+//        inferer.setEvidence(evidence);
+//        inferer.setEvidence(evidence2);
+//
+//        System.out.println("===========================================");
+//        System.out.println("A " + Arrays.toString(inferer.getBeliefs(a)));
+//        System.out.println("B " + Arrays.toString(inferer.getBeliefs(b)));
+//        System.out.println("C " + Arrays.toString(inferer.getBeliefs(c)));
 
     }
 
