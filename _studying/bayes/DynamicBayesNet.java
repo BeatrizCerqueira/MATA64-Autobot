@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class V1DynamicBayesNet {
+public class DynamicBayesNet {
     private BayesNet net;
     private BayesNode burglary;
     private BayesNode earthquake;
@@ -18,7 +18,7 @@ public class V1DynamicBayesNet {
     private BayesNode maryCalls;
     private Map<String, Integer> eventCounts;
 
-    public V1DynamicBayesNet() {
+    public DynamicBayesNet() {
         // Step 1: Initialize the Bayesian Network
         net = new BayesNet();
 
@@ -121,7 +121,7 @@ public class V1DynamicBayesNet {
     }
 
     public static void main(String[] args) {
-        V1DynamicBayesNet dbn = new V1DynamicBayesNet();
+        DynamicBayesNet dbn = new DynamicBayesNet();
 
         // Simulate event occurrences
         dbn.recordEvent("Burglary", true);
