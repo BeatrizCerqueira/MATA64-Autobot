@@ -12,7 +12,7 @@ public class Fuzzy {
     private static FunctionBlock functionBlock;
 
     public static void loadFile(String filename) {
-        String filePath = "./autobot/fuzzy/" + filename;
+        String filePath = "autobot/_studying/fuzzy/" + filename;
         fis = FIS.load(filePath);
 
         if (fis == null) {
