@@ -1,4 +1,4 @@
-package autobot._studying.fuzzy;
+package autobot.fuzzy;
 
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
@@ -12,7 +12,7 @@ public class Fuzzy {
     private static FunctionBlock functionBlock;
 
     public static void loadFile(String filename) {
-        String filePath = "autobot/_studying/fuzzy/" + filename;
+        String filePath = "./autobot/fuzzy/" + filename;
         fis = FIS.load(filePath);
 
         if (fis == null) {
@@ -49,7 +49,61 @@ public class Fuzzy {
 
     // ============ DEBUGS ===========
     public static void main(String[] args) {
-        test_funcs();
+        test_rules();
+    }
+
+    private static void test_rules() {
+        loadFile("autobot.fcl");
+        setFunctionBlock("escape");
+
+        // Adiciona valores às variáveis
+
+//        Variable distance = new Variable("distance");
+//        Variable enemy_energy = new Variable("enemy_energy");
+//        Variable our_energy = new Variable("our_energy");
+//        Variable enemy_gun_heat = new Variable("enemy_gun_heat");
+//
+//        distance.setValue(100);
+//        enemy_energy.setValue(50);
+//        our_energy.setValue(50);
+//        enemy_gun_heat.setValue(1);
+//
+//        setVariables(distance, enemy_energy, our_energy, enemy_gun_heat);
+//
+        printChart();
+//
+//        evaluate();
+//
+//        // Resultado e defuzificação
+//        Variable escape = getVariable("should_i_stay_or_should_i_go");
+//        printDefuzzyChart(escape);
+    }
+
+    private static void test_bot() {
+        loadFile("autobot.fcl");
+        setFunctionBlock("should_i_stay_or_should_i_go");
+
+        // Adiciona valores às variáveis
+
+        Variable distance = new Variable("distance");
+        Variable enemy_energy = new Variable("enemy_energy");
+        Variable our_energy = new Variable("our_energy");
+        Variable enemy_gun_heat = new Variable("enemy_gun_heat");
+
+        distance.setValue(100);
+        enemy_energy.setValue(50);
+        our_energy.setValue(50);
+        enemy_gun_heat.setValue(1);
+
+        setVariables(distance, enemy_energy, our_energy, enemy_gun_heat);
+
+        printChart();
+
+        evaluate();
+
+        // Resultado e defuzificação
+        Variable escape = getVariable("should_i_stay_or_should_i_go");
+        printDefuzzyChart(escape);
     }
 
     private static void test_funcs() {
@@ -67,7 +121,7 @@ public class Fuzzy {
         setVariables(service, food);
 
         evaluate();
-        printChart();  //TODO: Printar valores resultante da faixa no gráfico
+        printChart();
 
         // Resultado e defuzificação
         Variable tip = getVariable("tip");
@@ -76,39 +130,6 @@ public class Fuzzy {
         System.out.println(tip.getValue());
         // é possível retornar o termo equivalente ao valor?
 
-    }
-
-    private static void test_tipper() {
-        // Load from 'FCL' file
-//        String fileName = "./autobot/fuzzy/autobot.fcl";
-        String fileName = "./autobot/fuzzy/tippy.fcl";
-        FIS fis = FIS.load(fileName, true);
-
-        // Error while loading?
-        if (fis == null) {
-            System.err.println("Can't load file: '" + fileName + "'");
-            return;
-        }
-
-        // Success
-        FunctionBlock functionBlock = fis.getFunctionBlock("tipper");
-
-        // Show
-        JFuzzyChart.get().chart(functionBlock);
-
-        // Set inputs
-        fis.setVariable("service", 3);
-        fis.setVariable("food", 7);
-
-        // Evaluate
-        fis.evaluate();
-
-        // Show output variable's chart
-        Variable tip = functionBlock.getVariable("tip");
-        JFuzzyChart.get().chart(tip, tip.getDefuzzifier(), true);
-
-        // Print ruleSet
-        System.out.println(fis);
     }
 
 }
