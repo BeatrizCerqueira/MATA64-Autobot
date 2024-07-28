@@ -31,7 +31,7 @@ public class Autobot extends AdvancedRobot {
         Prolog.loadPrologFile();
         GeneticAlgorithm.init(getRoundNum());
         Fuzzy.init();
-        Fuzzy.printCharts();
+//        Fuzzy.printCharts();
 
         changeRobotColors();
 
@@ -286,7 +286,7 @@ public class Autobot extends AdvancedRobot {
     }
 
     private void changeRobotColors() {
-        setBodyColor(Color.PINK);
+        setBodyColor(Color.BLACK);
         setGunColor(Color.BLACK);
         setRadarColor(Color.WHITE);
     }

@@ -16,7 +16,9 @@ public class Fuzzy {
     private static Variable result;
 
     public static void loadFile(String filename) {
-        String filePath = "./autobot/fuzzy/" + filename;
+//        String filePath = "./autobot/fuzzy/" + filename;
+        String filePath = "./robots/autobot/fuzzy/" + filename;
+
         fis = FIS.load(filePath);
 
         if (fis == null) {
@@ -69,7 +71,6 @@ public class Fuzzy {
 
 
     public static void setFuzzyValues(Double... values) {
-        System.out.println(values[0]);
         for (int i = 0; i < variables.size(); i++) {
             variables.get(i).setValue(values[i]);
         }
