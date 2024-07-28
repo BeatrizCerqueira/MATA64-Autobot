@@ -26,12 +26,16 @@ public class Autobot extends AdvancedRobot {
     int safeDistanceGA;
     int bordersMarginGA;
 
+    //Fuzzy Variables:
+    int velocityFuzzy;
+    boolean hasLifeRisk = false;
+
     public void run() {
 
         Prolog.loadPrologFile();
         GeneticAlgorithm.init(getRoundNum());
         Fuzzy.init();
-//        Fuzzy.printCharts();
+//        Fuzzy.printCharts(); // TESTING
 
         changeRobotColors();
 
@@ -151,6 +155,8 @@ public class Autobot extends AdvancedRobot {
 
             boolean shouldFire = Prolog.shouldFire(firePowerNeededToHit, getEnergy());
 
+//            shouldFire = false;   // MOCK FOR TESTING PURPOSES
+
             if (shouldFire) {
                 Map<String, Double> pair = new HashMap<>();
                 pair.put("distance", enemyDistanceAfterTurns);
@@ -228,6 +234,7 @@ public class Autobot extends AdvancedRobot {
 
         double aheadDist = MathUtils.random(0, 3);  //reduce vel to not hit wall
         setAhead(aheadDist);
+        //TODO: if not facing wall, move faster!
     }
 
     /**
@@ -241,10 +248,15 @@ public class Autobot extends AdvancedRobot {
 
     public void checkEnemyIsClose() {
         boolean isEnemyClose = Prolog.isEnemyClose(enemyBot.getDistance(), safeDistanceGA);
-        boolean hasLifeRisk = Fuzzy.getDefuzzyValue() > 1;
-        boolean mustEscape = isEnemyClose || hasLifeRisk;
-        if (mustEscape) {
+        if (isEnemyClose) {
             setAhead(20);
+        }
+    }
+
+    public void checkLifeRisk() {
+        if (hasLifeRisk) {
+//            out.println("RUN! " + velocityFuzzy);
+            setAhead(velocityFuzzy);
         }
     }
 
@@ -253,17 +265,21 @@ public class Autobot extends AdvancedRobot {
 
         // Set distance and turn
         moveRandomly();         // default behavior - less priority
+        checkLifeRisk();        // must check before borders to avoid them
         checkBorders();         // turn to escape borders - setTurn
 
-        // if enemy bot not scanned, skip next methods
-        if (!enemyBot.isScanned())
+
+        // Skip next methods to avoid error or override
+        if (!enemyBot.isScanned() || hasLifeRisk)
             return;
 
         // Override setAhead
         checkEnemyGunReady();
         checkEnemyIsClose();
 
-        // Events priority: EnemyIsClose > EnemyGunReady > default random
+        // Events priority: LifeRisk > EnemyIsClose > EnemyGunReady > default random
+
+
     }
 
     public void nextTurn() {
@@ -295,6 +311,30 @@ public class Autobot extends AdvancedRobot {
     public void applyFuzzyAlgorithm() {
 //      Variables: distance, enemy_energy, autobot_energy
         Fuzzy.setFuzzyValues(enemyBot.getDistance(), enemyBot.getEnergy(), getEnergy());
-        System.out.println("Risco: " + Fuzzy.getDefuzzyValue());
+        defuzzyResults();
+    }
+
+    public void defuzzyResults() {
+        double riskFactor = Fuzzy.getDefuzzyValue();
+        hasLifeRisk = riskFactor > 0;
+        if (hasLifeRisk) {
+            // Higher risk must avoid borders and enemyBot at all costs
+            // TODO: check his direction to not colide
+            // reduced velocity at borders
+
+            final int EMERGENCY_VELOCITY = Consts.VELOCITY_MAX * 2;// 40;
+            final int EMERGENCY_DISTANCE = Consts.SAFE_DISTANCE_MAX * 2; //500;
+            final double EMERGENCY_BORDER_MARGIN = Consts.BORDER_MARGIN_MAX * 0.5; //200;
+
+            velocityFuzzy = (int) (EMERGENCY_VELOCITY * riskFactor);
+            safeDistanceGA = (int) (EMERGENCY_DISTANCE * riskFactor);
+            bordersMarginGA = (int) (EMERGENCY_BORDER_MARGIN * riskFactor);
+
+            System.out.println("Risco! " + Fuzzy.getDefuzzyValue());
+//            System.out.print("vel: " + velocityFuzzy);
+//            System.out.print(" dist: " + safeDistanceGA);
+//            System.out.println(" bord: " + bordersMarginGA);
+        }
+
     }
 }

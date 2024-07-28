@@ -16,7 +16,7 @@ public class Fuzzy {
     private static Variable result;
 
     public static void loadFile(String filename) {
-//        String filePath = "./autobot/fuzzy/" + filename;
+//        String filePath = "/autobot/fuzzy/" + filename;
         String filePath = "./robots/autobot/fuzzy/" + filename;
 
         fis = FIS.load(filePath);
@@ -130,32 +130,6 @@ public class Fuzzy {
 //        Variable escape = getVariable("life_risk");
 //        printDefuzzyChart(escape);
 //        System.out.println(escape.getValue());
-//
-//    }
-
-//    private static void test_funcs() {
-//        loadFile("tippy.fcl");
-//        setFunctionBlock("tipper");
-//
-//        // printa variáveis de entrada e saída
-//        // printChart();
-//
-//        // Avalia valores específicos
-//        Variable service = new Variable("service");
-//        Variable food = new Variable("food");
-//        service.setValue(10);
-//        food.setValue(5);
-//        setVariables(service, food);
-//
-//        evaluate();
-//        printChart();
-//
-//        // Resultado e defuzificação
-//        Variable tip = getVariable("tip");
-//        printDefuzzyChart(tip);
-//
-//        System.out.println(tip.getValue());
-//        // é possível retornar o termo equivalente ao valor?
 //
 //    }
 
