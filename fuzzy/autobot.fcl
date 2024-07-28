@@ -8,7 +8,7 @@ VAR_INPUT				// Variáveis de entrada
 END_VAR
 
 VAR_OUTPUT				// Variável de saída
-	poder : REAL;		// 0 à 3
+	life_risk : REAL;		// 0 à 3
 END_VAR
 
 // Fuzzify input variable 'distance': {'close', 'medium' , 'far'}
@@ -21,13 +21,13 @@ END_FUZZIFY
 
 // Fuzzify input variable 'enemy_energy': { 'sick', 'healthy' }
 FUZZIFY enemy_energy
-	TERM sick := (0,1) (20,0);
+	TERM sick := (0,1) (30,0);
     TERM healthy := (40, 0) (100, 1);
 END_FUZZIFY
 
 // Fuzzify input variable 'autobot_energy': { 'sick', 'healthy' }
 FUZZIFY autobot_energy
-	TERM sick := (0,1) (20,0);
+	TERM sick := (0,1) (30,0);
     TERM healthy := (40, 0) (100, 1);
 END_FUZZIFY
 
@@ -37,22 +37,29 @@ FUZZIFY enemy_gun_heat
     TERM hot   := (2,0) (3,1);
 END_FUZZIFY
 
-// Defuzzify output variable 'life_risk' : {'low', 'high' }
+// Defuzzify output variable 'life_risk' : {'low', 'medium', 'high' }
 DEFUZZIFY life_risk
-	TERM low := 1;
-	TERM high := 2;
-	METHOD : COG;		// Método 'Centro da gravidade'
-	DEFAULT := 1;		// Valor default 1 (se nenhuma das regras ativar o defuzzifier)
+    TERM low := gauss 1 2;
+    TERM medium := gauss 5 2;
+    TERM high := gauss 9 2;
+	METHOD : COG; 		// Método 'Centro da gravidade'
+	DEFAULT := 0;		// Valor default 0 (se nenhuma das regras ativar o defuzzifier)
 END_DEFUZZIFY
+
+// METHODs (COG|COGS|COGF|COA|LM|RM|MM)
+
+	//TERM low := (0,1) (0.25,1) (0.4,0);
+	//TERM medium := (0.3,0) (0.5,1) (0.7,0);
+	//TERM high := (0.8,0) (1,1);
 
 RULEBLOCK No1
 	AND : MIN;			// É comum utilizar o método MIN para o operador AND, e o método MAX para o operador OR.
 	ACT : MIN;			// Use 'min' activation method
 	ACCU : MAX;			// Use 'max' accumulation method
 
-	RULE 1 : IF distancia IS perto THEN poder IS forte;
-	RULE 2 : IF distancia IS media THEN poder IS normal;
-	RULE 3 : IF distancia IS longe THEN poder IS fraco;
+	RULE 1 : IF distance IS far THEN life_risk IS low;
+	RULE 2 : IF (autobot_energy IS sick AND enemy_energy IS sick) THEN life_risk IS medium;
+	RULE 3 : IF (distance IS close AND autobot_energy IS sick) THEN life_risk IS high;
 
 END_RULEBLOCK
 

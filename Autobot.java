@@ -74,6 +74,7 @@ public class Autobot extends AdvancedRobot {
         if (getRoundNum() >= getNumRounds() - 1)
             // Battle finished
             GeneticAlgorithm.clearGeneticData();
+        //TODO: remover arquivo quando abortar partida
 
     }
 
