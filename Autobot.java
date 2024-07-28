@@ -242,7 +242,9 @@ public class Autobot extends AdvancedRobot {
 
     public void checkEnemyIsClose() {
         boolean isEnemyClose = Prolog.isEnemyClose(enemyBot.getDistance(), safeDistanceGA);
-        if (isEnemyClose) {
+        boolean hasLifeRisk = Fuzzy.getDefuzzyValue() > 7;
+        boolean mustEscape = isEnemyClose || hasLifeRisk;
+        if (mustEscape) {
             setAhead(20);
         }
     }

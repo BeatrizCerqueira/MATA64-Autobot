@@ -50,7 +50,7 @@ RULEBLOCK No1
 	ACT : MIN;			// Use 'min' activation method
 	ACCU : MAX;			// Use 'max' accumulation method
 
-	RULE 1 : IF distance IS far THEN life_risk IS low;
+	RULE 1 : IF distance IS far AND autobot_energy IS sick THEN life_risk IS low;
 	RULE 2 : IF (autobot_energy IS sick AND enemy_energy IS sick) THEN life_risk IS medium;
 	RULE 3 : IF (distance IS close AND autobot_energy IS sick) THEN life_risk IS high;
 
