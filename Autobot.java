@@ -78,7 +78,6 @@ public class Autobot extends AdvancedRobot {
         if (getRoundNum() >= getNumRounds() - 1)
             // Battle finished
             GeneticAlgorithm.clearGeneticData();
-        //TODO: remover arquivo quando abortar partida
 
     }
 
@@ -242,7 +241,7 @@ public class Autobot extends AdvancedRobot {
 
     public void checkEnemyIsClose() {
         boolean isEnemyClose = Prolog.isEnemyClose(enemyBot.getDistance(), safeDistanceGA);
-        boolean hasLifeRisk = Fuzzy.getDefuzzyValue() > 7;
+        boolean hasLifeRisk = Fuzzy.getDefuzzyValue() > 1;
         boolean mustEscape = isEnemyClose || hasLifeRisk;
         if (mustEscape) {
             setAhead(20);

@@ -84,6 +84,7 @@ public class Enemy {
     }
 
     private void identifyEnemyBullets(double energyDecreased) {
+        // TODO:
         // check enemy energy decrease to identify if enemy has fired
         // if so, update heat
 
