@@ -1,19 +1,35 @@
 package autobot._studying.bayes;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ProbabilityCalculator {
-    private final List<Map<String, String>> dataset;
-    private final Map<String, Map<String, Double>> marginalProbabilities;
-    private final Map<String, Map<String, Map<String, Double>>> conditionalProbabilities;
+    private List<Map<String, String>> dataset;
+    private Map<String, Map<String, Double>> marginalProbabilities;
+    private Map<String, Map<String, Map<String, Double>>> conditionalProbabilities;
+    private Set<String> manufacturers;
+    private Set<String> osSet;
+    private Set<String> symptoms;
+    private Set<String> causes;
 
     public ProbabilityCalculator(List<Map<String, String>> dataset) {
         this.dataset = dataset;
         this.marginalProbabilities = new HashMap<>();
         this.conditionalProbabilities = new HashMap<>();
+        this.manufacturers = new HashSet<>();
+        this.osSet = new HashSet<>();
+        this.symptoms = new HashSet<>();
+        this.causes = new HashSet<>();
+        extractUniqueValues();
         calculateProbabilities();
+    }
+
+    private void extractUniqueValues() {
+        for (Map<String, String> record : dataset) {
+            manufacturers.add(record.get("Manufacturer"));
+            osSet.add(record.get("OS"));
+            symptoms.add(record.get("Symptom"));
+            causes.add(record.get("Cause"));
+        }
     }
 
     private void calculateProbabilities() {
@@ -34,22 +50,39 @@ public class ProbabilityCalculator {
             }
         }
 
-        for (String key : counts.keySet()) {
-            String[] parts = key.split("_");
-            String attribute = parts[0];
-            String value = parts[1];
-            marginalProbabilities.putIfAbsent(attribute, new HashMap<>());
-            marginalProbabilities.get(attribute).put(value, (double) counts.get(key) / total);
+        for (String manufacturer : manufacturers) {
+            marginalProbabilities.putIfAbsent("Manufacturer", new HashMap<>());
+            marginalProbabilities.get("Manufacturer").put(manufacturer, (double) counts.getOrDefault("Manufacturer_" + manufacturer, 0) / total);
         }
 
-        for (String cause : conditionalCounts.keySet()) {
+        for (String os : osSet) {
+            marginalProbabilities.putIfAbsent("OS", new HashMap<>());
+            marginalProbabilities.get("OS").put(os, (double) counts.getOrDefault("OS_" + os, 0) / total);
+        }
+
+        for (String symptom : symptoms) {
+            marginalProbabilities.putIfAbsent("Symptom", new HashMap<>());
+            marginalProbabilities.get("Symptom").put(symptom, (double) counts.getOrDefault("Symptom_" + symptom, 0) / total);
+        }
+
+        for (String cause : causes) {
+            marginalProbabilities.putIfAbsent("Cause", new HashMap<>());
+            marginalProbabilities.get("Cause").put(cause, (double) counts.getOrDefault("Cause_" + cause, 0) / total);
+        }
+
+        for (String cause : causes) {
             conditionalProbabilities.putIfAbsent(cause, new HashMap<>());
-            for (String key : conditionalCounts.get(cause).keySet()) {
-                String[] parts = key.split("_");
-                String attribute = parts[0];
-                String value = parts[1];
-                conditionalProbabilities.get(cause).putIfAbsent(attribute, new HashMap<>());
-                conditionalProbabilities.get(cause).get(attribute).put(value, (double) conditionalCounts.get(cause).get(key) / counts.get("Cause_" + cause));
+            for (String manufacturer : manufacturers) {
+                conditionalProbabilities.get(cause).putIfAbsent("Manufacturer", new HashMap<>());
+                conditionalProbabilities.get(cause).get("Manufacturer").put(manufacturer, (double) conditionalCounts.getOrDefault(cause, new HashMap<>()).getOrDefault("Manufacturer_" + manufacturer, 0) / counts.getOrDefault("Cause_" + cause, 0));
+            }
+            for (String os : osSet) {
+                conditionalProbabilities.get(cause).putIfAbsent("OS", new HashMap<>());
+                conditionalProbabilities.get(cause).get("OS").put(os, (double) conditionalCounts.getOrDefault(cause, new HashMap<>()).getOrDefault("OS_" + os, 0) / counts.getOrDefault("Cause_" + cause, 0));
+            }
+            for (String symptom : symptoms) {
+                conditionalProbabilities.get(cause).putIfAbsent("Symptom", new HashMap<>());
+                conditionalProbabilities.get(cause).get("Symptom").put(symptom, (double) conditionalCounts.getOrDefault(cause, new HashMap<>()).getOrDefault("Symptom_" + symptom, 0) / counts.getOrDefault("Cause_" + cause, 0));
             }
         }
     }
