@@ -15,6 +15,8 @@ import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.*;
 
+import static java.lang.Math.max;
+
 public class Autobot extends AdvancedRobot {
 
     Point2D robotLocation;
@@ -237,7 +239,7 @@ public class Autobot extends AdvancedRobot {
 
         //If not facing wall, move faster!
         if (getHeading() > minAngle && getHeading() < maxAngle) {
-            setAhead(15);
+            setAhead(max(velocityFuzzy, velocityGA));
         }
     }
 
