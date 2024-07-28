@@ -155,7 +155,7 @@ public class Autobot extends AdvancedRobot {
 
             boolean shouldFire = Prolog.shouldFire(firePowerNeededToHit, getEnergy());
 
-//            shouldFire = false;   // MOCK FOR TESTING PURPOSES
+            shouldFire = false;   // MOCK FOR TESTING PURPOSES
 
             if (shouldFire) {
                 Map<String, Double> pair = new HashMap<>();
@@ -234,7 +234,11 @@ public class Autobot extends AdvancedRobot {
 
         double aheadDist = MathUtils.random(0, 3);  //reduce vel to not hit wall
         setAhead(aheadDist);
-        //TODO: if not facing wall, move faster!
+
+        //If not facing wall, move faster!
+        if (getHeading() > minAngle && getHeading() < maxAngle) {
+            setAhead(15);
+        }
     }
 
     /**
@@ -319,12 +323,11 @@ public class Autobot extends AdvancedRobot {
         hasLifeRisk = riskFactor > 0;
         if (hasLifeRisk) {
             // Higher risk must avoid borders and enemyBot at all costs
-            // TODO: check his direction to not colide
-            // reduced velocity at borders
+            // In order to avoid hit borders, velocity is reduced when is atMargin
 
             final int EMERGENCY_VELOCITY = Consts.VELOCITY_MAX * 2;// 40;
             final int EMERGENCY_DISTANCE = Consts.SAFE_DISTANCE_MAX * 2; //500;
-            final double EMERGENCY_BORDER_MARGIN = Consts.BORDER_MARGIN_MAX * 0.5; //200;
+            final double EMERGENCY_BORDER_MARGIN = Consts.BORDER_MARGIN_MAX * 0.75; //200;
 
             velocityFuzzy = (int) (EMERGENCY_VELOCITY * riskFactor);
             safeDistanceGA = (int) (EMERGENCY_DISTANCE * riskFactor);
