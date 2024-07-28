@@ -16,12 +16,14 @@ import java.util.List;
 import java.util.*;
 
 import static java.lang.Math.max;
+import static java.lang.Math.signum;
 
 public class Autobot extends AdvancedRobot {
 
     Point2D robotLocation;
 
     Enemy enemyBot = new Enemy();
+    int direction = 1;
 
     // Genetic Algorithm Variables:
     int velocityGA;
@@ -118,11 +120,11 @@ public class Autobot extends AdvancedRobot {
 
         // Radar goes that much further in the direction it is going to turn
         double extraRadarTurn = Math.toDegrees(Math.atan(Consts.RADAR_COVERAGE_DIST / enemyBot.getDistance()));
-        double radarTotalTurn = radarInitialTurn + (extraRadarTurn * Math.signum(radarInitialTurn));
+        double radarTotalTurn = radarInitialTurn + (extraRadarTurn * signum(radarInitialTurn));
 
         // Radar goes to the less distance direction
         double normalizedRadarTotalTurn = Utils.normalRelativeAngleDegrees(radarTotalTurn);
-        double radarTurn = (Math.min(Math.abs(normalizedRadarTotalTurn), Rules.RADAR_TURN_RATE)) * Math.signum(normalizedRadarTotalTurn);
+        double radarTurn = (Math.min(Math.abs(normalizedRadarTotalTurn), Rules.RADAR_TURN_RATE)) * signum(normalizedRadarTotalTurn);
 
         // Set radar turn
         setTurnRadarRight(radarTurn);
@@ -137,7 +139,7 @@ public class Autobot extends AdvancedRobot {
         double gunInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getGunHeading());
 
         // Gun goes to the less distance direction
-        double gunTurn = (Math.min(Math.abs(gunInitialTurn), Rules.GUN_TURN_RATE)) * Math.signum(gunInitialTurn);
+        double gunTurn = (Math.min(Math.abs(gunInitialTurn), Rules.GUN_TURN_RATE)) * signum(gunInitialTurn);
 
         // Set gun turn
         setTurnGunRight(gunTurn);
@@ -157,7 +159,7 @@ public class Autobot extends AdvancedRobot {
 
             boolean shouldFire = Prolog.shouldFire(firePowerNeededToHit, getEnergy());
 
-            shouldFire = false;   // MOCK FOR TESTING PURPOSES
+//            shouldFire = false;   // MOCK FOR TESTING PURPOSES
 
             if (shouldFire) {
                 Map<String, Double> pair = new HashMap<>();
@@ -179,11 +181,11 @@ public class Autobot extends AdvancedRobot {
     public void moveRandomly() {
         // set default movement attributes, considering robot is at center of arena
 
-        double maxHeadTurn = (10 - (0.75 * getVelocity())); //max robot can turn considering its velocity
+        double maxHeadTurn = (10 - (0.75 * getVelocity()));                   //max robot can turn considering its velocity
         double headTurn = MathUtils.random(-1 * maxHeadTurn, maxHeadTurn);    //random relative angle to turn
 
         setTurnRight(headTurn);
-        setAhead(velocityGA);
+        setAhead(velocityGA * direction);
     }
 
     public void checkBorders() {
@@ -197,8 +199,8 @@ public class Autobot extends AdvancedRobot {
         boolean yMargin = yLimit - (Math.abs(y)) < bordersMarginGA;
 
         if (xMargin || yMargin) {
-            double xSign = xMargin ? Math.signum(x) : 0;
-            double ySign = yMargin ? Math.signum(y) : 0;
+            double xSign = xMargin ? signum(x) : 0;
+            double ySign = yMargin ? signum(y) : 0;
             avoidBorders(xSign, ySign);
         }
 
@@ -249,13 +251,15 @@ public class Autobot extends AdvancedRobot {
     public void checkEnemyGunReady() {
         if (enemyBot.isGunReady()) { // enemy gun will shoot any time now. do not move
             setAhead(0);
+            direction = (int) signum(MathUtils.random(-1.0, 1.0));               // may move backwards randomly
         }
     }
 
     public void checkEnemyIsClose() {
         boolean isEnemyClose = Prolog.isEnemyClose(enemyBot.getDistance(), safeDistanceGA);
         if (isEnemyClose) {
-            setAhead(20);
+            int escapeVelocity = MathUtils.random(10, 20); // random velocity to allow more freedom to turn
+            setAhead(escapeVelocity);
         }
     }
 
@@ -309,9 +313,10 @@ public class Autobot extends AdvancedRobot {
     }
 
     private void changeRobotColors() {
-        setBodyColor(Color.BLACK);
+        setBodyColor(Color.WHITE);
         setGunColor(Color.BLACK);
         setRadarColor(Color.WHITE);
+        setBulletColor(Color.MAGENTA);
     }
 
     public void applyFuzzyAlgorithm() {
