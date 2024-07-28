@@ -80,7 +80,7 @@ public class Fuzzy {
 
     private static void test_tipper() {
         // Load from 'FCL' file
-//        String fileName = "./autobot/fuzzy/rules.fcl";
+//        String fileName = "./autobot/fuzzy/autobot.fcl";
         String fileName = "./autobot/fuzzy/tippy.fcl";
         FIS fis = FIS.load(fileName, true);
 

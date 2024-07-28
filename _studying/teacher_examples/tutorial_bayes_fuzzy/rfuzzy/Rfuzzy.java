@@ -16,7 +16,7 @@ public class Rfuzzy extends AdvancedRobot {
     /**
      * run: Rfuzzy's default behavior
      */
-    final static String fclFileName = "./fcl/rules.fcl";
+    final static String fclFileName = "./fcl/autobot.fcl";
     public static final double ROBOT_SIZE = 36;
     private FunctionBlock poderTiro;
 
