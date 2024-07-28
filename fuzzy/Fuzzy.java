@@ -47,6 +47,7 @@ public class Fuzzy {
         loadFile("autobot.fcl");
         setFunctionBlock("escape");
         setDefuzzyVariable("life_risk");
+        initVariables("distance", "enemy_energy", "autobot_energy");
     }
 
     public static void initVariables(String... names) {
@@ -54,16 +55,29 @@ public class Fuzzy {
         for (String name : names) {
             variables.add(new Variable(name));
         }
+
+        getVariablesNames();
     }
 
-    public static void setVariablesValues(Double... values) {
+    public static void getVariablesNames() {
+        System.out.print("Variáveis fuzzy: ");
+        for (Variable var : variables) {
+            System.out.print(var.getName() + " ");
+        }
+        System.out.println();
+    }
+
+
+    public static void setFuzzyValues(Double... values) {
         System.out.println(values[0]);
         for (int i = 0; i < variables.size(); i++) {
             variables.get(i).setValue(values[i]);
         }
     }
 
-    public static void setDefuzzyVariable(String variableName) {
+
+    public static void setDefuzzyVariable
+            (String variableName) {
         result = functionBlock.getVariable(variableName);
     }
 
@@ -81,8 +95,8 @@ public class Fuzzy {
 
     public static void main(String[] args) {
         init();
-        initVariables("distance", "enemy_energy", "autobot_energy", "enemy_gun_heat");
-        setVariablesValues(100.0, 15.0, 10.0, 2.0);
+//        initVariables("distance", "enemy_energy", "autobot_energy", "enemy_gun_heat");
+        setFuzzyValues(100.0, 15.0, 10.0, 2.0);
         System.out.println(getDefuzzyValue());
         printCharts();
     }

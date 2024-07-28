@@ -12,6 +12,10 @@ public class Enemy {
 
     Point2D location;
 
+    public double getEnergy() {
+        return energy;
+    }
+
     double energy;
     double heat;
     double angle;

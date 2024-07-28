@@ -4,7 +4,6 @@ VAR_INPUT				// Variáveis de entrada
 	distance : REAL;
 	enemy_energy : REAL;
 	autobot_energy : REAL;
-	enemy_gun_heat : REAL;
 END_VAR
 
 VAR_OUTPUT				// Variável de saída
@@ -29,12 +28,6 @@ END_FUZZIFY
 FUZZIFY autobot_energy
 	TERM sick := (0,1) (30,0);
     TERM healthy := (40, 0) (100, 1);
-END_FUZZIFY
-
-// Fuzzify input variable 'enemy_gun_heat': { 'cold', 'hot' }
-FUZZIFY enemy_gun_heat
-    TERM cold  := (0,1) (1,0);
-    TERM hot   := (2,0) (3,1);
 END_FUZZIFY
 
 // Defuzzify output variable 'life_risk' : {'low', 'medium', 'high' }

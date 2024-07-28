@@ -1,6 +1,7 @@
 package autobot;
 
 
+import autobot.fuzzy.Fuzzy;
 import autobot.genetic.GeneticAlgorithm;
 import autobot.prolog.Prolog;
 import autobot.utils.Consts;
@@ -29,6 +30,9 @@ public class Autobot extends AdvancedRobot {
 
         Prolog.loadPrologFile();
         GeneticAlgorithm.init(getRoundNum());
+        Fuzzy.init();
+        Fuzzy.printCharts();
+
         changeRobotColors();
 
         setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
@@ -270,6 +274,7 @@ public class Autobot extends AdvancedRobot {
 
         // apply genetic algorithm
         applyGeneticAlgorithm();
+        applyFuzzyAlgorithm();
 
     }
 
@@ -281,8 +286,14 @@ public class Autobot extends AdvancedRobot {
     }
 
     private void changeRobotColors() {
-        setBodyColor(Color.BLACK);
+        setBodyColor(Color.PINK);
         setGunColor(Color.BLACK);
         setRadarColor(Color.WHITE);
+    }
+
+    public void applyFuzzyAlgorithm() {
+//      Variables: distance, enemy_energy, autobot_energy
+        Fuzzy.setFuzzyValues(enemyBot.getDistance(), enemyBot.getEnergy(), getEnergy());
+        System.out.println("Risco: " + Fuzzy.getDefuzzyValue());
     }
 }
