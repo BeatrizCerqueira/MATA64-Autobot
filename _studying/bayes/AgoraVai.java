@@ -145,22 +145,17 @@ class Weka {
         }
     }
 
-    private void updateDistributions() {
+    public void calcNewDistributions() throws Exception {
+        bayesNet.setData(dataset);
+        bayesNet.estimateCPTs();
         for (InternalBayesNode internalNode : internalNodes) {
             internalNode.setDistribution(bayesNet.getDistribution(internalNode.getName()));
         }
     }
 
-    private void update() throws Exception {
-        bayesNet.setData(dataset);
-        bayesNet.estimateCPTs();
-        updateDistributions();
-    }
-
     public void addInstance(EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, MyGunAngle mga, FirePower fp, Hit hit) throws Exception {
         double[] instance = new double[]{ed.ordinal(), ev.ordinal(), ea.ordinal(), mga.ordinal(), fp.ordinal(), hit.ordinal()};
         dataset.add(new DenseInstance(1.0, instance));
-        update();
     }
 
     private void printDataset() {
@@ -265,7 +260,7 @@ class Jayes {
         }
     }
 
-    public void updateProbabilities() {
+    public void setNewProbabilities() {
         for (InternalBayesNode internalNode : internalNodes) {
             BayesNode jayesNode = bayesNet.getNode(internalNode.getName());
             jayesNode.setProbabilities(internalNode.getFlattenedDistribution());
@@ -363,7 +358,8 @@ public class AgoraVai {
         weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
         weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
         weka.addInstance(EnemyDistance.DIST2, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
-        jayes.updateProbabilities(); // TODO: How to avoid calling manually?
+        weka.calcNewDistributions();
+        jayes.setNewProbabilities();
     }
 
     private static void printAll(String tip, Weka weka, Jayes jayes) {
