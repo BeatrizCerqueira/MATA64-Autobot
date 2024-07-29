@@ -23,7 +23,6 @@ import org.eclipse.recommenders.jayes.BayesNet;
 import org.eclipse.recommenders.jayes.BayesNode;
 import org.eclipse.recommenders.jayes.util.MathUtils;
 import weka.classifiers.bayes.net.EditableBayesNet;
-import weka.classifiers.bayes.net.MarginCalculator;
 import weka.core.Attribute;
 import weka.core.Instances;
 
@@ -35,8 +34,7 @@ class InternalBayesNode {
     private final String name;
     private final List<String> values;
     private final List<String> parents;
-    private double[] marginalDistribution;
-    private double[][] conditionalDistribution;
+    private double[][] distribution;
 
     public InternalBayesNode(String name, List<String> values, List<String> parents) {
         this.name = name;
@@ -56,41 +54,30 @@ class InternalBayesNode {
         return parents;
     }
 
-    public double[] getMarginalDistribution() {
-        return marginalDistribution;
+    public double[] getFlattenedDistribution() {
+        return Arrays.stream(distribution).flatMapToDouble(Arrays::stream).toArray();
     }
 
-    public double[] getFlattenedConditionalDistribution() {
-        return Arrays.stream(conditionalDistribution).flatMapToDouble(Arrays::stream).toArray();
+    public double[][] getDistribution() {
+        return distribution;
     }
 
-    public double[][] getConditionalDistribution() {
-        return conditionalDistribution;
-    }
-
-    public void setMarginalDistribution(double[] marginalDistribution) {
-        this.marginalDistribution = marginalDistribution;
-    }
-
-    public void setConditionalDistribution(double[][] conditionalDistribution) {
-        this.conditionalDistribution = conditionalDistribution;
+    public void setDistribution(double[][] distribution) {
+        this.distribution = distribution;
     }
 
 }
 
 class Weka {
 
+    private final List<InternalBayesNode> internalNodes;
     private Instances dataset;
     private EditableBayesNet bayesNet;
-    private MarginCalculator marginalDistributionCalculator;
-    private final List<InternalBayesNode> internalNodes;
 
     public Weka(List<InternalBayesNode> internalNodes) throws Exception {
         this.internalNodes = internalNodes;
         initDataset();
         initBayesianNetwork();
-        initMarginCalculator();
-        updateDistributions();
     }
 
     private void initDataset() {
@@ -104,7 +91,12 @@ class Weka {
     }
 
     private void initBayesianNetwork() throws Exception {
-        EditableBayesNet bayesNet = new EditableBayesNet(dataset);
+        this.bayesNet = new EditableBayesNet(dataset);
+        initParents();
+        updateDistributions();
+    }
+
+    private void initParents() throws Exception {
         for (InternalBayesNode internalNode : internalNodes) {
             if (!internalNode.getParents().isEmpty()) {
                 for (String parent : internalNode.getParents()) {
@@ -112,20 +104,11 @@ class Weka {
                 }
             }
         }
-        this.bayesNet = bayesNet;
-    }
-
-    private void initMarginCalculator() throws Exception {
-        MarginCalculator marginDistributionCalculator = new MarginCalculator();
-        marginDistributionCalculator.calcMargins(bayesNet);
-        this.marginalDistributionCalculator = marginDistributionCalculator;
     }
 
     private void updateDistributions() {
-        for (int i = 0; i < internalNodes.size(); i++) {
-            InternalBayesNode internalNode = internalNodes.get(i);
-            internalNode.setMarginalDistribution(marginalDistributionCalculator.getMargin(i));
-            internalNode.setConditionalDistribution(bayesNet.getDistribution(i));
+        for (InternalBayesNode internalNode : internalNodes) {
+            internalNode.setDistribution(bayesNet.getDistribution(internalNode.getName()));
         }
     }
 
@@ -144,17 +127,10 @@ class Weka {
         }
     }
 
-    private void printMarginalDistributions() {
-        System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> Marginal Distribution <<<<<<<<<<<<<<<<<<<<<<<<<<");
-        for (InternalBayesNode internalNode : internalNodes) {
-            System.out.println(internalNode.getName() + ": " + Arrays.toString(internalNode.getMarginalDistribution()));
-        }
-    }
-
-    private void printConditionalDistributions() {
+    private void printDistributions() {
         System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> Conditional Distribution <<<<<<<<<<<<<<<<<<<<<<<<<<");
         for (InternalBayesNode internalNode : internalNodes) {
-            System.out.println(internalNode.getName() + ": " + Arrays.deepToString(internalNode.getConditionalDistribution()));
+            System.out.println(internalNode.getName() + ": " + Arrays.deepToString(internalNode.getDistribution()));
         }
     }
 
@@ -166,15 +142,14 @@ class Weka {
     public void printAll() {
         printNetworkData();
         printDataset();
-        printMarginalDistributions();
-        printConditionalDistributions();
+        printDistributions();
     }
 
 }
 
 class Jayes {
-    private BayesNet bayesNet;
     private final List<InternalBayesNode> internalNodes;
+    private BayesNet bayesNet;
 
     public Jayes(List<InternalBayesNode> internalNodes) {
         this.internalNodes = internalNodes;
@@ -185,6 +160,7 @@ class Jayes {
         this.bayesNet = new BayesNet();
         initNodes();
         initParents();
+        updateProbabilities();
     }
 
     private void initNodes() {
@@ -210,7 +186,7 @@ class Jayes {
     public void updateProbabilities() {
         for (InternalBayesNode internalNode : internalNodes) {
             BayesNode jayesNode = bayesNet.getNode(internalNode.getName());
-            jayesNode.setProbabilities(internalNode.getFlattenedConditionalDistribution());
+            jayesNode.setProbabilities(internalNode.getFlattenedDistribution());
         }
     }
 
@@ -242,7 +218,6 @@ class Jayes {
         printProbabilities();
     }
 
-
 }
 
 public class AgoraVai {
@@ -259,10 +234,8 @@ public class AgoraVai {
 
         Weka weka = new Weka(internalNodes);
         weka.printInit();
+
         Jayes jayes = new Jayes(internalNodes);
         jayes.printInit();
-        jayes.updateProbabilities();
-        jayes.printAll();
-
     }
 }
