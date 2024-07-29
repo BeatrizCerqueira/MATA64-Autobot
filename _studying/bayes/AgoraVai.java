@@ -335,9 +335,13 @@ public class AgoraVai {
         weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
         weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
         weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
-        weka.addInstance(EnemyDistance.DIST2, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP2, Hit.TRUE);
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP2, Hit.TRUE);
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP2, Hit.TRUE);
+
+        weka.addInstance(EnemyDistance.DIST2, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP2, Hit.TRUE);
+
         weka.calcNewDistributions();
         jayes.setNewProbabilities();
     }
@@ -351,7 +355,8 @@ public class AgoraVai {
         jayes.printAll();
     }
 
-    private static void calcBeliefs(Jayes jayes) {
+    @SuppressWarnings("unused")
+    private static void calcHitBeliefs(Jayes jayes) {
         List<InternalEvidence> internalEvidences = new ArrayList<>();
 
         internalEvidences.add(new InternalEvidence("EnemyDistance", EnemyDistance.DIST1.toString()));
@@ -369,6 +374,32 @@ public class AgoraVai {
 
     }
 
+    private static void calcBestFirePowerToHit(Jayes jayes) {
+        List<InternalEvidence> internalEvidences = new ArrayList<>();
+
+        internalEvidences.add(new InternalEvidence("EnemyDistance", EnemyDistance.DIST1.toString()));
+        internalEvidences.add(new InternalEvidence("EnemyVelocity", EnemyVelocity.EV1.toString()));
+        internalEvidences.add(new InternalEvidence("EnemyAngle", EnemyAngle.EA1.toString()));
+        internalEvidences.add(new InternalEvidence("MyGunAngle", MyGunAngle.MGA1.toString()));
+        internalEvidences.add(new InternalEvidence("Hit", Hit.TRUE.toString()));
+
+        String nodeToGetBeliefs = "FirePower";
+
+        List<Double> firePowerBeliefs =
+                Arrays.stream(jayes.getBeliefs(internalEvidences, nodeToGetBeliefs)).boxed().toList();
+
+        Double maxFirePowerBelieve = Collections.max(firePowerBeliefs);
+        int maxFirePowerBelieveIndex = firePowerBeliefs.indexOf(maxFirePowerBelieve);
+        FirePower bestFirePower = FirePower.values()[maxFirePowerBelieveIndex];
+
+        System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> Inference <<<<<<<<<<<<<<<<<<<<<<<<<<");
+        System.out.println("Beliefs of fire power: " + firePowerBeliefs);
+        System.out.println("Max fire power believe: " + maxFirePowerBelieve);
+        System.out.println("Index of max fire power believe: " + maxFirePowerBelieveIndex);
+        System.out.println("Best fire power to hit: " + bestFirePower);
+
+    }
+
     public static void main(String[] args) throws Exception {
         List<InternalBayesNode> internalNodes = initInternalBayesNodes();
 
@@ -378,7 +409,8 @@ public class AgoraVai {
 //        printAll("Initial network", weka, jayes);
 
         addSomeInstances(weka, jayes);
-        calcBeliefs(jayes);
+//        calcHitBeliefs(jayes);
+        calcBestFirePowerToHit(jayes);
 
 //        printAll("After changes", weka, jayes);
 
@@ -386,9 +418,15 @@ public class AgoraVai {
     }
 }
 
-
 // TODO: * Salvar e pegar dados entre as rodadas
 // TODO: * Entender melhor o caso do 0
 
 // TODO: * Arquivos de classes
 // TODO: * Observer
+
+
+// TODO: * Classificador entre valores do enum
+// TODO: * Ao atirar, pega os dados, calcula prob, escolhe, adiciona nas instâncias com o resultado
+// TODO: * Como saber se a bala acertou ou não?
+// TODO: * Valor mínimo de believe para atirar
+// TODO: * Lógica existente de tiro
