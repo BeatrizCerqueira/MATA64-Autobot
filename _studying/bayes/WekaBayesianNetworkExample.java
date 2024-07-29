@@ -1,6 +1,7 @@
 package autobot._studying.bayes;
 
 import weka.classifiers.bayes.net.EditableBayesNet;
+import weka.classifiers.bayes.net.MarginCalculator;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
@@ -44,7 +45,11 @@ public class WekaBayesianNetworkExample {
         bayesNet.addArc("Cause", "OS");
         bayesNet.addArc("Cause", "Symptom");
 
-        // Print the network
+        // Create margin distribution calculator
+        MarginCalculator marginCalculator = new MarginCalculator();
+        marginCalculator.calcMargins(bayesNet);
+
+        // Print network before adding instances
         System.out.println(bayesNet);
 
         System.out.println("\nManufacturer index: " + bayesNet.getNode("Manufacturer"));
@@ -59,9 +64,19 @@ public class WekaBayesianNetworkExample {
         System.out.println("\nCause index: " + bayesNet.getNode("Cause"));
         System.out.println(Arrays.toString(bayesNet.getValues("Cause")));
 
+        // Print dataset before adding instances
+        System.out.println();
+        System.out.println(dataset);
 
-        // Print distributions before adding instances
-        System.out.println("\n");
+        // Print marginal distributions before adding instances
+        System.out.println();
+        System.out.println(Arrays.toString(marginCalculator.getMargin(0)));
+        System.out.println(Arrays.toString(marginCalculator.getMargin(1)));
+        System.out.println(Arrays.toString(marginCalculator.getMargin(2)));
+        System.out.println(Arrays.toString(marginCalculator.getMargin(3)));
+
+        // Print conditional distributions before adding instances
+        System.out.println();
         System.out.println(Arrays.deepToString(bayesNet.getDistribution("Manufacturer")));
         System.out.println(Arrays.deepToString(bayesNet.getDistribution("OS")));
         System.out.println(Arrays.deepToString(bayesNet.getDistribution("Symptom")));
@@ -78,28 +93,28 @@ public class WekaBayesianNetworkExample {
         dataset.add(new DenseInstance(1.0, instance3));
         dataset.add(new DenseInstance(1.0, instance4));
 
-        // Update the network
+        // Update network
         bayesNet.setData(dataset);
         bayesNet.estimateCPTs();
+        marginCalculator.calcMargins(bayesNet);
 
-        // Print distributions after adding instances
-        System.out.println("\n");
+        // Print dataset after adding instances
+        System.out.println();
+        System.out.println(dataset);
+
+        // Print marginal distributions after adding instances
+        System.out.println();
+        System.out.println(Arrays.toString(marginCalculator.getMargin(0)));
+        System.out.println(Arrays.toString(marginCalculator.getMargin(1)));
+        System.out.println(Arrays.toString(marginCalculator.getMargin(2)));
+        System.out.println(Arrays.toString(marginCalculator.getMargin(3)));
+
+        // Print conditional distributions after adding instances
+        System.out.println();
         System.out.println(Arrays.deepToString(bayesNet.getDistribution("Manufacturer")));
         System.out.println(Arrays.deepToString(bayesNet.getDistribution("OS")));
         System.out.println(Arrays.deepToString(bayesNet.getDistribution("Symptom")));
         System.out.println(Arrays.deepToString(bayesNet.getDistribution("Cause")));
-
-
-//        System.out.println(Arrays.toString(bayesNet.getMargin(0)));
-//        System.out.println(Arrays.toString(bayesNet.getMargin(1)));
-//        System.out.println(Arrays.toString(bayesNet.getMargin(2)));
-//        System.out.println(Arrays.toString(bayesNet.getMargin(3)));
-
-//        bayesNet.getDistributions()[0][0].setDebug(true);
-//        System.out.println(bayesNet.getDistributions()[0][0]);
-//        System.out.println(Arrays.toString(bayesNet.getDistributions()[0][0].getOptions()));
-//        System.out.println(bayesNet.getDistributions()[0][0].getProbability(0));
-
 
     }
 }
