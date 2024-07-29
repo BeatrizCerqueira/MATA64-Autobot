@@ -5,7 +5,12 @@ import weka.classifiers.bayes.net.MarginCalculator;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
+import weka.gui.graphvisualizer.GraphVisualizer;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -22,6 +27,25 @@ public class BayesUsingWeka {
 
         System.out.println("\n\n\n========================================= Updated network =========================================");
         printNetworkInfo(bayesNet, marginCalculator, dataset);
+
+        displayWekaGraph(bayesNet);
+    }
+
+    private static void displayWekaGraph(EditableBayesNet bayesNet) throws Exception {
+        GraphVisualizer graphVisualizer = new GraphVisualizer();
+        graphVisualizer.readBIF(bayesNet.graph());
+
+        final JFrame jFrame = new JFrame("Weka Classifier Graph Visualizer: Bayes net");
+        jFrame.setSize(500, 400);
+        jFrame.getContentPane().setLayout(new BorderLayout());
+        jFrame.getContentPane().add(graphVisualizer, BorderLayout.CENTER);
+        jFrame.addWindowFocusListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                jFrame.dispose();
+            }
+        });
+        jFrame.setVisible(true);
+        graphVisualizer.layoutGraph();
     }
 
     private static MarginCalculator createMarginCalculator(EditableBayesNet bayesNet) throws Exception {
