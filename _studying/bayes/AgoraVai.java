@@ -91,12 +91,13 @@ class Weka {
     }
 
     private void initBayesianNetwork() throws Exception {
-        this.bayesNet = new EditableBayesNet(dataset);
-        initParents();
-        updateDistributions();
+        EditableBayesNet bayesNet = new EditableBayesNet(dataset);
+        initParents(bayesNet);
+        updateDistributions(bayesNet);
+        this.bayesNet = bayesNet;
     }
 
-    private void initParents() throws Exception {
+    private void initParents(EditableBayesNet bayesNet) throws Exception {
         for (InternalBayesNode internalNode : internalNodes) {
             if (!internalNode.getParents().isEmpty()) {
                 for (String parent : internalNode.getParents()) {
@@ -106,7 +107,7 @@ class Weka {
         }
     }
 
-    private void updateDistributions() {
+    private void updateDistributions(EditableBayesNet bayesNet) {
         for (InternalBayesNode internalNode : internalNodes) {
             internalNode.setDistribution(bayesNet.getDistribution(internalNode.getName()));
         }
@@ -157,20 +158,21 @@ class Jayes {
     }
 
     private void initBayesianNetwork() {
-        this.bayesNet = new BayesNet();
-        initNodes();
-        initParents();
-        updateProbabilities();
+        BayesNet bayesNet = new BayesNet();
+        initNodes(bayesNet);
+        initParents(bayesNet);
+        updateProbabilities(bayesNet);
+        this.bayesNet = bayesNet;
     }
 
-    private void initNodes() {
+    private void initNodes(BayesNet bayesNet) {
         for (InternalBayesNode internalNode : internalNodes) {
             BayesNode jayesNode = bayesNet.createNode(internalNode.getName());
             jayesNode.addOutcomes(internalNode.getValues().toArray(new String[0]));
         }
     }
 
-    private void initParents() {
+    private void initParents(BayesNet bayesNet) {
         for (InternalBayesNode internalNode : internalNodes) {
             if (!internalNode.getParents().isEmpty()) {
                 BayesNode jayesNode = bayesNet.getNode(internalNode.getName());
@@ -183,7 +185,7 @@ class Jayes {
         }
     }
 
-    public void updateProbabilities() {
+    public void updateProbabilities(BayesNet bayesNet) {
         for (InternalBayesNode internalNode : internalNodes) {
             BayesNode jayesNode = bayesNet.getNode(internalNode.getName());
             jayesNode.setProbabilities(internalNode.getFlattenedDistribution());
