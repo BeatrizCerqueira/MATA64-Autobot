@@ -100,22 +100,7 @@ class InternalBayesNode {
 
 }
 
-class InternalEvidence {
-    private final String nodeName;
-    private final String nodeValue;
-
-    public InternalEvidence(String nodeName, String nodeValue) {
-        this.nodeName = nodeName;
-        this.nodeValue = nodeValue;
-    }
-
-    public String getNodeName() {
-        return nodeName;
-    }
-
-    public String getNodeValue() {
-        return nodeValue;
-    }
+record InternalEvidence(String nodeName, String nodeValue) {
 }
 
 class Weka {
@@ -171,7 +156,7 @@ class Weka {
         }
     }
 
-    public void addInstance(EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, MyGunAngle mga, FirePower fp, Hit hit) throws Exception {
+    public void addInstance(EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, MyGunAngle mga, FirePower fp, Hit hit) {
         double[] instance = new double[]{ed.ordinal(), ev.ordinal(), ea.ordinal(), mga.ordinal(), fp.ordinal(), hit.ordinal()};
         dataset.add(new DenseInstance(1.0, instance));
     }
@@ -286,22 +271,15 @@ class Jayes {
         inferer.setNetwork(bayesNet);
     }
 
-    public void getBeliefs(List<InternalEvidence> internalEvidences, String nodeToGetBeliefs) {
-
-        Map<BayesNode, String> jayesEvidence = new HashMap<>();
-
-        for (InternalEvidence internalEvidence : internalEvidences) {
-            BayesNode jayesNode = bayesNet.getNode(internalEvidence.getNodeName());
-            jayesEvidence.put(jayesNode, internalEvidence.getNodeValue());
-        }
-
-        inferer.setEvidence(jayesEvidence);
+    public double[] getBeliefs(List<InternalEvidence> internalEvidences, String nodeToGetBeliefs) {
         BayesNode jayesNodeToGetBeliefs = bayesNet.getNode(nodeToGetBeliefs);
-
-        System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> Inference <<<<<<<<<<<<<<<<<<<<<<<<<<");
-
-        double[] beliefs = inferer.getBeliefs(jayesNodeToGetBeliefs);
-        System.out.println("Probability of " + nodeToGetBeliefs + ": " + Arrays.toString(beliefs));
+        Map<BayesNode, String> jayesEvidence = new HashMap<>();
+        for (InternalEvidence internalEvidence : internalEvidences) {
+            BayesNode jayesNode = bayesNet.getNode(internalEvidence.nodeName());
+            jayesEvidence.put(jayesNode, internalEvidence.nodeValue());
+        }
+        inferer.setEvidence(jayesEvidence);
+        return inferer.getBeliefs(jayesNodeToGetBeliefs);
     }
 
     private void printNetworkData() {
@@ -364,6 +342,7 @@ public class AgoraVai {
         jayes.setNewProbabilities();
     }
 
+    @SuppressWarnings("unused")
     private static void printAll(String tip, Weka weka, Jayes jayes) {
         System.out.println("\n\n\n========================================= " + tip + " =========================================");
         System.out.println("========================================= " + tip + " =========================================");
@@ -374,12 +353,20 @@ public class AgoraVai {
 
     private static void calcBeliefs(Jayes jayes) {
         List<InternalEvidence> internalEvidences = new ArrayList<>();
+
         internalEvidences.add(new InternalEvidence("EnemyDistance", EnemyDistance.DIST1.toString()));
         internalEvidences.add(new InternalEvidence("EnemyVelocity", EnemyVelocity.EV1.toString()));
         internalEvidences.add(new InternalEvidence("EnemyAngle", EnemyAngle.EA1.toString()));
         internalEvidences.add(new InternalEvidence("MyGunAngle", MyGunAngle.MGA1.toString()));
         internalEvidences.add(new InternalEvidence("FirePower", FirePower.FP1.toString()));
-        jayes.getBeliefs(internalEvidences, "Hit");
+
+        String nodeToGetBeliefs = "Hit";
+
+        double[] hitBeliefs = jayes.getBeliefs(internalEvidences, nodeToGetBeliefs);
+
+        System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> Inference <<<<<<<<<<<<<<<<<<<<<<<<<<");
+        System.out.println("Beliefs of hit enemy: " + Arrays.toString(hitBeliefs));
+
     }
 
     public static void main(String[] args) throws Exception {
