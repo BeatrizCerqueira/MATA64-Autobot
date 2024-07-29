@@ -100,6 +100,24 @@ class InternalBayesNode {
 
 }
 
+class InternalEvidence {
+    private final String nodeName;
+    private final String nodeValue;
+
+    public InternalEvidence(String nodeName, String nodeValue) {
+        this.nodeName = nodeName;
+        this.nodeValue = nodeValue;
+    }
+
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    public String getNodeValue() {
+        return nodeValue;
+    }
+}
+
 class Weka {
 
     private final List<InternalBayesNode> internalNodes;
@@ -268,13 +286,13 @@ class Jayes {
         inferer.setNetwork(bayesNet);
     }
 
-    public void getBeliefs(Map<String, String> internalEvidence, String nodeToGetBeliefs) {
+    public void getBeliefs(List<InternalEvidence> internalEvidences, String nodeToGetBeliefs) {
 
         Map<BayesNode, String> jayesEvidence = new HashMap<>();
 
-        for (Map.Entry<String, String> evidenceAttr : internalEvidence.entrySet()) {
-            BayesNode jayesNode = bayesNet.getNode(evidenceAttr.getKey());
-            jayesEvidence.put(jayesNode, evidenceAttr.getValue());
+        for (InternalEvidence internalEvidence : internalEvidences) {
+            BayesNode jayesNode = bayesNet.getNode(internalEvidence.getNodeName());
+            jayesEvidence.put(jayesNode, internalEvidence.getNodeValue());
         }
 
         inferer.setEvidence(jayesEvidence);
@@ -282,10 +300,8 @@ class Jayes {
 
         System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> Inference <<<<<<<<<<<<<<<<<<<<<<<<<<");
 
-
         double[] beliefs = inferer.getBeliefs(jayesNodeToGetBeliefs);
         System.out.println("Probability of " + nodeToGetBeliefs + ": " + Arrays.toString(beliefs));
-
     }
 
     private void printNetworkData() {
@@ -356,6 +372,16 @@ public class AgoraVai {
         jayes.printAll();
     }
 
+    private static void calcBeliefs(Jayes jayes) {
+        List<InternalEvidence> internalEvidences = new ArrayList<>();
+        internalEvidences.add(new InternalEvidence("EnemyDistance", EnemyDistance.DIST1.toString()));
+        internalEvidences.add(new InternalEvidence("EnemyVelocity", EnemyVelocity.EV1.toString()));
+        internalEvidences.add(new InternalEvidence("EnemyAngle", EnemyAngle.EA1.toString()));
+        internalEvidences.add(new InternalEvidence("MyGunAngle", MyGunAngle.MGA1.toString()));
+        internalEvidences.add(new InternalEvidence("FirePower", FirePower.FP1.toString()));
+        jayes.getBeliefs(internalEvidences, "Hit");
+    }
+
     public static void main(String[] args) throws Exception {
         List<InternalBayesNode> internalNodes = initInternalBayesNodes();
 
@@ -365,7 +391,7 @@ public class AgoraVai {
 //        printAll("Initial network", weka, jayes);
 
         addSomeInstances(weka, jayes);
-        jayes.getBeliefs(Map.of("EnemyDistance", EnemyDistance.DIST1.toString(), "EnemyVelocity", EnemyVelocity.EV1.toString(), "EnemyAngle", EnemyAngle.EA1.toString(), "MyGunAngle", MyGunAngle.MGA1.toString(), "FirePower", FirePower.FP1.toString()), "Hit");
+        calcBeliefs(jayes);
 
 //        printAll("After changes", weka, jayes);
 
