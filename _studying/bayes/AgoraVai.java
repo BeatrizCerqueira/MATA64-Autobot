@@ -26,7 +26,12 @@ import weka.classifiers.bayes.net.EditableBayesNet;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
+import weka.gui.graphvisualizer.GraphVisualizer;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -157,7 +162,6 @@ class Weka {
         update();
     }
 
-
     private void printDataset() {
         System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> Dataset <<<<<<<<<<<<<<<<<<<<<<<<<<");
         System.out.println(dataset);
@@ -180,15 +184,35 @@ class Weka {
         }
     }
 
+    @SuppressWarnings("unused")
     public void printInit() {
         System.out.println("\n\n\n========================================= Initial network =========================================");
         printAll();
     }
 
+    @SuppressWarnings("unused")
     public void printAll() {
         printNetworkData();
         printDataset();
         printDistributions();
+    }
+
+    @SuppressWarnings("unused")
+    public void displayGraph() throws Exception {
+        GraphVisualizer graphVisualizer = new GraphVisualizer();
+        graphVisualizer.readBIF(bayesNet.graph());
+
+        final JFrame jFrame = new JFrame("Autobot Bayesian Network");
+        jFrame.setSize(600, 400);
+        jFrame.getContentPane().setLayout(new BorderLayout());
+        jFrame.getContentPane().add(graphVisualizer, BorderLayout.CENTER);
+        jFrame.addWindowFocusListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                jFrame.dispose();
+            }
+        });
+        jFrame.setVisible(true);
+        graphVisualizer.layoutGraph();
     }
 
 }
@@ -262,11 +286,13 @@ class Jayes {
         }
     }
 
+    @SuppressWarnings("unused")
     public void printInit() {
         System.out.println("\n\n\n========================================= Initial network =========================================");
         printAll();
     }
 
+    @SuppressWarnings("unused")
     public void printAll() {
         printNetworkData();
         printProbabilities();
@@ -317,8 +343,10 @@ public class AgoraVai {
 
         weka.printAll();
 
-        jayes.updateProbabilities();
+        jayes.updateProbabilities(); // TODO: How to avoid calling manually?
         jayes.printAll();
+
+        weka.displayGraph();
 
     }
 }
