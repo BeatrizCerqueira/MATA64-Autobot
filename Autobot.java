@@ -333,13 +333,13 @@ public class Autobot extends AdvancedRobot {
             // Higher risk must avoid borders and enemyBot at all costs
             // In order to avoid hit borders, velocity is reduced when is atMargin
 
-            final int MAX_EMERGENCY_VELOCITY = 40;
-            final int MAX_EMERGENCY_DISTANCE = 250;
-            final double MAX_EMERGENCY_BORDER_MARGIN = Consts.BORDER_MARGIN_MAX * 115;
+            final int MAX_FUZZY_VELOCITY = 30;
+            final int MAX_FUZZY_DISTANCE = 250;
+            final double MAX_FUZZY_BORDER_MARGIN = 115;
 
-            velocityFuzzy = (int) (MAX_EMERGENCY_VELOCITY * riskFactor);
-            safeDistanceGA = (int) (MAX_EMERGENCY_DISTANCE * riskFactor);
-            bordersMarginGA = (int) (MAX_EMERGENCY_BORDER_MARGIN * riskFactor);
+            velocityFuzzy = (int) (MAX_FUZZY_VELOCITY * riskFactor);
+            safeDistanceGA = (int) (MAX_FUZZY_DISTANCE * riskFactor);
+            bordersMarginGA = (int) (MAX_FUZZY_BORDER_MARGIN * riskFactor);
 
             System.out.println("Risco! " + Fuzzy.getDefuzzyValue());
 //            System.out.print("vel: " + velocityFuzzy);

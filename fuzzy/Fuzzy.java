@@ -16,7 +16,7 @@ public class Fuzzy {
     private static Variable result;
 
     public static void loadFile(String filename) {
-//        String filePath = "/autobot/fuzzy/" + filename;
+//        String filePath = "./autobot/fuzzy/" + filename;
         String filePath = "./robots/autobot/fuzzy/" + filename;
 
         fis = FIS.load(filePath);
@@ -96,8 +96,8 @@ public class Fuzzy {
 
     public static void main(String[] args) {
         init();
-//        initVariables("distance", "enemy_energy", "autobot_energy", "enemy_gun_heat");
-        setFuzzyValues(100.0, 15.0, 10.0, 2.0);
+//        initVariables("distance", "enemy_energy", "autobot_energy");
+        setFuzzyValues(200.0, 28.0, 10.0);
         System.out.println(getDefuzzyValue());
         printCharts();
     }
