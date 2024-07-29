@@ -9,7 +9,7 @@ import weka.core.Instances;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class WekaBayesianNetworkExample {
+public class BayesUsingWeka {
     public static void main(String[] args) throws Exception {
         Instances dataset = createDataset();
         EditableBayesNet bayesNet = createBayesianNetwork(dataset);

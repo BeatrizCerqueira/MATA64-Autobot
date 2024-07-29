@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Bayes {
+public class BayesUsingJayes {
     public static void main(String[] args) {
         // Step 1: Initialize the Bayesian Network
         BayesNet net = new BayesNet();
