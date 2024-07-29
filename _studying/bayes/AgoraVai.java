@@ -24,11 +24,37 @@ import org.eclipse.recommenders.jayes.BayesNode;
 import org.eclipse.recommenders.jayes.util.MathUtils;
 import weka.classifiers.bayes.net.EditableBayesNet;
 import weka.core.Attribute;
+import weka.core.DenseInstance;
 import weka.core.Instances;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
+enum EnemyDistance {
+    DIST1, DIST2
+}
+
+enum EnemyVelocity {
+    SP1, SP2
+}
+
+enum EnemyAngle {
+    EA1, EA2
+}
+
+enum MyGunAngle {
+    MGA1, MGA2
+}
+
+enum FirePower {
+    FP1, FP2
+}
+
+enum Hit {
+    TRUE, FALSE
+}
 
 class InternalBayesNode {
     private final String name;
@@ -36,9 +62,9 @@ class InternalBayesNode {
     private final List<String> parents;
     private double[][] distribution;
 
-    public InternalBayesNode(String name, List<String> values, List<String> parents) {
+    public InternalBayesNode(String name, Class<? extends Enum<?>> enumClass, List<String> parents) {
         this.name = name;
-        this.values = values;
+        this.values = Arrays.stream(enumClass.getEnumConstants()).map(Enum::name).collect(Collectors.toList());
         this.parents = parents;
     }
 
@@ -113,6 +139,25 @@ class Weka {
         }
     }
 
+    private void updateDistributions() {
+        for (InternalBayesNode internalNode : internalNodes) {
+            internalNode.setDistribution(bayesNet.getDistribution(internalNode.getName()));
+        }
+    }
+
+    private void update() throws Exception {
+        bayesNet.setData(dataset);
+        bayesNet.estimateCPTs();
+        updateDistributions();
+    }
+
+    public void addInstance(EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, MyGunAngle mga, FirePower fp, Hit hit) throws Exception {
+        double[] instance = new double[]{ed.ordinal(), ev.ordinal(), ea.ordinal(), mga.ordinal(), fp.ordinal(), hit.ordinal()};
+        dataset.add(new DenseInstance(1.0, instance));
+        update();
+    }
+
+
     private void printDataset() {
         System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> Dataset <<<<<<<<<<<<<<<<<<<<<<<<<<");
         System.out.println(dataset);
@@ -185,7 +230,14 @@ class Jayes {
         }
     }
 
-    public void updateProbabilities(BayesNet bayesNet) {
+    private void updateProbabilities(BayesNet bayesNet) {
+        for (InternalBayesNode internalNode : internalNodes) {
+            BayesNode jayesNode = bayesNet.getNode(internalNode.getName());
+            jayesNode.setProbabilities(internalNode.getFlattenedDistribution());
+        }
+    }
+
+    public void updateProbabilities() {
         for (InternalBayesNode internalNode : internalNodes) {
             BayesNode jayesNode = bayesNet.getNode(internalNode.getName());
             jayesNode.setProbabilities(internalNode.getFlattenedDistribution());
@@ -224,20 +276,49 @@ class Jayes {
 
 public class AgoraVai {
 
-    public static void main(String[] args) throws Exception {
+    private static List<InternalBayesNode> initInternalBayesNodes() {
         List<InternalBayesNode> internalNodes = new ArrayList<>();
 
-        internalNodes.add(new InternalBayesNode("EnemyDistance", Arrays.asList("dist1", "dist2"), new ArrayList<>()));
-        internalNodes.add(new InternalBayesNode("EnemyVelocity", Arrays.asList("sp1", "sp2"), new ArrayList<>()));
-        internalNodes.add(new InternalBayesNode("EnemyAngle", Arrays.asList("ea1", "ea2"), new ArrayList<>()));
-        internalNodes.add(new InternalBayesNode("MyGunAngle", Arrays.asList("mga1", "mga2"), new ArrayList<>()));
-        internalNodes.add(new InternalBayesNode("FirePower", Arrays.asList("fp1", "fp2"), new ArrayList<>()));
-        internalNodes.add(new InternalBayesNode("Hit", Arrays.asList("true", "false"), Arrays.asList("EnemyDistance", "EnemyVelocity", "EnemyAngle", "MyGunAngle", "FirePower")));
+        InternalBayesNode enemyDistance = new InternalBayesNode("EnemyDistance", EnemyDistance.class, new ArrayList<>());
+        InternalBayesNode enemyVelocity = new InternalBayesNode("EnemyVelocity", EnemyVelocity.class, new ArrayList<>());
+        InternalBayesNode enemyAngle = new InternalBayesNode("EnemyAngle", EnemyAngle.class, new ArrayList<>());
+        InternalBayesNode myGunAngle = new InternalBayesNode("MyGunAngle", MyGunAngle.class, new ArrayList<>());
+        InternalBayesNode firePower = new InternalBayesNode("FirePower", FirePower.class, new ArrayList<>());
+        InternalBayesNode hit = new InternalBayesNode("Hit", Hit.class, Arrays.asList("EnemyDistance", "EnemyVelocity", "EnemyAngle", "MyGunAngle", "FirePower"));
+
+        internalNodes.add(enemyDistance);
+        internalNodes.add(enemyVelocity);
+        internalNodes.add(enemyAngle);
+        internalNodes.add(myGunAngle);
+        internalNodes.add(firePower);
+        internalNodes.add(hit);
+
+        return internalNodes;
+    }
+
+    private static void addSomeInstances(Weka weka) throws Exception {
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.SP1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.SP1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.SP1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.SP1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.SP1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+    }
+
+    public static void main(String[] args) throws Exception {
+        List<InternalBayesNode> internalNodes = initInternalBayesNodes();
 
         Weka weka = new Weka(internalNodes);
         weka.printInit();
 
         Jayes jayes = new Jayes(internalNodes);
         jayes.printInit();
+
+        addSomeInstances(weka);
+
+        weka.printAll();
+
+        jayes.updateProbabilities();
+        jayes.printAll();
+
     }
 }
