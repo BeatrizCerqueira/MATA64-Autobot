@@ -1,4 +1,4 @@
-package autobot._studying.bayes;
+package autobot._studying.bayes.ignore_for_now;
 
 import org.eclipse.recommenders.jayes.BayesNet;
 import org.eclipse.recommenders.jayes.BayesNode;

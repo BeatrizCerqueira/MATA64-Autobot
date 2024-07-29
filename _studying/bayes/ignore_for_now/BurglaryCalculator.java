@@ -1,4 +1,4 @@
-package autobot._studying.bayes;
+package autobot._studying.bayes.ignore_for_now;
 
 /**
  * @author Niya Jaison | UTA ID : 1001562701 | Net ID:nxj2701
