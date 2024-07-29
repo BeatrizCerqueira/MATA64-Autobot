@@ -96,8 +96,8 @@ public class Fuzzy {
 
     public static void main(String[] args) {
         init();
-//        initVariables("distance", "enemy_energy", "autobot_energy", "enemy_gun_heat");
-        setFuzzyValues(100.0, 15.0, 10.0, 2.0);
+//        initVariables("distance", "enemy_energy", "autobot_energy");
+        setFuzzyValues(200.0, 28.0, 10.0);
         System.out.println(getDefuzzyValue());
         printCharts();
     }
@@ -130,32 +130,6 @@ public class Fuzzy {
 //        Variable escape = getVariable("life_risk");
 //        printDefuzzyChart(escape);
 //        System.out.println(escape.getValue());
-//
-//    }
-
-//    private static void test_funcs() {
-//        loadFile("tippy.fcl");
-//        setFunctionBlock("tipper");
-//
-//        // printa variáveis de entrada e saída
-//        // printChart();
-//
-//        // Avalia valores específicos
-//        Variable service = new Variable("service");
-//        Variable food = new Variable("food");
-//        service.setValue(10);
-//        food.setValue(5);
-//        setVariables(service, food);
-//
-//        evaluate();
-//        printChart();
-//
-//        // Resultado e defuzificação
-//        Variable tip = getVariable("tip");
-//        printDefuzzyChart(tip);
-//
-//        System.out.println(tip.getValue());
-//        // é possível retornar o termo equivalente ao valor?
 //
 //    }
 

@@ -15,23 +15,31 @@ import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.*;
 
+import static java.lang.Math.max;
+import static java.lang.Math.signum;
+
 public class Autobot extends AdvancedRobot {
 
     Point2D robotLocation;
 
     Enemy enemyBot = new Enemy();
+    int direction = 1;
 
     // Genetic Algorithm Variables:
     int velocityGA;
     int safeDistanceGA;
     int bordersMarginGA;
 
+    //Fuzzy Variables:
+    int velocityFuzzy;
+    boolean hasLifeRisk = false;
+
     public void run() {
 
         Prolog.loadPrologFile();
         GeneticAlgorithm.init(getRoundNum());
         Fuzzy.init();
-//        Fuzzy.printCharts();
+//        Fuzzy.printCharts(); // TESTING
 
         changeRobotColors();
 
@@ -56,6 +64,7 @@ public class Autobot extends AdvancedRobot {
 
     public void onHitByBullet(HitByBulletEvent e) {
         ahead(20);
+        setTurnRight(MathUtils.random(-30, 30));
     }
 
     public void onHitWall(HitWallEvent e) {
@@ -112,11 +121,11 @@ public class Autobot extends AdvancedRobot {
 
         // Radar goes that much further in the direction it is going to turn
         double extraRadarTurn = Math.toDegrees(Math.atan(Consts.RADAR_COVERAGE_DIST / enemyBot.getDistance()));
-        double radarTotalTurn = radarInitialTurn + (extraRadarTurn * Math.signum(radarInitialTurn));
+        double radarTotalTurn = radarInitialTurn + (extraRadarTurn * signum(radarInitialTurn));
 
         // Radar goes to the less distance direction
         double normalizedRadarTotalTurn = Utils.normalRelativeAngleDegrees(radarTotalTurn);
-        double radarTurn = (Math.min(Math.abs(normalizedRadarTotalTurn), Rules.RADAR_TURN_RATE)) * Math.signum(normalizedRadarTotalTurn);
+        double radarTurn = (Math.min(Math.abs(normalizedRadarTotalTurn), Rules.RADAR_TURN_RATE)) * signum(normalizedRadarTotalTurn);
 
         // Set radar turn
         setTurnRadarRight(radarTurn);
@@ -131,7 +140,7 @@ public class Autobot extends AdvancedRobot {
         double gunInitialTurn = Utils.normalRelativeAngleDegrees(enemyAngle - getGunHeading());
 
         // Gun goes to the less distance direction
-        double gunTurn = (Math.min(Math.abs(gunInitialTurn), Rules.GUN_TURN_RATE)) * Math.signum(gunInitialTurn);
+        double gunTurn = (Math.min(Math.abs(gunInitialTurn), Rules.GUN_TURN_RATE)) * signum(gunInitialTurn);
 
         // Set gun turn
         setTurnGunRight(gunTurn);
@@ -150,6 +159,8 @@ public class Autobot extends AdvancedRobot {
             double firePowerNeededToHit = (20 - bulletVelocityNeededToHit) / 3;
 
             boolean shouldFire = Prolog.shouldFire(firePowerNeededToHit, getEnergy());
+
+//            shouldFire = false;   // MOCK FOR TESTING PURPOSES
 
             if (shouldFire) {
                 Map<String, Double> pair = new HashMap<>();
@@ -171,11 +182,11 @@ public class Autobot extends AdvancedRobot {
     public void moveRandomly() {
         // set default movement attributes, considering robot is at center of arena
 
-        double maxHeadTurn = (10 - (0.75 * getVelocity())); //max robot can turn considering its velocity
+        double maxHeadTurn = (10 - (0.75 * getVelocity()));                   //max robot can turn considering its velocity
         double headTurn = MathUtils.random(-1 * maxHeadTurn, maxHeadTurn);    //random relative angle to turn
 
         setTurnRight(headTurn);
-        setAhead(velocityGA);
+        setAhead(velocityGA * direction);
     }
 
     public void checkBorders() {
@@ -189,8 +200,8 @@ public class Autobot extends AdvancedRobot {
         boolean yMargin = yLimit - (Math.abs(y)) < bordersMarginGA;
 
         if (xMargin || yMargin) {
-            double xSign = xMargin ? Math.signum(x) : 0;
-            double ySign = yMargin ? Math.signum(y) : 0;
+            double xSign = xMargin ? signum(x) : 0;
+            double ySign = yMargin ? signum(y) : 0;
             avoidBorders(xSign, ySign);
         }
 
@@ -228,6 +239,11 @@ public class Autobot extends AdvancedRobot {
 
         double aheadDist = MathUtils.random(0, 3);  //reduce vel to not hit wall
         setAhead(aheadDist);
+
+        //If not facing wall, move faster!
+        if (getHeading() > minAngle && getHeading() < maxAngle) {
+            setAhead(max(velocityFuzzy, velocityGA));
+        }
     }
 
     /**
@@ -236,15 +252,22 @@ public class Autobot extends AdvancedRobot {
     public void checkEnemyGunReady() {
         if (enemyBot.isGunReady()) { // enemy gun will shoot any time now. do not move
             setAhead(0);
+            direction = (int) signum(MathUtils.random(-1.0, 1.0));               // may move backwards randomly
         }
     }
 
     public void checkEnemyIsClose() {
         boolean isEnemyClose = Prolog.isEnemyClose(enemyBot.getDistance(), safeDistanceGA);
-        boolean hasLifeRisk = Fuzzy.getDefuzzyValue() > 1;
-        boolean mustEscape = isEnemyClose || hasLifeRisk;
-        if (mustEscape) {
-            setAhead(20);
+        if (isEnemyClose) {
+            int escapeVelocity = MathUtils.random(10, 20); // random velocity to allow more freedom to turn
+            setAhead(escapeVelocity);
+        }
+    }
+
+    public void checkLifeRisk() {
+        if (hasLifeRisk) {
+//            out.println("RUN! " + velocityFuzzy);
+            setAhead(velocityFuzzy);
         }
     }
 
@@ -253,17 +276,21 @@ public class Autobot extends AdvancedRobot {
 
         // Set distance and turn
         moveRandomly();         // default behavior - less priority
+        checkLifeRisk();        // must check before borders to avoid them
         checkBorders();         // turn to escape borders - setTurn
 
-        // if enemy bot not scanned, skip next methods
-        if (!enemyBot.isScanned())
+
+        // Skip next methods to avoid error or override
+        if (!enemyBot.isScanned() || hasLifeRisk)
             return;
 
         // Override setAhead
         checkEnemyGunReady();
         checkEnemyIsClose();
 
-        // Events priority: EnemyIsClose > EnemyGunReady > default random
+        // Events priority: LifeRisk > EnemyIsClose > EnemyGunReady > default random
+
+
     }
 
     public void nextTurn() {
@@ -287,14 +314,38 @@ public class Autobot extends AdvancedRobot {
     }
 
     private void changeRobotColors() {
-        setBodyColor(Color.BLACK);
+        setBodyColor(Color.WHITE);
         setGunColor(Color.BLACK);
         setRadarColor(Color.WHITE);
+        setBulletColor(Color.MAGENTA);
     }
 
     public void applyFuzzyAlgorithm() {
 //      Variables: distance, enemy_energy, autobot_energy
         Fuzzy.setFuzzyValues(enemyBot.getDistance(), enemyBot.getEnergy(), getEnergy());
-        System.out.println("Risco: " + Fuzzy.getDefuzzyValue());
+        defuzzyResults();
+    }
+
+    public void defuzzyResults() {
+        double riskFactor = Fuzzy.getDefuzzyValue();
+        hasLifeRisk = riskFactor > 0;
+        if (hasLifeRisk) {
+            // Higher risk must avoid borders and enemyBot at all costs
+            // In order to avoid hit borders, velocity is reduced when is atMargin
+
+            final int MAX_FUZZY_VELOCITY = 30;
+            final int MAX_FUZZY_DISTANCE = 250;
+            final double MAX_FUZZY_BORDER_MARGIN = 115;
+
+            velocityFuzzy = (int) (MAX_FUZZY_VELOCITY * riskFactor);
+            safeDistanceGA = (int) (MAX_FUZZY_DISTANCE * riskFactor);
+            bordersMarginGA = (int) (MAX_FUZZY_BORDER_MARGIN * riskFactor);
+
+            System.out.println("Risco! " + Fuzzy.getDefuzzyValue());
+//            System.out.print("vel: " + velocityFuzzy);
+//            System.out.print(" dist: " + safeDistanceGA);
+//            System.out.println(" bord: " + bordersMarginGA);
+        }
+
     }
 }

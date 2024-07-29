@@ -39,7 +39,7 @@ public class Consts {
     public static final int BORDER_MARGIN_MAX = 150;
 
     public static final int SAFE_DISTANCE_MIN = 40;
-    public static final int SAFE_DISTANCE_MAX = 150;
+    public static final int SAFE_DISTANCE_MAX = 250;
 
     public static final int VELOCITY_MIN = 0;
     public static final int VELOCITY_MAX = 20;
