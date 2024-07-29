@@ -37,6 +37,36 @@ public class WekaBayesianNetworkExample {
         Instances dataset = new Instances("Dataset", attributes, 0);
         dataset.setClassIndex(dataset.numAttributes() - 1);
 
+        // Create Bayesian network
+        EditableBayesNet bayesNet = new EditableBayesNet(dataset);
+
+        bayesNet.addArc("Cause", "Manufacturer");
+        bayesNet.addArc("Cause", "OS");
+        bayesNet.addArc("Cause", "Symptom");
+
+        // Print the network
+        System.out.println(bayesNet);
+
+        System.out.println("\nManufacturer index: " + bayesNet.getNode("Manufacturer"));
+        System.out.println(Arrays.toString(bayesNet.getValues("Manufacturer")));
+
+        System.out.println("\nOS index: " + bayesNet.getNode("OS"));
+        System.out.println(Arrays.toString(bayesNet.getValues("OS")));
+
+        System.out.println("\nSymptom index: " + bayesNet.getNode("Symptom"));
+        System.out.println(Arrays.toString(bayesNet.getValues("Symptom")));
+
+        System.out.println("\nCause index: " + bayesNet.getNode("Cause"));
+        System.out.println(Arrays.toString(bayesNet.getValues("Cause")));
+
+
+        // Print distributions before adding instances
+        System.out.println("\n");
+        System.out.println(Arrays.deepToString(bayesNet.getDistribution("Manufacturer")));
+        System.out.println(Arrays.deepToString(bayesNet.getDistribution("OS")));
+        System.out.println(Arrays.deepToString(bayesNet.getDistribution("Symptom")));
+        System.out.println(Arrays.deepToString(bayesNet.getDistribution("Cause")));
+
         // Add instances
         double[] instance1 = new double[]{manufacturerValues.indexOf("Dell"), osValues.indexOf("Windows"), symptomValues.indexOf("Can't print"), causeValues.indexOf("Driver")};
         double[] instance2 = new double[]{manufacturerValues.indexOf("Compaq"), osValues.indexOf("Linux"), symptomValues.indexOf("Can't print"), causeValues.indexOf("Driver")};
@@ -48,55 +78,12 @@ public class WekaBayesianNetworkExample {
         dataset.add(new DenseInstance(1.0, instance3));
         dataset.add(new DenseInstance(1.0, instance4));
 
-        // Create Bayesian network
-        EditableBayesNet bayesNet = new EditableBayesNet(dataset);
-
-
-//        bayesNet.buildClassifier(dataset);
-//
-//        bayesNet.addNode("Manufacturer", 3);
-//        bayesNet.addNode("OS", 2);
-//        bayesNet.addNode("Symptom", 2);
-//        bayesNet.addNode("Cause", 2);
-//
-//
-//        bayesNet.addNodeValue(bayesNet.getNode("Manufacturer"), "Dell");
-//        bayesNet.addNodeValue(bayesNet.getNode("Manufacturer"), "Compaq");
-//        bayesNet.addNodeValue(bayesNet.getNode("Manufacturer"), "Gateway");
-//
-//        bayesNet.addNodeValue(bayesNet.getNode("OS"), "Windows");
-//        bayesNet.addNodeValue(bayesNet.getNode("OS"), "Linux");
-//
-//        bayesNet.addNodeValue(bayesNet.getNode("Symptom"), "Can't print");
-//        bayesNet.addNodeValue(bayesNet.getNode("Symptom"), "No display");
-//
-//        bayesNet.addNodeValue(bayesNet.getNode("Cause"), "Driver");
-//        bayesNet.addNodeValue(bayesNet.getNode("Cause"), "Hardware");
-
-        bayesNet.addArc("Cause", "Manufacturer");
-        bayesNet.addArc("Cause", "OS");
-        bayesNet.addArc("Cause", "Symptom");
-
-//        bayesNet.initStructure();
-//        bayesNet.buildStructure();
+        // Update the network
+        bayesNet.setData(dataset);
         bayesNet.estimateCPTs();
 
-        System.out.println(bayesNet);
-
-//        System.out.println(bayesNet.getNode("Manufacturer"));
-//        System.out.println(Arrays.toString(bayesNet.getValues("Manufacturer")));
-//
-//        System.out.println(bayesNet.getNode("OS"));
-//        System.out.println(Arrays.toString(bayesNet.getValues("OS")));
-//
-//        System.out.println(bayesNet.getNode("Symptom"));
-//        System.out.println(Arrays.toString(bayesNet.getValues("Symptom")));
-//
-//        System.out.println(bayesNet.getNode("Cause"));
-//        System.out.println(Arrays.toString(bayesNet.getValues("Cause")));
-
+        // Print distributions after adding instances
         System.out.println("\n");
-
         System.out.println(Arrays.deepToString(bayesNet.getDistribution("Manufacturer")));
         System.out.println(Arrays.deepToString(bayesNet.getDistribution("OS")));
         System.out.println(Arrays.deepToString(bayesNet.getDistribution("Symptom")));
