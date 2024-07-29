@@ -268,37 +268,23 @@ class Jayes {
         inferer.setNetwork(bayesNet);
     }
 
-    public void foo() {
+    public void getBeliefs(Map<String, String> internalEvidence, String nodeToGetBeliefs) {
 
-        BayesNode enemyDistance = bayesNet.getNode("EnemyDistance");
-        BayesNode enemyVelocity = bayesNet.getNode("EnemyVelocity");
-        BayesNode enemyAngle = bayesNet.getNode("EnemyAngle");
-        BayesNode myGunAngle = bayesNet.getNode("MyGunAngle");
-        BayesNode firePower = bayesNet.getNode("FirePower");
-        BayesNode hit = bayesNet.getNode("Hit");
+        Map<BayesNode, String> jayesEvidence = new HashMap<>();
 
-        // Set evidence
-        Map<BayesNode, String> evidence = new HashMap<>();
-        evidence.put(enemyDistance, EnemyDistance.DIST1.toString());
-        evidence.put(enemyVelocity, EnemyVelocity.EV1.toString());
-        evidence.put(enemyAngle, EnemyAngle.EA1.toString());
-        evidence.put(myGunAngle, MyGunAngle.MGA1.toString());
-        evidence.put(firePower, FirePower.FP1.toString());
-        inferer.setEvidence(evidence);
+        for (Map.Entry<String, String> evidenceAttr : internalEvidence.entrySet()) {
+            BayesNode jayesNode = bayesNet.getNode(evidenceAttr.getKey());
+            jayesEvidence.put(jayesNode, evidenceAttr.getValue());
+        }
+
+        inferer.setEvidence(jayesEvidence);
+        BayesNode jayesNodeToGetBeliefs = bayesNet.getNode(nodeToGetBeliefs);
 
         System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> Inference <<<<<<<<<<<<<<<<<<<<<<<<<<");
 
-        // Get the beliefs of the enemy distance
-        double[] enemyDistanceBeliefs = inferer.getBeliefs(enemyDistance);
-        System.out.println("Probability of EnemyDistance: " + Arrays.toString(enemyDistanceBeliefs));
 
-        // Get the beliefs of the enemy velocity
-        double[] enemyVelocityBeliefs = inferer.getBeliefs(enemyVelocity);
-        System.out.println("Probability of EnemyVelocity: " + Arrays.toString(enemyVelocityBeliefs));
-
-        // Get the beliefs of hitting enemy
-        double[] hitBeliefs = inferer.getBeliefs(hit);
-        System.out.println("Probability of Hit: " + Arrays.toString(hitBeliefs));
+        double[] beliefs = inferer.getBeliefs(jayesNodeToGetBeliefs);
+        System.out.println("Probability of " + nodeToGetBeliefs + ": " + Arrays.toString(beliefs));
 
     }
 
@@ -376,12 +362,12 @@ public class AgoraVai {
         Weka weka = new Weka(internalNodes);
         Jayes jayes = new Jayes(internalNodes);
 
-        printAll("Initial network", weka, jayes);
+//        printAll("Initial network", weka, jayes);
 
         addSomeInstances(weka, jayes);
-        jayes.foo();
+        jayes.getBeliefs(Map.of("EnemyDistance", EnemyDistance.DIST1.toString(), "EnemyVelocity", EnemyVelocity.EV1.toString(), "EnemyAngle", EnemyAngle.EA1.toString(), "MyGunAngle", MyGunAngle.MGA1.toString(), "FirePower", FirePower.FP1.toString()), "Hit");
 
-        printAll("After changes", weka, jayes);
+//        printAll("After changes", weka, jayes);
 
         weka.displayGraph();
     }
