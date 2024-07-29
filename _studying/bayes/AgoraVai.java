@@ -21,6 +21,8 @@ package autobot._studying.bayes;
 
 import org.eclipse.recommenders.jayes.BayesNet;
 import org.eclipse.recommenders.jayes.BayesNode;
+import org.eclipse.recommenders.jayes.inference.IBayesInferer;
+import org.eclipse.recommenders.jayes.inference.junctionTree.JunctionTreeAlgorithm;
 import org.eclipse.recommenders.jayes.util.MathUtils;
 import weka.classifiers.bayes.net.EditableBayesNet;
 import weka.core.Attribute;
@@ -32,9 +34,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 enum EnemyDistance {
@@ -42,7 +43,7 @@ enum EnemyDistance {
 }
 
 enum EnemyVelocity {
-    SP1, SP2
+    EV1, EV2
 }
 
 enum EnemyAngle {
@@ -124,7 +125,7 @@ class Weka {
     private void initBayesianNetwork() throws Exception {
         EditableBayesNet bayesNet = new EditableBayesNet(dataset);
         initParents(bayesNet);
-        updateDistributions(bayesNet);
+        initDistributions(bayesNet);
         this.bayesNet = bayesNet;
     }
 
@@ -138,7 +139,7 @@ class Weka {
         }
     }
 
-    private void updateDistributions(EditableBayesNet bayesNet) {
+    private void initDistributions(EditableBayesNet bayesNet) {
         for (InternalBayesNode internalNode : internalNodes) {
             internalNode.setDistribution(bayesNet.getDistribution(internalNode.getName()));
         }
@@ -178,20 +179,15 @@ class Weka {
     }
 
     private void printDistributions() {
-        System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> Conditional Distribution <<<<<<<<<<<<<<<<<<<<<<<<<<");
+        System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> Distribution <<<<<<<<<<<<<<<<<<<<<<<<<<");
         for (InternalBayesNode internalNode : internalNodes) {
             System.out.println(internalNode.getName() + ": " + Arrays.deepToString(internalNode.getDistribution()));
         }
     }
 
     @SuppressWarnings("unused")
-    public void printInit() {
-        System.out.println("\n\n\n========================================= Initial network =========================================");
-        printAll();
-    }
-
-    @SuppressWarnings("unused")
     public void printAll() {
+        System.out.println("\n========================================= Weka =========================================");
         printNetworkData();
         printDataset();
         printDistributions();
@@ -220,17 +216,25 @@ class Weka {
 class Jayes {
     private final List<InternalBayesNode> internalNodes;
     private BayesNet bayesNet;
+    private IBayesInferer inferer;
 
     public Jayes(List<InternalBayesNode> internalNodes) {
         this.internalNodes = internalNodes;
         initBayesianNetwork();
+        initInferer();
+    }
+
+    private void initInferer() {
+        IBayesInferer inferer = new JunctionTreeAlgorithm();
+        inferer.setNetwork(bayesNet);
+        this.inferer = inferer;
     }
 
     private void initBayesianNetwork() {
         BayesNet bayesNet = new BayesNet();
         initNodes(bayesNet);
         initParents(bayesNet);
-        updateProbabilities(bayesNet);
+        initProbabilities(bayesNet);
         this.bayesNet = bayesNet;
     }
 
@@ -254,7 +258,7 @@ class Jayes {
         }
     }
 
-    private void updateProbabilities(BayesNet bayesNet) {
+    private void initProbabilities(BayesNet bayesNet) {
         for (InternalBayesNode internalNode : internalNodes) {
             BayesNode jayesNode = bayesNet.getNode(internalNode.getName());
             jayesNode.setProbabilities(internalNode.getFlattenedDistribution());
@@ -266,6 +270,41 @@ class Jayes {
             BayesNode jayesNode = bayesNet.getNode(internalNode.getName());
             jayesNode.setProbabilities(internalNode.getFlattenedDistribution());
         }
+        inferer.setNetwork(bayesNet);
+    }
+
+    public void foo() {
+
+        BayesNode enemyDistance = bayesNet.getNode("EnemyDistance");
+        BayesNode enemyVelocity = bayesNet.getNode("EnemyVelocity");
+        BayesNode enemyAngle = bayesNet.getNode("EnemyAngle");
+        BayesNode myGunAngle = bayesNet.getNode("MyGunAngle");
+        BayesNode firePower = bayesNet.getNode("FirePower");
+        BayesNode hit = bayesNet.getNode("Hit");
+
+        // Set evidence
+        Map<BayesNode, String> evidence = new HashMap<>();
+        evidence.put(enemyDistance, EnemyDistance.DIST1.toString());
+        evidence.put(enemyVelocity, EnemyVelocity.EV1.toString());
+        evidence.put(enemyAngle, EnemyAngle.EA1.toString());
+        evidence.put(myGunAngle, MyGunAngle.MGA1.toString());
+        evidence.put(firePower, FirePower.FP1.toString());
+        inferer.setEvidence(evidence);
+
+        System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> Inference <<<<<<<<<<<<<<<<<<<<<<<<<<");
+
+        // Get the beliefs of the enemy distance
+        double[] enemyDistanceBeliefs = inferer.getBeliefs(enemyDistance);
+        System.out.println("Probability of EnemyDistance: " + Arrays.toString(enemyDistanceBeliefs));
+
+        // Get the beliefs of the enemy velocity
+        double[] enemyVelocityBeliefs = inferer.getBeliefs(enemyVelocity);
+        System.out.println("Probability of EnemyVelocity: " + Arrays.toString(enemyVelocityBeliefs));
+
+        // Get the beliefs of hitting enemy
+        double[] hitBeliefs = inferer.getBeliefs(hit);
+        System.out.println("Probability of Hit: " + Arrays.toString(hitBeliefs));
+
     }
 
     private void printNetworkData() {
@@ -287,13 +326,8 @@ class Jayes {
     }
 
     @SuppressWarnings("unused")
-    public void printInit() {
-        System.out.println("\n\n\n========================================= Initial network =========================================");
-        printAll();
-    }
-
-    @SuppressWarnings("unused")
     public void printAll() {
+        System.out.println("\n========================================= Jayes =========================================");
         printNetworkData();
         printProbabilities();
     }
@@ -322,31 +356,44 @@ public class AgoraVai {
         return internalNodes;
     }
 
-    private static void addSomeInstances(Weka weka) throws Exception {
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.SP1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.SP1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.SP1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.SP1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.SP1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+    private static void addSomeInstances(Weka weka, Jayes jayes) throws Exception {
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+        weka.addInstance(EnemyDistance.DIST2, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+        jayes.updateProbabilities(); // TODO: How to avoid calling manually?
+    }
+
+    private static void printAll(String tip, Weka weka, Jayes jayes) {
+        System.out.println("\n\n\n========================================= " + tip + " =========================================");
+        System.out.println("========================================= " + tip + " =========================================");
+        System.out.println("========================================= " + tip + " =========================================");
+        weka.printAll();
+        jayes.printAll();
     }
 
     public static void main(String[] args) throws Exception {
         List<InternalBayesNode> internalNodes = initInternalBayesNodes();
 
         Weka weka = new Weka(internalNodes);
-        weka.printInit();
-
         Jayes jayes = new Jayes(internalNodes);
-        jayes.printInit();
 
-        addSomeInstances(weka);
+        printAll("Initial network", weka, jayes);
 
-        weka.printAll();
+        addSomeInstances(weka, jayes);
+        jayes.foo();
 
-        jayes.updateProbabilities(); // TODO: How to avoid calling manually?
-        jayes.printAll();
+        printAll("After changes", weka, jayes);
 
         weka.displayGraph();
-
     }
 }
+
+
+// TODO: * Salvar e pegar dados entre as rodadas
+// TODO: * Entender melhor o caso do 0
+
+// TODO: * Arquivos de classes
+// TODO: * Observer
