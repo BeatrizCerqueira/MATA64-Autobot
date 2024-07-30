@@ -8,7 +8,7 @@ import robocode.ScannedRobotEvent;
 
 import java.awt.geom.Point2D;
 
-public class Enemy {
+public class Enemy implements Cloneable {
 
     Point2D location;
 
@@ -109,4 +109,14 @@ public class Enemy {
         return isScanned;
     }
 
+
+    @Override
+    public Enemy clone() {
+        try {
+            // Copy mutable state here, so the clone can't change the internals of the original
+            return (Enemy) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

@@ -18,9 +18,20 @@ import java.util.*;
 import static java.lang.Math.max;
 import static java.lang.Math.signum;
 
+record FireRecord(Bullet bullet, Enemy enemy) {
+    // Bullet bullet,
+    // double enemyDistance
+    // double enemyVelocity
+    // double enemyAngle
+    // double enemyHeading
+    // double myGunToEnemyAngle // TODO: @Bia parametro myGunToEnemyAngle sem valor/referencia
+};
+
 public class Autobot extends AdvancedRobot {
 
     Point2D robotLocation;
+    List<FireRecord> activeBullets = new ArrayList<>();
+    List<FireRecord> SucceedBullets = new ArrayList<>();
 
     Enemy enemyBot = new Enemy();
     int direction = 1;
@@ -62,6 +73,37 @@ public class Autobot extends AdvancedRobot {
         } while (true);
     }
 
+    // ============= BULLET EVENTS ================
+    public void onBulletHit(BulletHitEvent event) {
+        Bullet bullet = event.getBullet();
+
+        for (FireRecord record : activeBullets) {
+            if (bullet.equals(record.bullet())) { // bullet found
+                SucceedBullets.add(record);       //  add record to dataset
+                activeBullets.remove(record);     //  bullet no longer active
+                break;
+            }
+        }
+    }
+
+    public void onBulletMissed(BulletMissedEvent event) {
+        removeBullet(event.getBullet());
+    }
+
+    public void onBulletHitBullet(BulletHitBulletEvent event) {
+        removeBullet(event.getBullet());
+    }
+
+    private void removeBullet(Bullet bullet) {
+        for (FireRecord record : activeBullets) {
+            if (bullet.equals(record.bullet())) { // bullet found
+                activeBullets.remove(record);     //  bullet no longer active
+                break;
+            }
+        }
+    }
+
+    // ============= HIT EVENTS ================
     public void onHitByBullet(HitByBulletEvent e) {
         ahead(20);
         setTurnRight(MathUtils.random(-30, 30));
@@ -171,9 +213,15 @@ public class Autobot extends AdvancedRobot {
 
         }
 
+        // Keep fired bullet on track
         if (!history.isEmpty()) {
             history.sort(Comparator.comparing(m -> m.get("distance")));
-            setFire(history.get(0).get("firePower"));
+
+            Bullet bullet = fireBullet(history.get(0).get("firePower")); // setFire(history.get(0).get("firePower"));
+
+            if (bullet != null) {
+                activeBullets.add(new FireRecord(bullet, enemyBot.clone()));
+            }
         }
     }
 
