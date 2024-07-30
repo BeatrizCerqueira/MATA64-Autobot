@@ -24,6 +24,8 @@ public class WekaWrapper {
     private final List<InternalBayesNode> internalNodes;
     private Instances dataset;
     private EditableBayesNet bayesNet;
+    private final String filename = "Autobot.arff";
+    private final String filepath = "C:/robocode/robots/autobot/bayes/data/" + filename;
 
     public WekaWrapper(List<InternalBayesNode> internalNodes) throws Exception {
         this.internalNodes = internalNodes;
@@ -65,21 +67,15 @@ public class WekaWrapper {
     }
 
     public void saveDatasetFile() throws IOException {
-
-//        String currentPath = new java.io.File(".").getCanonicalPath();
-//        System.out.println("Current dir:" + currentPath);
-
-        String filename = "Autobot.arff";
-        String filepath = "C:/robocode/robots/autobot/bayes/data/" + filename;
-//        String filepath = "/robots/autobot/bayes/data/" + filename;
-
         ArffSaver saver = new ArffSaver();
         saver.setInstances(dataset);
         saver.setFile(new File(filepath));
         saver.writeBatch();
-
         System.out.println("File saved.");
+    }
 
+    public void loadDatasetFile() throws IOException {
+        // TODO @lucas: favor fazer serviço completo <3
     }
 
     public void calcNewDistributions() throws Exception {
