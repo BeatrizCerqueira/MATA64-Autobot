@@ -4,6 +4,8 @@ package autobot;
 import autobot.fuzzy.Fuzzy;
 import autobot.genetic.GeneticAlgorithm;
 import autobot.prolog.Prolog;
+import autobot.records.ActiveBullet;
+import autobot.records.BulletResult;
 import autobot.utils.Consts;
 import autobot.utils.MathUtils;
 import autobot.utils.draw.Draw;
@@ -18,20 +20,12 @@ import java.util.*;
 import static java.lang.Math.max;
 import static java.lang.Math.signum;
 
-record FireRecord(Bullet bullet, Enemy enemy) {
-    // Bullet bullet,
-    // double enemyDistance
-    // double enemyVelocity
-    // double enemyAngle
-    // double enemyHeading
-    // double myGunToEnemyAngle // TODO: @Bia parametro myGunToEnemyAngle sem valor/referencia
-};
 
 public class Autobot extends AdvancedRobot {
 
     Point2D robotLocation;
-    List<FireRecord> activeBullets = new ArrayList<>();
-    List<FireRecord> SucceedBullets = new ArrayList<>();
+    List<ActiveBullet> activeBullets = new ArrayList<>();
+    List<BulletResult> bulletResults = new ArrayList<>();
 
     Enemy enemyBot = new Enemy();
     int direction = 1;
@@ -75,13 +69,14 @@ public class Autobot extends AdvancedRobot {
 
     // ============= BULLET EVENTS ================
     public void onBulletHit(BulletHitEvent event) {
-        Bullet bullet = event.getBullet();
-
-        for (FireRecord record : activeBullets) {
-            if (bullet.equals(record.bullet())) { // bullet found
-                SucceedBullets.add(record);       //  add record to dataset
-                activeBullets.remove(record);     //  bullet no longer active
-                break;
+        Bullet eventBullet = event.getBullet();
+        for (ActiveBullet activeBullet : activeBullets) {
+            Bullet activeBulletInstance = activeBullet.bulletInstance();
+            if (activeBulletInstance.equals(eventBullet)) { // bulletInstance found
+                BulletResult bulletResult = new BulletResult(activeBullet.enemySnapshot(), true);
+                bulletResults.add(bulletResult);       //  add record to dataset
+                activeBullets.remove(activeBullet);     //  bulletInstance no longer active
+                return;
             }
         }
     }
@@ -94,11 +89,11 @@ public class Autobot extends AdvancedRobot {
         removeBullet(event.getBullet());
     }
 
-    private void removeBullet(Bullet bullet) {
-        for (FireRecord record : activeBullets) {
-            if (bullet.equals(record.bullet())) { // bullet found
-                activeBullets.remove(record);     //  bullet no longer active
-                break;
+    private void removeBullet(Bullet bulletToRemove) {
+        for (ActiveBullet activeBullet : activeBullets) {
+            if (activeBullet.bulletInstance().equals(bulletToRemove)) { // bulletInstance found
+                activeBullets.remove(activeBullet);     //  bulletInstance no longer active
+                return;
             }
         }
     }
@@ -220,7 +215,7 @@ public class Autobot extends AdvancedRobot {
             Bullet bullet = fireBullet(history.get(0).get("firePower")); // setFire(history.get(0).get("firePower"));
 
             if (bullet != null) {
-                activeBullets.add(new FireRecord(bullet, enemyBot.clone()));
+                activeBullets.add(new ActiveBullet(bullet, enemyBot.clone()));
             }
         }
     }
