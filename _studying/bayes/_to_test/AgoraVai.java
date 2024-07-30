@@ -3,6 +3,7 @@ package autobot._studying.bayes._to_test;
 import autobot._studying.bayes.InternalBayesNode;
 import autobot._studying.bayes.JayesWrapper;
 import autobot._studying.bayes.WekaWrapper;
+import autobot._studying.bayes.enums.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,13 +15,13 @@ public class AgoraVai {
     private static List<InternalBayesNode> initInternalBayesNodes() {
         List<InternalBayesNode> internalNodes = new ArrayList<>();
 
-        InternalBayesNode enemyDistance = new InternalBayesNode("EnemyDistance", autobot._studying.bayes.enums.EnemyDistance.class, new ArrayList<>());
-        InternalBayesNode enemyVelocity = new InternalBayesNode("EnemyVelocity", autobot._studying.bayes.enums.EnemyVelocity.class, new ArrayList<>());
-        InternalBayesNode enemyAngle = new InternalBayesNode("EnemyAngle", autobot._studying.bayes.enums.EnemyAngle.class, new ArrayList<>());
-        InternalBayesNode enemyHeading = new InternalBayesNode("EnemyHeading", autobot._studying.bayes.enums.EnemyHeading.class, new ArrayList<>());
-        InternalBayesNode myGunToEnemyAngle = new InternalBayesNode("MyGunToEnemyAngle", autobot._studying.bayes.enums.MyGunToEnemyAngle.class, new ArrayList<>());
-        InternalBayesNode firePower = new InternalBayesNode("FirePower", autobot._studying.bayes.enums.FirePower.class, new ArrayList<>());
-        InternalBayesNode hit = new InternalBayesNode("Hit", autobot._studying.bayes.enums.Hit.class, Arrays.asList("EnemyDistance", "EnemyVelocity", "EnemyAngle", "EnemyHeading", "MyGunToEnemyAngle", "FirePower"));
+        InternalBayesNode enemyDistance = new InternalBayesNode("EnemyDistance", EnemyDistance.class, new ArrayList<>());
+        InternalBayesNode enemyVelocity = new InternalBayesNode("EnemyVelocity", EnemyVelocity.class, new ArrayList<>());
+        InternalBayesNode enemyAngle = new InternalBayesNode("EnemyAngle", EnemyAngle.class, new ArrayList<>());
+        InternalBayesNode enemyHeading = new InternalBayesNode("EnemyHeading", EnemyHeading.class, new ArrayList<>());
+        InternalBayesNode myGunToEnemyAngle = new InternalBayesNode("MyGunToEnemyAngle", MyGunToEnemyAngle.class, new ArrayList<>());
+        InternalBayesNode firePower = new InternalBayesNode("FirePower", FirePower.class, new ArrayList<>());
+        InternalBayesNode hit = new InternalBayesNode("Hit", Hit.class, Arrays.asList("EnemyDistance", "EnemyVelocity", "EnemyAngle", "EnemyHeading", "MyGunToEnemyAngle", "FirePower"));
 
         internalNodes.add(enemyDistance);
         internalNodes.add(enemyVelocity);
@@ -34,14 +35,14 @@ public class AgoraVai {
     }
 
     private static void addSomeInstances(WekaWrapper weka, JayesWrapper jayes) throws Exception {
-        weka.addInstance(autobot._studying.bayes.enums.EnemyDistance.RANGE_0_100, autobot._studying.bayes.enums.EnemyVelocity.RANGE_0_1, autobot._studying.bayes.enums.EnemyAngle.RANGE_0_45, autobot._studying.bayes.enums.EnemyHeading.RANGE_0_45, autobot._studying.bayes.enums.MyGunToEnemyAngle.RANGE_0_20, autobot._studying.bayes.enums.FirePower.FP_03, autobot._studying.bayes.enums.Hit.TRUE);
-        weka.addInstance(autobot._studying.bayes.enums.EnemyDistance.RANGE_0_100, autobot._studying.bayes.enums.EnemyVelocity.RANGE_0_1, autobot._studying.bayes.enums.EnemyAngle.RANGE_0_45, autobot._studying.bayes.enums.EnemyHeading.RANGE_0_45, autobot._studying.bayes.enums.MyGunToEnemyAngle.RANGE_0_20, autobot._studying.bayes.enums.FirePower.FP_03, autobot._studying.bayes.enums.Hit.TRUE);
-        weka.addInstance(autobot._studying.bayes.enums.EnemyDistance.RANGE_0_100, autobot._studying.bayes.enums.EnemyVelocity.RANGE_0_1, autobot._studying.bayes.enums.EnemyAngle.RANGE_0_45, autobot._studying.bayes.enums.EnemyHeading.RANGE_0_45, autobot._studying.bayes.enums.MyGunToEnemyAngle.RANGE_0_20, autobot._studying.bayes.enums.FirePower.FP_03, autobot._studying.bayes.enums.Hit.TRUE);
-        weka.addInstance(autobot._studying.bayes.enums.EnemyDistance.RANGE_0_100, autobot._studying.bayes.enums.EnemyVelocity.RANGE_0_1, autobot._studying.bayes.enums.EnemyAngle.RANGE_0_45, autobot._studying.bayes.enums.EnemyHeading.RANGE_0_45, autobot._studying.bayes.enums.MyGunToEnemyAngle.RANGE_0_20, autobot._studying.bayes.enums.FirePower.FP_08, autobot._studying.bayes.enums.Hit.TRUE);
-        weka.addInstance(autobot._studying.bayes.enums.EnemyDistance.RANGE_0_100, autobot._studying.bayes.enums.EnemyVelocity.RANGE_0_1, autobot._studying.bayes.enums.EnemyAngle.RANGE_0_45, autobot._studying.bayes.enums.EnemyHeading.RANGE_0_45, autobot._studying.bayes.enums.MyGunToEnemyAngle.RANGE_0_20, autobot._studying.bayes.enums.FirePower.FP_08, autobot._studying.bayes.enums.Hit.TRUE);
-        weka.addInstance(autobot._studying.bayes.enums.EnemyDistance.RANGE_0_100, autobot._studying.bayes.enums.EnemyVelocity.RANGE_0_1, autobot._studying.bayes.enums.EnemyAngle.RANGE_0_45, autobot._studying.bayes.enums.EnemyHeading.RANGE_0_45, autobot._studying.bayes.enums.MyGunToEnemyAngle.RANGE_0_20, autobot._studying.bayes.enums.FirePower.FP_08, autobot._studying.bayes.enums.Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_03, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_03, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_03, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
 
-        weka.addInstance(autobot._studying.bayes.enums.EnemyDistance.RANGE_100_200, autobot._studying.bayes.enums.EnemyVelocity.RANGE_0_1, autobot._studying.bayes.enums.EnemyAngle.RANGE_0_45, autobot._studying.bayes.enums.EnemyHeading.RANGE_0_45, autobot._studying.bayes.enums.MyGunToEnemyAngle.RANGE_0_20, autobot._studying.bayes.enums.FirePower.FP_08, autobot._studying.bayes.enums.Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_100_200, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
 
         weka.calcNewDistributions();
         jayes.setNewProbabilities();
