@@ -74,6 +74,7 @@ public class Autobot extends AdvancedRobot {
     }
 
     // ============= BULLET EVENTS ================
+
     public void onBulletHit(BulletHitEvent event) {
         addBulletResult(event.getBullet(), true);
     }
@@ -98,6 +99,7 @@ public class Autobot extends AdvancedRobot {
     }
 
     // ============= HIT EVENTS ================
+
     public void onHitByBullet(HitByBulletEvent e) {
         ahead(20);
         setTurnRight(MathUtils.random(-30, 30));
@@ -107,44 +109,18 @@ public class Autobot extends AdvancedRobot {
         checkBorders();
     }
 
+    // ============= SCANNED ROBOT ================
+
     public void onScannedRobot(ScannedRobotEvent e) {
         enemyBot.scanned(this, e);
-        setRadarTurn();
-        setGunTurn();
-        setFireTurn();
-    }
-
-    public void onRoundEnded(RoundEndedEvent event) {
-        GeneticAlgorithm.saveGeneticData();
-
-        if (getRoundNum() >= getNumRounds() - 1)
-            // Battle finished
-            GeneticAlgorithm.clearGeneticData();
-
-    }
-
-    public void onPaint(Graphics2D g) {
-        // Draw robot's security zone
-        g.setColor(Color.green);
-        Draw.drawCircle(g, getX(), getY(), safeDistanceGA);
-
-        // Draw bordersMargin
-        int w = (int) getBattleFieldWidth();
-        int h = (int) getBattleFieldHeight();
-        int margin = bordersMarginGA;
-
-        g.setColor(new Color(0xff, 0x00, 0x00, 0x20));
-        g.fillRect(0, 0, margin, h);            // left
-        g.fillRect(0, 0, w, margin);            // bottom
-        g.fillRect(w - margin, 0, margin, h);   // right
-        g.fillRect(0, h - margin, w, margin);   // upper
-
-
+        setRadarRotation();
+        setGunRotation();
+        handleSetFire();
     }
 
     // ============= RADAR / GUN ================
 
-    private void setRadarTurn() {
+    private void setRadarRotation() {
 
         // Get the enemy angle
         double enemyAngle = enemyBot.getAngle();
@@ -164,7 +140,7 @@ public class Autobot extends AdvancedRobot {
         setTurnRadarRight(radarTurn);
     }
 
-    private void setGunTurn() {
+    private void setGunRotation() {
 
         // Get the enemy angle
         double enemyAngle = enemyBot.getAngle();
@@ -180,7 +156,7 @@ public class Autobot extends AdvancedRobot {
 
     }
 
-    private void setFireTurn() {
+    private void handleSetFire() {
 
         List<Map<String, Double>> history = new ArrayList<>();
 
@@ -384,10 +360,38 @@ public class Autobot extends AdvancedRobot {
 
     }
 
+    public void onRoundEnded(RoundEndedEvent event) {
+        GeneticAlgorithm.saveGeneticData();
+
+        if (getRoundNum() >= getNumRounds() - 1)
+            // Battle finished
+            GeneticAlgorithm.clearGeneticData();
+
+    }
+
     private void changeRobotColors() {
         setBodyColor(Color.WHITE);
         setGunColor(Color.BLACK);
         setRadarColor(Color.WHITE);
 //        setBulletColor(Color.WHITE);
+    }
+
+    public void onPaint(Graphics2D g) {
+        // Draw robot's security zone
+        g.setColor(Color.green);
+        Draw.drawCircle(g, getX(), getY(), safeDistanceGA);
+
+        // Draw bordersMargin
+        int w = (int) getBattleFieldWidth();
+        int h = (int) getBattleFieldHeight();
+        int margin = bordersMarginGA;
+
+        g.setColor(new Color(0xff, 0x00, 0x00, 0x20));
+        g.fillRect(0, 0, margin, h);            // left
+        g.fillRect(0, 0, w, margin);            // bottom
+        g.fillRect(w - margin, 0, margin, h);   // right
+        g.fillRect(0, h - margin, w, margin);   // upper
+
+
     }
 }
