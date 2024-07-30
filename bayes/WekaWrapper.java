@@ -5,6 +5,7 @@ import weka.classifiers.bayes.net.EditableBayesNet;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
+import weka.core.converters.ArffLoader;
 import weka.core.converters.ArffSaver;
 import weka.gui.graphvisualizer.GraphVisualizer;
 
@@ -12,11 +13,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 @SuppressWarnings("DuplicatedCode")
 public class WekaWrapper {
@@ -33,14 +37,19 @@ public class WekaWrapper {
         initBayesianNetwork();
     }
 
-    private void initDataset() {
-        ArrayList<Attribute> attributes = new ArrayList<>();
-        for (InternalBayesNode internalNode : internalNodes) {
-            attributes.add(new Attribute(internalNode.getName(), internalNode.getValues()));
+    private void initDataset() throws IOException {
+        boolean hasFile = (new File(filepath)).exists();
+        if (hasFile)
+            loadDatasetFile();
+        else {
+            ArrayList<Attribute> attributes = new ArrayList<>();
+            for (InternalBayesNode internalNode : internalNodes) {
+                attributes.add(new Attribute(internalNode.getName(), internalNode.getValues()));
+            }
+            Instances dataset = new Instances("Dataset", attributes, 0);
+            dataset.setClassIndex(dataset.numAttributes() - 1);
+            this.dataset = dataset;
         }
-        Instances dataset = new Instances("Dataset", attributes, 0);
-        dataset.setClassIndex(dataset.numAttributes() - 1);
-        this.dataset = dataset;
     }
 
     private void initBayesianNetwork() throws Exception {
@@ -71,11 +80,13 @@ public class WekaWrapper {
         saver.setInstances(dataset);
         saver.setFile(new File(filepath));
         saver.writeBatch();
-        System.out.println("File saved.");
     }
 
     public void loadDatasetFile() throws IOException {
-        // TODO @lucas: favor fazer serviço completo <3
+        BufferedReader reader = new BufferedReader(new FileReader(filepath));
+        ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
+        dataset = arff.getData();
+        dataset.setClassIndex(dataset.numAttributes() - 1);
     }
 
     public void calcNewDistributions() throws Exception {

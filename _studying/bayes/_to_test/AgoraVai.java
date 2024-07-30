@@ -82,6 +82,7 @@ public class AgoraVai {
 //        weka.displayGraph();
 
         weka.saveDatasetFile();
+        weka.loadDatasetFile();
 
     }
 }
