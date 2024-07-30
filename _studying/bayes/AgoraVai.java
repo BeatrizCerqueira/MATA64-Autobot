@@ -19,6 +19,7 @@
 
 package autobot._studying.bayes;
 
+import autobot.utils.Consts;
 import org.eclipse.recommenders.jayes.BayesNet;
 import org.eclipse.recommenders.jayes.BayesNode;
 import org.eclipse.recommenders.jayes.inference.IBayesInferer;
@@ -156,6 +157,7 @@ class Weka {
         }
     }
 
+    // TODO: Agnostic
     public void addInstance(EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, MyGunAngle mga, FirePower fp, Hit hit) {
         double[] instance = new double[]{ed.ordinal(), ev.ordinal(), ea.ordinal(), mga.ordinal(), fp.ordinal(), hit.ordinal()};
         dataset.add(new DenseInstance(1.0, instance));
@@ -310,50 +312,12 @@ class Jayes {
 }
 
 class Test1 {
-    private Weka weka;
-    private Jayes jayes;
+    private final Weka weka;
+    private final Jayes jayes;
 
-    private List<InternalBayesNode> initInternalBayesNodes() {
-        List<InternalBayesNode> internalNodes = new ArrayList<>();
-
-        InternalBayesNode enemyDistance = new InternalBayesNode("EnemyDistance", EnemyDistance.class, new ArrayList<>());
-        InternalBayesNode enemyVelocity = new InternalBayesNode("EnemyVelocity", EnemyVelocity.class, new ArrayList<>());
-        InternalBayesNode enemyAngle = new InternalBayesNode("EnemyAngle", EnemyAngle.class, new ArrayList<>());
-        InternalBayesNode myGunAngle = new InternalBayesNode("MyGunAngle", MyGunAngle.class, new ArrayList<>());
-        InternalBayesNode firePower = new InternalBayesNode("FirePower", FirePower.class, new ArrayList<>());
-        InternalBayesNode hit = new InternalBayesNode("Hit", Hit.class, Arrays.asList("EnemyDistance", "EnemyVelocity", "EnemyAngle", "MyGunAngle", "FirePower"));
-
-        internalNodes.add(enemyDistance);
-        internalNodes.add(enemyVelocity);
-        internalNodes.add(enemyAngle);
-        internalNodes.add(myGunAngle);
-        internalNodes.add(firePower);
-        internalNodes.add(hit);
-
-        return internalNodes;
-    }
-
-    private void addSomeInstances() throws Exception {
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
-
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP2, Hit.TRUE);
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP2, Hit.TRUE);
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP2, Hit.TRUE);
-
-        weka.addInstance(EnemyDistance.DIST2, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP2, Hit.TRUE);
-
-        weka.calcNewDistributions();
-        jayes.setNewProbabilities();
-    }
-
-    private void printAll(String tip) {
-        System.out.println("\n\n\n========================================= " + tip + " =========================================");
-        System.out.println("========================================= " + tip + " =========================================");
-        System.out.println("========================================= " + tip + " =========================================");
-        weka.printAll();
-        jayes.printAll();
+    public Test1(Weka weka, Jayes jayes) {
+        this.weka = weka;
+        this.jayes = jayes;
     }
 
     private void calcHitBeliefs() {
@@ -401,70 +365,149 @@ class Test1 {
 
     @SuppressWarnings("unused")
     public void run() throws Exception {
-        List<InternalBayesNode> internalNodes = initInternalBayesNodes();
-
-        this.weka = new Weka(internalNodes);
-        this.jayes = new Jayes(internalNodes);
-
-        printAll("Initial network");
-
-        addSomeInstances();
-        printAll("After changes");
 
         calcHitBeliefs();
         calcBestFirePowerToHit();
 
-        weka.displayGraph();
     }
+}
+
+class Test2 {
+
+    private Weka weka;
+    private Jayes jayes;
+
+    public Test2(Weka weka, Jayes jayes) {
+        this.weka = weka;
+        this.jayes = jayes;
+    }
+
+    private FirePower calcBestFirePowerToHit(EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, MyGunAngle mga) {
+        List<InternalEvidence> internalEvidences = new ArrayList<>();
+
+        internalEvidences.add(new InternalEvidence("EnemyDistance", ed.toString()));
+        internalEvidences.add(new InternalEvidence("EnemyVelocity", ev.toString()));
+        internalEvidences.add(new InternalEvidence("EnemyAngle", ea.toString()));
+        internalEvidences.add(new InternalEvidence("MyGunAngle", mga.toString()));
+        internalEvidences.add(new InternalEvidence("Hit", Hit.TRUE.toString()));
+
+        String nodeToGetBeliefs = "FirePower";
+
+        List<Double> firePowerBeliefs = Arrays.stream(jayes.getBeliefs(internalEvidences, nodeToGetBeliefs)).boxed().toList();
+
+        Double maxFirePowerBelieve = Collections.max(firePowerBeliefs);
+        int maxFirePowerBelieveIndex = firePowerBeliefs.indexOf(maxFirePowerBelieve);
+        FirePower bestFirePower = FirePower.values()[maxFirePowerBelieveIndex];
+
+        System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> Inference <<<<<<<<<<<<<<<<<<<<<<<<<<");
+        System.out.println("Beliefs of fire power: " + firePowerBeliefs);
+        System.out.println("Max fire power believe: " + maxFirePowerBelieve);
+        System.out.println("Index of max fire power believe: " + maxFirePowerBelieveIndex);
+        System.out.println("Best fire power to hit: " + bestFirePower);
+
+        return bestFirePower;
+
+    }
+
+    private double foo(double enemyDistance, double enemyVelocity, double enemyAngle, double myGunAngle, double myEnergy) throws Exception {
+
+        // Classify values in ranges
+
+
+        // Return double value of the choose FP
+        return 0.5;
+    }
+
+    private void setFire(double firePower) {
+        System.out.println("Firing with power: " + firePower);
+    }
+
+    @SuppressWarnings("unused")
+    public void run() throws Exception {
+
+        double enemyDistance = 200.0;    // 0 to 1000 px
+        double enemyVelocity = 10.0;     // 0 to 8 px/turn
+        double enemyHeading = 45.0;      // 0 to 360 degrees [TODO] Tem que ver isso aqui, na verdade n pode ser getHeading, em que ser algo em relação ao nosso robô. A pergunta que quero responder na verdadeé: o inimigo tá com tendência de aproximação ou afastamento?
+        double myGunToEnemyAngle = 45.0; // 0 to 180 degrees  (abs (gunInitialTurn + gunTurnThatWasSet))
+
+        // Other variables
+        double myEnergy = 100.0;         // 0 to 100
+
+        //noinspection ConstantValue
+        if (myEnergy > Consts.MIN_LIFE_TO_FIRE) {
+            double firePower = foo(enemyDistance, enemyVelocity, enemyHeading, myGunToEnemyAngle, myEnergy);
+            setFire(firePower);
+        } else {
+            System.out.println("Not enough energy to fire");
+        }
+    }
+
 }
 
 public class AgoraVai {
 
+    private static List<InternalBayesNode> initInternalBayesNodes() {
+        List<InternalBayesNode> internalNodes = new ArrayList<>();
 
-//    private static double foo(double enemyDistance, double enemyVelocity, double enemyAngle, double myGunAngle, double myEnergy) throws Exception {
-//        List<InternalBayesNode> internalNodes = initInternalBayesNodes();
-//
-//        Weka weka = new Weka(internalNodes);
-//        Jayes jayes = new Jayes(internalNodes);
-//
-//        addSomeInstances(weka, jayes);
-//        calcBestFirePowerToHit(jayes);
-//
-//        return 0.0;
-//
-//    }
-//
-//    public static void setFire(double firePower) {
-//        System.out.println("Firing with power: " + firePower);
-//    }
-//
-//    @SuppressWarnings("unused")
-//    private static void test2() {
-//
-//        double enemyDistance = 200.0;    // 0 to 1000 px
-//        double enemyVelocity = 10.0;     // 0 to 8 px/turn
-//        double enemyHeading = 45.0;      // 0 to 360 degrees [TODO] Tem que ver isso aqui, na verdade n pode ser getHeading, em que ser algo em relação ao nosso robô. A pergunta que quero responder na verdadeé: o inimigo tá com tendência de aproximação ou afastamento?
-//        double myGunToEnemyAngle = 45.0; // 0 to 180 degrees  (abs (gunInitialTurn + gunTurnThatWasSet))
-//
-//        // Other variables
-//        double myEnergy = 100.0;         // 0 to 100
-//
-//        //noinspection ConstantValue
-//        if (myEnergy > Consts.MIN_ENERGY_TO_FIRE) {
-//            double firePower = foo(enemyDistance, enemyVelocity, enemyHeading, myGunToEnemyAngle, myEnergy);
-//            setFire(firePower);
-//        } else {
-//            System.out.println("Not enough energy to fire");
-//        }
-//    }
+        InternalBayesNode enemyDistance = new InternalBayesNode("EnemyDistance", EnemyDistance.class, new ArrayList<>());
+        InternalBayesNode enemyVelocity = new InternalBayesNode("EnemyVelocity", EnemyVelocity.class, new ArrayList<>());
+        InternalBayesNode enemyAngle = new InternalBayesNode("EnemyAngle", EnemyAngle.class, new ArrayList<>());
+        InternalBayesNode myGunAngle = new InternalBayesNode("MyGunAngle", MyGunAngle.class, new ArrayList<>());
+        InternalBayesNode firePower = new InternalBayesNode("FirePower", FirePower.class, new ArrayList<>());
+        InternalBayesNode hit = new InternalBayesNode("Hit", Hit.class, Arrays.asList("EnemyDistance", "EnemyVelocity", "EnemyAngle", "MyGunAngle", "FirePower"));
+
+        internalNodes.add(enemyDistance);
+        internalNodes.add(enemyVelocity);
+        internalNodes.add(enemyAngle);
+        internalNodes.add(myGunAngle);
+        internalNodes.add(firePower);
+        internalNodes.add(hit);
+
+        return internalNodes;
+    }
+
+    private static void addSomeInstances(Weka weka, Jayes jayes) throws Exception {
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP2, Hit.TRUE);
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP2, Hit.TRUE);
+        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP2, Hit.TRUE);
+
+        weka.addInstance(EnemyDistance.DIST2, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP2, Hit.TRUE);
+
+        weka.calcNewDistributions();
+        jayes.setNewProbabilities();
+    }
+
+    private static void printAll(String tip, Weka weka, Jayes jayes) {
+        System.out.println("\n\n\n========================================= " + tip + " =========================================");
+        System.out.println("========================================= " + tip + " =========================================");
+        System.out.println("========================================= " + tip + " =========================================");
+        weka.printAll();
+        jayes.printAll();
+    }
 
     public static void main(String[] args) throws Exception {
 
-        Test1 test1 = new Test1();
-        test1.run();
+        List<InternalBayesNode> internalNodes = initInternalBayesNodes();
+
+        Weka weka = new Weka(internalNodes);
+        Jayes jayes = new Jayes(internalNodes);
+//        printAll("Initial network", weka, jayes);
+
+        addSomeInstances(weka, jayes);
+//        printAll("After changes", weka, jayes);
+
+//        Test1 test1 = new Test1(weka, jayes);
+//        test1.run();
+
+        Test2 test2 = new Test2(weka, jayes);
+        test2.run();
 
 
-//        test2();
+//        weka.displayGraph();
 
     }
 }
