@@ -1,7 +1,7 @@
 package autobot._studying.bayes._to_test;
 
 import autobot.bayes.JayesWrapper;
-import autobot.bayes.enums.*;
+import autobot.bayes.enums.FirePower;
 import autobot.bayes.records.EvidenceAttribute;
 
 import java.util.ArrayList;
@@ -20,12 +20,12 @@ class Test1 {
     private void calcHitBeliefs() {
         List<EvidenceAttribute> evidenceAttributes = new ArrayList<>();
 
-        evidenceAttributes.add(new EvidenceAttribute("EnemyDistance", EnemyDistance.RANGE_0_100.toString()));
-        evidenceAttributes.add(new EvidenceAttribute("EnemyVelocity", EnemyVelocity.RANGE_0_1.toString()));
-        evidenceAttributes.add(new EvidenceAttribute("EnemyAngle", EnemyAngle.RANGE_0_45.toString()));
-        evidenceAttributes.add(new EvidenceAttribute("EnemyHeading", EnemyHeading.RANGE_0_45.toString()));
-        evidenceAttributes.add(new EvidenceAttribute("MyGunToEnemyAngle", MyGunToEnemyAngle.RANGE_0_20.toString()));
-        evidenceAttributes.add(new EvidenceAttribute("FirePower", FirePower.FP_01.toString()));
+//        evidenceAttributes.add(new EvidenceAttribute("EnemyDistance", EnemyDistance.RANGE_0_100.toString()));
+//        evidenceAttributes.add(new EvidenceAttribute("EnemyVelocity", EnemyVelocity.RANGE_0_1.toString()));
+//        evidenceAttributes.add(new EvidenceAttribute("EnemyAngle", EnemyAngle.RANGE_0_45.toString()));
+//        evidenceAttributes.add(new EvidenceAttribute("EnemyHeading", EnemyHeading.RANGE_0_45.toString()));
+//        evidenceAttributes.add(new EvidenceAttribute("MyGunToEnemyAngle", MyGunToEnemyAngle.RANGE_0_20.toString()));
+//        evidenceAttributes.add(new EvidenceAttribute("FirePower", FirePower.FP_01.toString()));
 
         String nodeToGetBeliefs = "Hit";
 
@@ -39,12 +39,12 @@ class Test1 {
     private void calcBestFirePowerToHit() {
         List<EvidenceAttribute> evidenceAttributes = new ArrayList<>();
 
-        evidenceAttributes.add(new EvidenceAttribute("EnemyDistance", EnemyDistance.RANGE_0_100.toString()));
-        evidenceAttributes.add(new EvidenceAttribute("EnemyVelocity", EnemyVelocity.RANGE_0_1.toString()));
-        evidenceAttributes.add(new EvidenceAttribute("EnemyAngle", EnemyAngle.RANGE_0_45.toString()));
-        evidenceAttributes.add(new EvidenceAttribute("EnemyHeading", EnemyHeading.RANGE_0_45.toString()));
-        evidenceAttributes.add(new EvidenceAttribute("MyGunToEnemyAngle", MyGunToEnemyAngle.RANGE_0_20.toString()));
-        evidenceAttributes.add(new EvidenceAttribute("Hit", Hit.TRUE.toString()));
+//        evidenceAttributes.add(new EvidenceAttribute("EnemyDistance", EnemyDistance.RANGE_0_100.toString()));
+//        evidenceAttributes.add(new EvidenceAttribute("EnemyVelocity", EnemyVelocity.RANGE_0_1.toString()));
+//        evidenceAttributes.add(new EvidenceAttribute("EnemyAngle", EnemyAngle.RANGE_0_45.toString()));
+//        evidenceAttributes.add(new EvidenceAttribute("EnemyHeading", EnemyHeading.RANGE_0_45.toString()));
+//        evidenceAttributes.add(new EvidenceAttribute("MyGunToEnemyAngle", MyGunToEnemyAngle.RANGE_0_20.toString()));
+//        evidenceAttributes.add(new EvidenceAttribute("Hit", Hit.TRUE.toString()));
 
         String nodeToGetBeliefs = "FirePower";
 
