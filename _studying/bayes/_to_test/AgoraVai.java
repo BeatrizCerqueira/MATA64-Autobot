@@ -41,7 +41,7 @@ public class AgoraVai {
         List<GenericAttribute> instance4 = Arrays.asList(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
         List<GenericAttribute> instance5 = Arrays.asList(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
         List<GenericAttribute> instance6 = Arrays.asList(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
-        List<GenericAttribute> instance7 = Arrays.asList(EnemyDistance.RANGE_100_200, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
+        List<GenericAttribute> instance7 = Arrays.asList(EnemyDistance.RANGE_900_1000, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
 
         weka.addInstance(instance1);
         weka.addInstance(instance2);
