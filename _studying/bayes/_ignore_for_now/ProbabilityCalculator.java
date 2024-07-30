@@ -1,4 +1,4 @@
-package autobot._studying.bayes.ignore_for_now;
+package autobot._studying.bayes._ignore_for_now;
 
 import java.util.*;
 
