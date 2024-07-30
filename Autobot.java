@@ -317,7 +317,7 @@ public class Autobot extends AdvancedRobot {
         setBodyColor(Color.WHITE);
         setGunColor(Color.BLACK);
         setRadarColor(Color.WHITE);
-        setBulletColor(Color.MAGENTA);
+//        setBulletColor(Color.WHITE);
     }
 
     public void applyFuzzyAlgorithm() {

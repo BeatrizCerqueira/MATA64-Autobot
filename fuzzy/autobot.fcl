@@ -46,7 +46,6 @@ END_DEFUZZIFY
 	//TERM medium := (0.3,0) (0.5,1) (0.7,0);
 	//TERM high := (0.8,0) (1,1);
 
-    // TODO test other methods
 RULEBLOCK No1
 	AND : MIN;			// Operator AND calculation
 	ACT : MIN;			// Activation method
@@ -54,7 +53,7 @@ RULEBLOCK No1
 
 	RULE 1 : IF (autobot_energy IS sick AND distance IS NOT close) THEN life_risk IS low;
 	RULE 2 : IF (autobot_energy IS sick AND enemy_energy IS sick) THEN life_risk IS medium;
-	RULE 3 : IF (autobot_energy IS sick AND enemy_energy IS healthy AND distance IS close) THEN life_risk IS high;
+	RULE 3 : IF (autobot_energy IS sick AND (enemy_energy IS healthy OR distance IS close)) THEN life_risk IS high;
 END_RULEBLOCK
 
 END_FUNCTION_BLOCK
