@@ -368,7 +368,7 @@ public class Autobot extends AdvancedRobot {
         }
 
     }
-    
+
     // ============= OTHERS ================
 
     public void nextTurn() {
