@@ -70,25 +70,25 @@ public class AgoraVai {
 
         WekaWrapper weka = new WekaWrapper(internalNodes);
         JayesWrapper jayes = new JayesWrapper(internalNodes);
-//        printAll("Initial network", weka, jayes);
 
+//        printAll("Initial network", weka, jayes);
         addSomeInstances(weka, jayes);
 //        printAll("After changes", weka, jayes);
 
-//        Test1 test1 = new Test1(jayes);
-//        test1.run();
-
-        Test2 test2 = new Test2(jayes);
-        test2.run();
+//        Test1 teste = new Test1(jayes);
+//        Test2 teste = new Test2(jayes);
+//        teste.run();
 
 //        weka.displayGraph();
+
+        weka.saveDatasetFile();
 
     }
 }
 
 // LUCAS:
-// TODO: * Salvar e pegar dados entre as rodadas
-// TODO: * Como saber se a bala acertou ou não?
+// DONE: * Salvar e pegar dados entre as rodadas
+// DONE: * Como saber se a bala acertou ou não?
 
 
 // PARA APRESENTAR:

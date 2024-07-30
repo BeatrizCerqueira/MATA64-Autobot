@@ -5,12 +5,15 @@ import weka.classifiers.bayes.net.EditableBayesNet;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
+import weka.core.converters.ArffSaver;
 import weka.gui.graphvisualizer.GraphVisualizer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,6 +62,24 @@ public class WekaWrapper {
         for (InternalBayesNode internalNode : internalNodes) {
             internalNode.setDistribution(bayesNet.getDistribution(internalNode.getName()));
         }
+    }
+
+    public void saveDatasetFile() throws IOException {
+
+//        String currentPath = new java.io.File(".").getCanonicalPath();
+//        System.out.println("Current dir:" + currentPath);
+
+        String filename = "autobot.arff";
+        String filepath = "C:/robocode/robots/autobot/bayes/data/" + filename;
+//        String filepath = "/robots/autobot/bayes/data/" + filename;
+        
+        ArffSaver saver = new ArffSaver();
+        saver.setInstances(dataset);
+        saver.setFile(new File(filepath));
+        saver.writeBatch();
+
+        System.out.println("File saved.");
+
     }
 
     public void calcNewDistributions() throws Exception {
