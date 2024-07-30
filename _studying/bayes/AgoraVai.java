@@ -204,14 +204,10 @@ enum FirePower {
         this.power = power;
     }
 
-    public static FirePower fromDouble(double power) {
-        for (FirePower fp : values()) {
-            if (power == fp.power) {
-                return fp;
-            }
-        }
-        throw new IllegalArgumentException("Power out of range: " + power);
+    public double toDouble() {
+        return power;
     }
+
 }
 
 enum Hit {
@@ -562,7 +558,7 @@ class Test2 {
         internalEvidences.add(new InternalEvidence("EnemyAngle", ea.toString()));
         internalEvidences.add(new InternalEvidence("EnemyHeading", eh.toString()));
         internalEvidences.add(new InternalEvidence("MyGunToEnemyAngle", mgtea.toString()));
-        internalEvidences.add(new InternalEvidence("Hit", Hit.TRUE.toString()));
+        internalEvidences.add(new InternalEvidence("Hit", Hit.fromBoolean(true).toString()));
 
         String nodeToGetBeliefs = "FirePower";
 
@@ -582,13 +578,20 @@ class Test2 {
 
     }
 
-    private double foo(double enemyDistance, double enemyVelocity, double enemyAngle, double myGunAngle, double myEnergy) throws Exception {
+    private double calcBestFirePowerToHit(double enemyDistance, double enemyVelocity, double enemyAngle, double enemyHeading, double myGunToEnemyAngle) {
+        EnemyDistance ed = EnemyDistance.fromDouble(enemyDistance);
+        EnemyVelocity ev = EnemyVelocity.fromDouble(enemyVelocity);
+        EnemyAngle ea = EnemyAngle.fromDouble(enemyAngle);
+        EnemyHeading eh = EnemyHeading.fromDouble(enemyHeading);
+        MyGunToEnemyAngle mgtea = MyGunToEnemyAngle.fromDouble(myGunToEnemyAngle);
 
-        // Classify values in ranges
+        System.out.println("EnemyDistance: " + enemyDistance + " = " + ed);
+        System.out.println("EnemyVelocity: " + enemyVelocity + " = " + ev);
+        System.out.println("EnemyAngle: " + enemyAngle + " = " + ea);
+        System.out.println("EnemyHeading: " + enemyHeading + " = " + eh);
+        System.out.println("MyGunToEnemyAngle: " + myGunToEnemyAngle + " = " + mgtea);
 
-
-        // Return double value of the choose FP
-        return 0.5;
+        return calcBestFirePowerToHit(ed, ev, ea, eh, mgtea).toDouble();
     }
 
     private void setFire(double firePower) {
@@ -599,7 +602,7 @@ class Test2 {
     public void run() throws Exception {
 
         double enemyDistance = 200.0;    // 0 to 1000 px       |   10 ranges
-        double enemyVelocity = 10.0;     // 0 to 8 px/turn     |   8 ranges
+        double enemyVelocity = 5.0;      // 0 to 8 px/turn     |   8 ranges
         double enemyAngle = 45.0;        // 0 to 360 degrees   |   8 ranges   |  ourGetHeading() + enemy.getBearing()
         double enemyHeading = 45.0;      // 0 to 360 degrees   |   8 ranges
         double myGunToEnemyAngle = 45.0; // 0 to 180 degrees   |   9 ranges   |  abs(gunInitialTurn + gunTurnThatWasSet)
@@ -611,7 +614,7 @@ class Test2 {
 
         //noinspection ConstantValue
         if (myEnergy > Consts.MIN_LIFE_TO_FIRE) {
-            double firePower = foo(enemyDistance, enemyVelocity, enemyHeading, myGunToEnemyAngle, myEnergy);
+            double firePower = calcBestFirePowerToHit(enemyDistance, enemyVelocity, enemyAngle, enemyHeading, myGunToEnemyAngle);
             setFire(firePower);
         } else {
             System.out.println("Not enough energy to fire");
@@ -646,14 +649,14 @@ public class AgoraVai {
     }
 
     private static void addSomeInstances(Weka weka, Jayes jayes) throws Exception {
-        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_01, Hit.TRUE);
-        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_01, Hit.TRUE);
-        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_01, Hit.TRUE);
-        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_01, Hit.TRUE);
-        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_01, Hit.TRUE);
-        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_02, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_03, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_03, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_03, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
 
-        weka.addInstance(EnemyDistance.RANGE_100_200, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_02, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_100_200, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
 
         weka.calcNewDistributions();
         jayes.setNewProbabilities();
