@@ -1,7 +1,7 @@
-package autobot._studying.bayes;
+package autobot.bayes;
 
-import autobot._studying.bayes.enums.*;
-import autobot._studying.bayes.records.EvidenceAttribute;
+import autobot.bayes.enums.*;
+import autobot.bayes.records.EvidenceAttribute;
 import autobot.records.BulletResult;
 
 import java.util.ArrayList;

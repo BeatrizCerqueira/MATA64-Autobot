@@ -1,4 +1,4 @@
-package autobot._studying.bayes.records;
+package autobot.bayes.records;
 
 public record EvidenceAttribute(String name, String value) {
 

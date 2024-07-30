@@ -1,4 +1,4 @@
-package autobot._studying.bayes.enums;
+package autobot.bayes.enums;
 
 public enum Hit implements GenericAttribute {
     TRUE(true),

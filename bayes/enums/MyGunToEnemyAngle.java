@@ -1,4 +1,4 @@
-package autobot._studying.bayes.enums;
+package autobot.bayes.enums;
 
 public enum MyGunToEnemyAngle implements GenericAttribute {
     RANGE_0_20(0, 20),

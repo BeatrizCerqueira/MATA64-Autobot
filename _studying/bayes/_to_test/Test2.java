@@ -1,8 +1,8 @@
 package autobot._studying.bayes._to_test;
 
-import autobot._studying.bayes.JayesWrapper;
-import autobot._studying.bayes.enums.*;
-import autobot._studying.bayes.records.EvidenceAttribute;
+import autobot.bayes.JayesWrapper;
+import autobot.bayes.enums.*;
+import autobot.bayes.records.EvidenceAttribute;
 import autobot.utils.Consts;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package autobot._studying.bayes.enums;
+package autobot.bayes.enums;
 
 public interface GenericAttribute {
 

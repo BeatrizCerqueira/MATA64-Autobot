@@ -1,9 +1,9 @@
 package autobot._studying.bayes._to_test;
 
-import autobot._studying.bayes.InternalBayesNode;
-import autobot._studying.bayes.JayesWrapper;
-import autobot._studying.bayes.WekaWrapper;
-import autobot._studying.bayes.enums.*;
+import autobot.bayes.InternalBayesNode;
+import autobot.bayes.JayesWrapper;
+import autobot.bayes.WekaWrapper;
+import autobot.bayes.enums.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;

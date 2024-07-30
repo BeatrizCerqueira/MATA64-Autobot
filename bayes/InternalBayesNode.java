@@ -1,4 +1,4 @@
-package autobot._studying.bayes;
+package autobot.bayes;
 
 import java.util.Arrays;
 import java.util.List;

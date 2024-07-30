@@ -1,6 +1,6 @@
-package autobot._studying.bayes;
+package autobot.bayes;
 
-import autobot._studying.bayes.enums.GenericAttribute;
+import autobot.bayes.enums.GenericAttribute;
 import weka.classifiers.bayes.net.EditableBayesNet;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -69,10 +69,10 @@ public class WekaWrapper {
 //        String currentPath = new java.io.File(".").getCanonicalPath();
 //        System.out.println("Current dir:" + currentPath);
 
-        String filename = "autobot.arff";
+        String filename = "Autobot.arff";
         String filepath = "C:/robocode/robots/autobot/bayes/data/" + filename;
 //        String filepath = "/robots/autobot/bayes/data/" + filename;
-        
+
         ArffSaver saver = new ArffSaver();
         saver.setInstances(dataset);
         saver.setFile(new File(filepath));

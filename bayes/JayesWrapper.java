@@ -1,6 +1,6 @@
-package autobot._studying.bayes;
+package autobot.bayes;
 
-import autobot._studying.bayes.records.EvidenceAttribute;
+import autobot.bayes.records.EvidenceAttribute;
 import org.eclipse.recommenders.jayes.BayesNet;
 import org.eclipse.recommenders.jayes.BayesNode;
 import org.eclipse.recommenders.jayes.inference.IBayesInferer;

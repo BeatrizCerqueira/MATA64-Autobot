@@ -1,4 +1,4 @@
-package autobot._studying.bayes.enums;
+package autobot.bayes.enums;
 
 public enum EnemyHeading implements GenericAttribute {
     RANGE_0_45(0, 45),
