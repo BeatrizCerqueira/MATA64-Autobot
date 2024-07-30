@@ -425,10 +425,11 @@ class Test2 {
     @SuppressWarnings("unused")
     public void run() throws Exception {
 
-        double enemyDistance = 200.0;    // 0 to 1000 px
-        double enemyVelocity = 10.0;     // 0 to 8 px/turn
-        double enemyHeading = 45.0;      // 0 to 360 degrees [TODO] Tem que ver isso aqui, na verdade n pode ser getHeading, em que ser algo em relação ao nosso robô. A pergunta que quero responder na verdadeé: o inimigo tá com tendência de aproximação ou afastamento?
-        double myGunToEnemyAngle = 45.0; // 0 to 180 degrees  (abs (gunInitialTurn + gunTurnThatWasSet))
+        double enemyDistance = 200.0;    // 0 to 1000 px       |   10 ranges
+        double enemyVelocity = 10.0;     // 0 to 8 px/turn     |   8 ranges
+        double enemyAngle = 45.0;        // 0 to 360 degrees   |   8 ranges   |  ourGetHeading() + enemy.getBearing()
+        double enemyHeading = 45.0;      // 0 to 360 degrees   |   8 ranges
+        double myGunToEnemyAngle = 45.0; // 0 to 180 degrees   |   9 ranges   |  abs(gunInitialTurn + gunTurnThatWasSet)
 
         // Other variables
         double myEnergy = 100.0;         // 0 to 100
@@ -512,17 +513,29 @@ public class AgoraVai {
     }
 }
 
+// LUCAS:
 // TODO: * Salvar e pegar dados entre as rodadas
+// TODO: * Como saber se a bala acertou ou não?
+
+
+// PARA APRESENTAR:
 // TODO: * Entender melhor o caso do 0
 
+
+// MELHORIA DE CÓDIGO
 // TODO: * Arquivos de classes
-// TODO: * Observer
 
-// TODO: * Classificador entre valores do enum
+
+// FUNCIONALIDADES NECESSÁRIAS:
 // TODO: * Ao atirar, pega os dados, calcula prob, escolhe, adiciona nas instâncias com o resultado
-// TODO: * Como saber se a bala acertou ou não?
-// TODO: * Valor mínimo de believe para atirar
-// TODO: * Lógica existente de tiro
+// TODO:    - Classificador entre valores do enum
+// TODO:    - Atualizar o dataset com o resultado
+// TODO: * Cassar com a lógica existente de tiro
 
 
+// FUNCIONALIDADES DESEJÁVEIS:
 // * TODO: Bayes para ver pra onde girar a arma baseado em posição, velocidade e direção do inimigo
+
+
+// CANCELADO (Se tem energia, atira. Quem tem limite é município!)
+// TODO: * Valor mínimo de believe para atirar
