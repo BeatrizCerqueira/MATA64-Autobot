@@ -1,22 +1,3 @@
-// [{ name: EnemyDistance
-//    values: [dist1, dist2]
-//    parents: [] },
-//  { name: EnemyVelocity
-//    values: [sp1, sp2]
-//    parents: [] },
-//  { name: EnemyAngle
-//    values: [ea1, ea2]
-//    parents: [] },
-//  { name: MyGunAngle
-//    values: [mga1, mga2]
-//    parents: [] },
-//  { name: FirePower
-//    values: [fp1, fp2]
-//    parents: [] },
-//  { name: Hit
-//    values: [true, false]
-//    parents: [EnemyDistance, EnemyVelocity, EnemyAngle, MyGunAngle, FirePower] }]
-
 package autobot._studying.bayes;
 
 import autobot.utils.Consts;
@@ -40,27 +21,217 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 enum EnemyDistance {
-    DIST1, DIST2
+    RANGE_0_100(0, 100),
+    RANGE_100_200(100, 200),
+    RANGE_200_300(200, 300),
+    RANGE_300_400(300, 400),
+    RANGE_400_500(400, 500),
+    RANGE_500_600(500, 600),
+    RANGE_600_700(600, 700),
+    RANGE_700_800(700, 800),
+    RANGE_800_900(800, 900),
+    RANGE_900_1000(900, 1000);
+
+    private final double min;
+    private final double max;
+
+    EnemyDistance(double min, double max) {
+        this.min = min;
+        this.max = max;
+    }
+
+    public static EnemyDistance fromDouble(double distance) {
+        for (EnemyDistance ed : values()) {
+            if (distance >= ed.min && distance < ed.max) {
+                return ed;
+            }
+        }
+        throw new IllegalArgumentException("Distance out of range: " + distance);
+    }
 }
 
 enum EnemyVelocity {
-    EV1, EV2
+    RANGE_0_1(0, 1),
+    RANGE_1_2(1, 2),
+    RANGE_2_3(2, 3),
+    RANGE_3_4(3, 4),
+    RANGE_4_5(4, 5),
+    RANGE_5_6(5, 6),
+    RANGE_6_7(6, 7),
+    RANGE_7_8(7, 8);
+
+
+    private final double min;
+    private final double max;
+
+    EnemyVelocity(double min, double max) {
+        this.min = min;
+        this.max = max;
+    }
+
+    public static EnemyVelocity fromDouble(double velocity) {
+        for (EnemyVelocity ev : values()) {
+            if (velocity >= ev.min && velocity < ev.max) {
+                return ev;
+            }
+        }
+        throw new IllegalArgumentException("Velocity out of range: " + velocity);
+    }
+
+
 }
 
 enum EnemyAngle {
-    EA1, EA2
+    RANGE_0_45(0, 45),
+    RANGE_45_90(45, 90),
+    RANGE_90_135(90, 135),
+    RANGE_135_180(135, 180),
+    RANGE_180_225(180, 225),
+    RANGE_225_270(225, 270),
+    RANGE_270_315(270, 315),
+    RANGE_315_360(315, 360);
+
+    private final double min;
+    private final double max;
+
+    EnemyAngle(double min, double max) {
+        this.min = min;
+        this.max = max;
+    }
+
+    public static EnemyAngle fromDouble(double angle) {
+        for (EnemyAngle ea : values()) {
+            if (angle >= ea.min && angle < ea.max) {
+                return ea;
+            }
+        }
+        throw new IllegalArgumentException("Angle out of range: " + angle);
+    }
 }
 
-enum MyGunAngle {
-    MGA1, MGA2
+enum EnemyHeading {
+    RANGE_0_45(0, 45),
+    RANGE_45_90(45, 90),
+    RANGE_90_135(90, 135),
+    RANGE_135_180(135, 180),
+    RANGE_180_225(180, 225),
+    RANGE_225_270(225, 270),
+    RANGE_270_315(270, 315),
+    RANGE_315_360(315, 360);
+
+    private final double min;
+    private final double max;
+
+    EnemyHeading(double min, double max) {
+        this.min = min;
+        this.max = max;
+    }
+
+    public static EnemyHeading fromDouble(double heading) {
+        for (EnemyHeading eh : values()) {
+            if (heading >= eh.min && heading < eh.max) {
+                return eh;
+            }
+        }
+        throw new IllegalArgumentException("Heading out of range: " + heading);
+    }
+}
+
+enum MyGunToEnemyAngle {
+    RANGE_0_20(0, 20),
+    RANGE_20_40(20, 40),
+    RANGE_40_60(40, 60),
+    RANGE_60_80(60, 80),
+    RANGE_80_100(80, 100),
+    RANGE_100_120(100, 120),
+    RANGE_120_140(120, 140),
+    RANGE_140_160(140, 160),
+    RANGE_160_180(160, 180);
+
+    private final double min;
+    private final double max;
+
+    MyGunToEnemyAngle(double min, double max) {
+        this.min = min;
+        this.max = max;
+    }
+
+    public static MyGunToEnemyAngle fromDouble(double angle) {
+        for (MyGunToEnemyAngle mgtea : values()) {
+            if (angle >= mgtea.min && angle < mgtea.max) {
+                return mgtea;
+            }
+        }
+        throw new IllegalArgumentException("Angle out of range: " + angle);
+    }
 }
 
 enum FirePower {
-    FP1, FP2
+    FP_01(0.1),
+    FP_02(0.2),
+    FP_03(0.3),
+    FP_04(0.4),
+    FP_05(0.5),
+    FP_06(0.6),
+    FP_07(0.7),
+    FP_08(0.8),
+    FP_09(0.9),
+    FP_10(1.0),
+    FP_11(1.1),
+    FP_12(1.2),
+    FP_13(1.3),
+    FP_14(1.4),
+    FP_15(1.5),
+    FP_16(1.6),
+    FP_17(1.7),
+    FP_18(1.8),
+    FP_19(1.9),
+    FP_20(2.0),
+    FP_21(2.1),
+    FP_22(2.2),
+    FP_23(2.3),
+    FP_24(2.4),
+    FP_25(2.5),
+    FP_26(2.6),
+    FP_27(2.7),
+    FP_28(2.8),
+    FP_29(2.9),
+    FP_30(3.0);
+
+    private final double power;
+
+    FirePower(double power) {
+        this.power = power;
+    }
+
+    public static FirePower fromDouble(double power) {
+        for (FirePower fp : values()) {
+            if (power == fp.power) {
+                return fp;
+            }
+        }
+        throw new IllegalArgumentException("Power out of range: " + power);
+    }
 }
 
 enum Hit {
-    TRUE, FALSE
+    TRUE(true),
+    FALSE(false);
+
+    private final boolean hit;
+
+    Hit(boolean hit) {
+        this.hit = hit;
+    }
+
+    public static Hit fromBoolean(boolean hit) {
+        for (Hit h : values()) {
+            if (hit == h.hit) {
+                return h;
+            }
+        }
+        throw new IllegalArgumentException("Hit out of range: " + hit);
+    }
 }
 
 class InternalBayesNode {
@@ -104,6 +275,7 @@ class InternalBayesNode {
 record InternalEvidence(String nodeName, String nodeValue) {
 }
 
+@SuppressWarnings("DuplicatedCode")
 class Weka {
 
     private final List<InternalBayesNode> internalNodes;
@@ -158,8 +330,8 @@ class Weka {
     }
 
     // TODO: Agnostic
-    public void addInstance(EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, MyGunAngle mga, FirePower fp, Hit hit) {
-        double[] instance = new double[]{ed.ordinal(), ev.ordinal(), ea.ordinal(), mga.ordinal(), fp.ordinal(), hit.ordinal()};
+    public void addInstance(EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, EnemyHeading eh, MyGunToEnemyAngle mgtea, FirePower fp, Hit hit) {
+        double[] instance = new double[]{ed.ordinal(), ev.ordinal(), ea.ordinal(), eh.ordinal(), mgtea.ordinal(), fp.ordinal(), hit.ordinal()};
         dataset.add(new DenseInstance(1.0, instance));
     }
 
@@ -311,23 +483,23 @@ class Jayes {
 
 }
 
+@SuppressWarnings({"unused", "DuplicatedCode"})
 class Test1 {
-    private final Weka weka;
     private final Jayes jayes;
 
-    public Test1(Weka weka, Jayes jayes) {
-        this.weka = weka;
+    public Test1(Jayes jayes) {
         this.jayes = jayes;
     }
 
     private void calcHitBeliefs() {
         List<InternalEvidence> internalEvidences = new ArrayList<>();
 
-        internalEvidences.add(new InternalEvidence("EnemyDistance", EnemyDistance.DIST1.toString()));
-        internalEvidences.add(new InternalEvidence("EnemyVelocity", EnemyVelocity.EV1.toString()));
-        internalEvidences.add(new InternalEvidence("EnemyAngle", EnemyAngle.EA1.toString()));
-        internalEvidences.add(new InternalEvidence("MyGunAngle", MyGunAngle.MGA1.toString()));
-        internalEvidences.add(new InternalEvidence("FirePower", FirePower.FP1.toString()));
+        internalEvidences.add(new InternalEvidence("EnemyDistance", EnemyDistance.RANGE_0_100.toString()));
+        internalEvidences.add(new InternalEvidence("EnemyVelocity", EnemyVelocity.RANGE_0_1.toString()));
+        internalEvidences.add(new InternalEvidence("EnemyAngle", EnemyAngle.RANGE_0_45.toString()));
+        internalEvidences.add(new InternalEvidence("EnemyHeading", EnemyHeading.RANGE_0_45.toString()));
+        internalEvidences.add(new InternalEvidence("MyGunToEnemyAngle", MyGunToEnemyAngle.RANGE_0_20.toString()));
+        internalEvidences.add(new InternalEvidence("FirePower", FirePower.FP_01.toString()));
 
         String nodeToGetBeliefs = "Hit";
 
@@ -341,10 +513,11 @@ class Test1 {
     private void calcBestFirePowerToHit() {
         List<InternalEvidence> internalEvidences = new ArrayList<>();
 
-        internalEvidences.add(new InternalEvidence("EnemyDistance", EnemyDistance.DIST1.toString()));
-        internalEvidences.add(new InternalEvidence("EnemyVelocity", EnemyVelocity.EV1.toString()));
-        internalEvidences.add(new InternalEvidence("EnemyAngle", EnemyAngle.EA1.toString()));
-        internalEvidences.add(new InternalEvidence("MyGunAngle", MyGunAngle.MGA1.toString()));
+        internalEvidences.add(new InternalEvidence("EnemyDistance", EnemyDistance.RANGE_0_100.toString()));
+        internalEvidences.add(new InternalEvidence("EnemyVelocity", EnemyVelocity.RANGE_0_1.toString()));
+        internalEvidences.add(new InternalEvidence("EnemyAngle", EnemyAngle.RANGE_0_45.toString()));
+        internalEvidences.add(new InternalEvidence("EnemyHeading", EnemyHeading.RANGE_0_45.toString()));
+        internalEvidences.add(new InternalEvidence("MyGunToEnemyAngle", MyGunToEnemyAngle.RANGE_0_20.toString()));
         internalEvidences.add(new InternalEvidence("Hit", Hit.TRUE.toString()));
 
         String nodeToGetBeliefs = "FirePower";
@@ -372,23 +545,23 @@ class Test1 {
     }
 }
 
+@SuppressWarnings({"unused", "DuplicatedCode"})
 class Test2 {
 
-    private Weka weka;
-    private Jayes jayes;
+    private final Jayes jayes;
 
-    public Test2(Weka weka, Jayes jayes) {
-        this.weka = weka;
+    public Test2(Jayes jayes) {
         this.jayes = jayes;
     }
 
-    private FirePower calcBestFirePowerToHit(EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, MyGunAngle mga) {
+    private FirePower calcBestFirePowerToHit(EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, EnemyHeading eh, MyGunToEnemyAngle mgtea) {
         List<InternalEvidence> internalEvidences = new ArrayList<>();
 
         internalEvidences.add(new InternalEvidence("EnemyDistance", ed.toString()));
         internalEvidences.add(new InternalEvidence("EnemyVelocity", ev.toString()));
         internalEvidences.add(new InternalEvidence("EnemyAngle", ea.toString()));
-        internalEvidences.add(new InternalEvidence("MyGunAngle", mga.toString()));
+        internalEvidences.add(new InternalEvidence("EnemyHeading", eh.toString()));
+        internalEvidences.add(new InternalEvidence("MyGunToEnemyAngle", mgtea.toString()));
         internalEvidences.add(new InternalEvidence("Hit", Hit.TRUE.toString()));
 
         String nodeToGetBeliefs = "FirePower";
@@ -431,6 +604,8 @@ class Test2 {
         double enemyHeading = 45.0;      // 0 to 360 degrees   |   8 ranges
         double myGunToEnemyAngle = 45.0; // 0 to 180 degrees   |   9 ranges   |  abs(gunInitialTurn + gunTurnThatWasSet)
 
+        // FirePower 0.1 a 3.0 (range de 0.1 em 0.1)
+
         // Other variables
         double myEnergy = 100.0;         // 0 to 100
 
@@ -445,6 +620,7 @@ class Test2 {
 
 }
 
+@SuppressWarnings("CommentedOutCode")
 public class AgoraVai {
 
     private static List<InternalBayesNode> initInternalBayesNodes() {
@@ -453,14 +629,16 @@ public class AgoraVai {
         InternalBayesNode enemyDistance = new InternalBayesNode("EnemyDistance", EnemyDistance.class, new ArrayList<>());
         InternalBayesNode enemyVelocity = new InternalBayesNode("EnemyVelocity", EnemyVelocity.class, new ArrayList<>());
         InternalBayesNode enemyAngle = new InternalBayesNode("EnemyAngle", EnemyAngle.class, new ArrayList<>());
-        InternalBayesNode myGunAngle = new InternalBayesNode("MyGunAngle", MyGunAngle.class, new ArrayList<>());
+        InternalBayesNode enemyHeading = new InternalBayesNode("EnemyHeading", EnemyHeading.class, new ArrayList<>());
+        InternalBayesNode myGunToEnemyAngle = new InternalBayesNode("MyGunToEnemyAngle", MyGunToEnemyAngle.class, new ArrayList<>());
         InternalBayesNode firePower = new InternalBayesNode("FirePower", FirePower.class, new ArrayList<>());
-        InternalBayesNode hit = new InternalBayesNode("Hit", Hit.class, Arrays.asList("EnemyDistance", "EnemyVelocity", "EnemyAngle", "MyGunAngle", "FirePower"));
+        InternalBayesNode hit = new InternalBayesNode("Hit", Hit.class, Arrays.asList("EnemyDistance", "EnemyVelocity", "EnemyAngle", "EnemyHeading", "MyGunToEnemyAngle", "FirePower"));
 
         internalNodes.add(enemyDistance);
         internalNodes.add(enemyVelocity);
         internalNodes.add(enemyAngle);
-        internalNodes.add(myGunAngle);
+        internalNodes.add(enemyHeading);
+        internalNodes.add(myGunToEnemyAngle);
         internalNodes.add(firePower);
         internalNodes.add(hit);
 
@@ -468,20 +646,20 @@ public class AgoraVai {
     }
 
     private static void addSomeInstances(Weka weka, Jayes jayes) throws Exception {
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP1, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_01, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_01, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_01, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_01, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_01, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_02, Hit.TRUE);
 
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP2, Hit.TRUE);
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP2, Hit.TRUE);
-        weka.addInstance(EnemyDistance.DIST1, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP2, Hit.TRUE);
-
-        weka.addInstance(EnemyDistance.DIST2, EnemyVelocity.EV1, EnemyAngle.EA1, MyGunAngle.MGA1, FirePower.FP2, Hit.TRUE);
+        weka.addInstance(EnemyDistance.RANGE_100_200, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_02, Hit.TRUE);
 
         weka.calcNewDistributions();
         jayes.setNewProbabilities();
     }
 
+    @SuppressWarnings("unused")
     private static void printAll(String tip, Weka weka, Jayes jayes) {
         System.out.println("\n\n\n========================================= " + tip + " =========================================");
         System.out.println("========================================= " + tip + " =========================================");
@@ -501,12 +679,11 @@ public class AgoraVai {
         addSomeInstances(weka, jayes);
 //        printAll("After changes", weka, jayes);
 
-//        Test1 test1 = new Test1(weka, jayes);
+//        Test1 test1 = new Test1(jayes);
 //        test1.run();
 
-        Test2 test2 = new Test2(weka, jayes);
+        Test2 test2 = new Test2(jayes);
         test2.run();
-
 
 //        weka.displayGraph();
 
