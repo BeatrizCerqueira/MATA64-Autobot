@@ -1,6 +1,7 @@
 package autobot;
 
 
+import autobot.bayes.Bayes;
 import autobot.fuzzy.Fuzzy;
 import autobot.genetic.GeneticAlgorithm;
 import autobot.prolog.Prolog;
@@ -44,6 +45,11 @@ public class Autobot extends AdvancedRobot {
         Prolog.loadPrologFile();
         GeneticAlgorithm.init(getRoundNum());
         Fuzzy.init();
+        try {
+            Bayes.init();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 //        Fuzzy.printCharts(); // TESTING
 
         changeRobotColors();
@@ -102,13 +108,10 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void onScannedRobot(ScannedRobotEvent e) {
-
         enemyBot.scanned(this, e);
-
         setRadarTurn();
         setGunTurn();
         setFireTurn();
-
     }
 
     public void onRoundEnded(RoundEndedEvent event) {
@@ -139,7 +142,7 @@ public class Autobot extends AdvancedRobot {
 
     }
 
-    // # Radar/Gun:
+    // ============= RADAR / GUN ================
 
     private void setRadarTurn() {
 
@@ -213,7 +216,7 @@ public class Autobot extends AdvancedRobot {
         }
     }
 
-    // # Movements:
+    // ============= MOVEMENTS ================
 
     public void moveRandomly() {
         // set default movement attributes, considering robot is at center of arena
@@ -282,9 +285,6 @@ public class Autobot extends AdvancedRobot {
         }
     }
 
-    /**
-     * If enemy gun is ready, setAhead(0)
-     */
     public void checkEnemyGunReady() {
         if (enemyBot.isGunReady()) { // enemy gun will shoot any time now. do not move
             setAhead(0);
@@ -329,18 +329,7 @@ public class Autobot extends AdvancedRobot {
 
     }
 
-    public void nextTurn() {
-        // update myRobot location
-        robotLocation = new Point2D.Double(getX(), getY());
-
-        //cool down enemy gun
-        enemyBot.passTurn(getGunCoolingRate());
-
-        // apply genetic algorithm
-        applyGeneticAlgorithm();
-        applyFuzzyAlgorithm();
-
-    }
+    // ============= GENETIC ALGORITHM ================
 
     public void applyGeneticAlgorithm() {
         GeneticAlgorithm.updateGA(getEnergy());
@@ -349,12 +338,7 @@ public class Autobot extends AdvancedRobot {
         bordersMarginGA = GeneticAlgorithm.getBordersMargin();
     }
 
-    private void changeRobotColors() {
-        setBodyColor(Color.WHITE);
-        setGunColor(Color.BLACK);
-        setRadarColor(Color.WHITE);
-//        setBulletColor(Color.WHITE);
-    }
+    // ============= FUZZY ================
 
     public void applyFuzzyAlgorithm() {
 //      Variables: distance, enemy_energy, autobot_energy
@@ -383,5 +367,27 @@ public class Autobot extends AdvancedRobot {
 //            System.out.println(" bord: " + bordersMarginGA);
         }
 
+    }
+    
+    // ============= OTHERS ================
+
+    public void nextTurn() {
+        // update myRobot location
+        robotLocation = new Point2D.Double(getX(), getY());
+
+        //cool down enemy gun
+        enemyBot.passTurn(getGunCoolingRate());
+
+        // apply genetic algorithm
+        applyGeneticAlgorithm();
+        applyFuzzyAlgorithm();
+
+    }
+
+    private void changeRobotColors() {
+        setBodyColor(Color.WHITE);
+        setGunColor(Color.BLACK);
+        setRadarColor(Color.WHITE);
+//        setBulletColor(Color.WHITE);
     }
 }
