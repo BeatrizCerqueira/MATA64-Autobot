@@ -69,29 +69,22 @@ public class Autobot extends AdvancedRobot {
 
     // ============= BULLET EVENTS ================
     public void onBulletHit(BulletHitEvent event) {
-        Bullet eventBullet = event.getBullet();
-        for (ActiveBullet activeBullet : activeBullets) {
-            Bullet activeBulletInstance = activeBullet.bulletInstance();
-            if (activeBulletInstance.equals(eventBullet)) { // bulletInstance found
-                BulletResult bulletResult = new BulletResult(activeBullet.enemySnapshot(), true);
-                bulletResults.add(bulletResult);       //  add record to dataset
-                activeBullets.remove(activeBullet);     //  bulletInstance no longer active
-                return;
-            }
-        }
+        addBulletResult(event.getBullet(), true);
     }
 
     public void onBulletMissed(BulletMissedEvent event) {
-        removeBullet(event.getBullet());
+        addBulletResult(event.getBullet(), false);
     }
 
     public void onBulletHitBullet(BulletHitBulletEvent event) {
-        removeBullet(event.getBullet());
+        addBulletResult(event.getBullet(), false);
     }
 
-    private void removeBullet(Bullet bulletToRemove) {
+    private void addBulletResult(Bullet eventBullet, boolean hasHit) {
         for (ActiveBullet activeBullet : activeBullets) {
-            if (activeBullet.bulletInstance().equals(bulletToRemove)) { // bulletInstance found
+            if (activeBullet.bulletInstance().equals(eventBullet)) { // bulletInstance found
+                BulletResult bulletResult = new BulletResult(activeBullet.enemySnapshot(), hasHit);
+                bulletResults.add(bulletResult);       //  add record to dataset
                 activeBullets.remove(activeBullet);     //  bulletInstance no longer active
                 return;
             }
