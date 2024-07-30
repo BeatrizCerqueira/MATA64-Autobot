@@ -2,7 +2,7 @@ package autobot.records;
 
 import autobot.Enemy;
 
-public record BulletResult(Enemy enemySnapshot, boolean hit) {
+public record BulletResult(Enemy enemySnapshot, boolean hasHit) {
     public double getEnemyDistance() {
         return enemySnapshot.getDistance();
     }
@@ -23,7 +23,7 @@ public record BulletResult(Enemy enemySnapshot, boolean hit) {
         return 10.0; // TODO: @Bia parametro myGunToEnemyAngle sem valor/referencia
     }
 
-    public boolean hasHit() {
-        return hit;
+    public double getFirePower() {
+        return 0.5; // TODO: @Bia parametro firePower sem valor/referencia
     }
 }

@@ -77,11 +77,25 @@ public class InternalBayesianNetwork {
     }
 
     public static void recordBulletResult(BulletResult bulletResult) throws Exception {
-//        weka.addInstance();
+
+        EnemyDistance ed = EnemyDistance.fromDouble(bulletResult.getEnemyDistance());
+        EnemyVelocity ev = EnemyVelocity.fromDouble(bulletResult.getEnemyVelocity());
+        EnemyAngle ea = EnemyAngle.fromDouble(bulletResult.getEnemyAngle());
+        EnemyHeading eh = EnemyHeading.fromDouble(bulletResult.getEnemyHeading());
+        MyGunToEnemyAngle mgtea = MyGunToEnemyAngle.fromDouble(bulletResult.getMyGunToEnemyAngle());
+        FirePower fp = FirePower.fromDouble(bulletResult.getFirePower());
+        Hit hit = Hit.fromBoolean(bulletResult.hasHit());
+
+        List<GenericAttribute> instance = Arrays.asList(ed, ev, ea, eh, mgtea, fp, hit);
+
+        printSetParams(bulletResult.getEnemyDistance(), bulletResult.getEnemyVelocity(), bulletResult.getEnemyAngle(), bulletResult.getEnemyHeading(), bulletResult.getMyGunToEnemyAngle(), bulletResult.getFirePower(), bulletResult.hasHit(), ed, ev, ea, eh, mgtea, fp, hit);
+
+        weka.addInstance(instance);
         weka.calcNewDistributions();
         jayes.setNewProbabilities();
     }
 
+    // TODO: Create a record for this
     public static double getBestFirePowerToHit(double enemyDistance, double enemyVelocity, double enemyAngle, double enemyHeading, double myGunToEnemyAngle) {
         EnemyDistance ed = EnemyDistance.fromDouble(enemyDistance);
         EnemyVelocity ev = EnemyVelocity.fromDouble(enemyVelocity);
@@ -89,7 +103,7 @@ public class InternalBayesianNetwork {
         EnemyHeading eh = EnemyHeading.fromDouble(enemyHeading);
         MyGunToEnemyAngle mgtea = MyGunToEnemyAngle.fromDouble(myGunToEnemyAngle);
 
-//        printReceivedParams(enemyDistance, enemyVelocity, enemyAngle, enemyHeading, myGunToEnemyAngle, ed, ev, ea, eh, mgtea);
+//        printGetParams(enemyDistance, enemyVelocity, enemyAngle, enemyHeading, myGunToEnemyAngle, ed, ev, ea, eh, mgtea);
 
         return calcBestFirePowerToHit(ed, ev, ea, eh, mgtea).toDouble();
     }
@@ -104,12 +118,23 @@ public class InternalBayesianNetwork {
     }
 
     @SuppressWarnings("unused")
-    private static void printReceivedParams(double enemyDistance, double enemyVelocity, double enemyAngle, double enemyHeading, double myGunToEnemyAngle, EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, EnemyHeading eh, MyGunToEnemyAngle mgtea) {
+    private static void printGetParams(double enemyDistance, double enemyVelocity, double enemyAngle, double enemyHeading, double myGunToEnemyAngle, EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, EnemyHeading eh, MyGunToEnemyAngle mgtea) {
         System.out.println("EnemyDistance: " + enemyDistance + " = " + ed);
         System.out.println("EnemyVelocity: " + enemyVelocity + " = " + ev);
         System.out.println("EnemyAngle: " + enemyAngle + " = " + ea);
         System.out.println("EnemyHeading: " + enemyHeading + " = " + eh);
         System.out.println("MyGunToEnemyAngle: " + myGunToEnemyAngle + " = " + mgtea);
+    }
+
+    @SuppressWarnings("unused")
+    private static void printSetParams(double enemyDistance, double enemyVelocity, double enemyAngle, double enemyHeading, double myGunToEnemyAngle, double firePower, boolean hit, EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, EnemyHeading eh, MyGunToEnemyAngle mgtea, FirePower fp, Hit h) {
+        System.out.println("EnemyDistance: " + enemyDistance + " = " + ed);
+        System.out.println("EnemyVelocity: " + enemyVelocity + " = " + ev);
+        System.out.println("EnemyAngle: " + enemyAngle + " = " + ea);
+        System.out.println("EnemyHeading: " + enemyHeading + " = " + eh);
+        System.out.println("MyGunToEnemyAngle: " + myGunToEnemyAngle + " = " + mgtea);
+        System.out.println("FirePower: " + firePower + " = " + fp);
+        System.out.println("Hit: " + hit + " = " + h);
     }
 
 

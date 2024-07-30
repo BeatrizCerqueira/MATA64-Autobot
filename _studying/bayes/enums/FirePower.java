@@ -1,6 +1,6 @@
 package autobot._studying.bayes.enums;
 
-public enum FirePower {
+public enum FirePower implements GenericAttribute {
     FP_01(0.1),
     FP_02(0.2),
     FP_03(0.3),
@@ -36,6 +36,15 @@ public enum FirePower {
 
     FirePower(double power) {
         this.power = power;
+    }
+
+    public static FirePower fromDouble(double power) {
+        for (FirePower fp : values()) {
+            if (power == fp.power) {
+                return fp;
+            }
+        }
+        throw new IllegalArgumentException("Power out of range: " + power);
     }
 
     public double toDouble() {

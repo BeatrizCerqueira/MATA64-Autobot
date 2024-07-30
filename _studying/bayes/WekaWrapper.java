@@ -1,6 +1,6 @@
 package autobot._studying.bayes;
 
-import autobot._studying.bayes.enums.*;
+import autobot._studying.bayes.enums.GenericAttribute;
 import weka.classifiers.bayes.net.EditableBayesNet;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -69,9 +69,11 @@ public class WekaWrapper {
         }
     }
 
-    // TODO: Agnostic
-    public void addInstance(EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, EnemyHeading eh, MyGunToEnemyAngle mgtea, FirePower fp, Hit hit) {
-        double[] instance = new double[]{ed.ordinal(), ev.ordinal(), ea.ordinal(), eh.ordinal(), mgtea.ordinal(), fp.ordinal(), hit.ordinal()};
+    public void addInstance(List<? extends GenericAttribute> values) {
+        double[] instance = new double[values.size()];
+        for (int i = 0; i < values.size(); i++) {
+            instance[i] = values.get(i).ordinal();
+        }
         dataset.add(new DenseInstance(1.0, instance));
     }
 

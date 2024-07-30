@@ -1,6 +1,6 @@
 package autobot._studying.bayes.enums;
 
-public enum EnemyVelocity {
+public enum EnemyVelocity implements GenericAttribute {
     RANGE_0_1(0, 1),
     RANGE_1_2(1, 2),
     RANGE_2_3(2, 3),

@@ -35,14 +35,21 @@ public class AgoraVai {
     }
 
     private static void addSomeInstances(WekaWrapper weka, JayesWrapper jayes) throws Exception {
-        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_03, Hit.TRUE);
-        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_03, Hit.TRUE);
-        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_03, Hit.TRUE);
-        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
-        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
-        weka.addInstance(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
+        List<GenericAttribute> instance1 = Arrays.asList(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_03, Hit.TRUE);
+        List<GenericAttribute> instance2 = Arrays.asList(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_03, Hit.TRUE);
+        List<GenericAttribute> instance3 = Arrays.asList(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_03, Hit.TRUE);
+        List<GenericAttribute> instance4 = Arrays.asList(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
+        List<GenericAttribute> instance5 = Arrays.asList(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
+        List<GenericAttribute> instance6 = Arrays.asList(EnemyDistance.RANGE_0_100, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
+        List<GenericAttribute> instance7 = Arrays.asList(EnemyDistance.RANGE_100_200, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
 
-        weka.addInstance(EnemyDistance.RANGE_100_200, EnemyVelocity.RANGE_0_1, EnemyAngle.RANGE_0_45, EnemyHeading.RANGE_0_45, MyGunToEnemyAngle.RANGE_0_20, FirePower.FP_08, Hit.TRUE);
+        weka.addInstance(instance1);
+        weka.addInstance(instance2);
+        weka.addInstance(instance3);
+        weka.addInstance(instance4);
+        weka.addInstance(instance5);
+        weka.addInstance(instance6);
+        weka.addInstance(instance7);
 
         weka.calcNewDistributions();
         jayes.setNewProbabilities();
@@ -105,3 +112,9 @@ public class AgoraVai {
 
 // CANCELADO (Se tem energia, atira. Quem tem limite é município!)
 // TODO: * Valor mínimo de believe para atirar
+
+
+// TODO ===========================================================================================================
+// TODO: Remove SuppressWarnings
+// TODO: Tentar rodar no Robocode
+// TODO: Aumentar importância de acordo com o nº do round

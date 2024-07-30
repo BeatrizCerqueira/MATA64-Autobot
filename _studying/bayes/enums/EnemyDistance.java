@@ -1,6 +1,6 @@
 package autobot._studying.bayes.enums;
 
-public enum EnemyDistance {
+public enum EnemyDistance implements GenericAttribute {
     RANGE_0_100(0, 100),
     RANGE_100_200(100, 200),
     RANGE_200_300(200, 300),
