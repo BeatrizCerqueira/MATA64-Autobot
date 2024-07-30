@@ -1,6 +1,6 @@
 package autobot._studying.bayes;
 
-import autobot._studying.bayes.records.InternalEvidence;
+import autobot._studying.bayes.records.EvidenceAttribute;
 import org.eclipse.recommenders.jayes.BayesNet;
 import org.eclipse.recommenders.jayes.BayesNode;
 import org.eclipse.recommenders.jayes.inference.IBayesInferer;
@@ -69,12 +69,12 @@ public class JayesWrapper {
         inferer.setNetwork(bayesNet);
     }
 
-    public double[] getBeliefs(List<InternalEvidence> internalEvidences, String nodeToGetBeliefs) {
+    public double[] getBeliefs(List<EvidenceAttribute> evidence, String nodeToGetBeliefs) {
         BayesNode jayesNodeToGetBeliefs = bayesNet.getNode(nodeToGetBeliefs);
         Map<BayesNode, String> jayesEvidence = new HashMap<>();
-        for (InternalEvidence internalEvidence : internalEvidences) {
-            BayesNode jayesNode = bayesNet.getNode(internalEvidence.nodeName());
-            jayesEvidence.put(jayesNode, internalEvidence.nodeValue());
+        for (EvidenceAttribute evidenceAttribute : evidence) {
+            BayesNode jayesNode = bayesNet.getNode(evidenceAttribute.name());
+            jayesEvidence.put(jayesNode, evidenceAttribute.value());
         }
         inferer.setEvidence(jayesEvidence);
         return inferer.getBeliefs(jayesNodeToGetBeliefs);

@@ -2,7 +2,7 @@ package autobot._studying.bayes._to_test;
 
 import autobot._studying.bayes.JayesWrapper;
 import autobot._studying.bayes.enums.*;
-import autobot._studying.bayes.records.InternalEvidence;
+import autobot._studying.bayes.records.EvidenceAttribute;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,18 +18,18 @@ class Test1 {
     }
 
     private void calcHitBeliefs() {
-        List<InternalEvidence> internalEvidences = new ArrayList<>();
+        List<EvidenceAttribute> evidenceAttributes = new ArrayList<>();
 
-        internalEvidences.add(new InternalEvidence("EnemyDistance", EnemyDistance.RANGE_0_100.toString()));
-        internalEvidences.add(new InternalEvidence("EnemyVelocity", EnemyVelocity.RANGE_0_1.toString()));
-        internalEvidences.add(new InternalEvidence("EnemyAngle", EnemyAngle.RANGE_0_45.toString()));
-        internalEvidences.add(new InternalEvidence("EnemyHeading", EnemyHeading.RANGE_0_45.toString()));
-        internalEvidences.add(new InternalEvidence("MyGunToEnemyAngle", MyGunToEnemyAngle.RANGE_0_20.toString()));
-        internalEvidences.add(new InternalEvidence("FirePower", FirePower.FP_01.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("EnemyDistance", EnemyDistance.RANGE_0_100.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("EnemyVelocity", EnemyVelocity.RANGE_0_1.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("EnemyAngle", EnemyAngle.RANGE_0_45.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("EnemyHeading", EnemyHeading.RANGE_0_45.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("MyGunToEnemyAngle", MyGunToEnemyAngle.RANGE_0_20.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("FirePower", FirePower.FP_01.toString()));
 
         String nodeToGetBeliefs = "Hit";
 
-        double[] hitBeliefs = jayes.getBeliefs(internalEvidences, nodeToGetBeliefs);
+        double[] hitBeliefs = jayes.getBeliefs(evidenceAttributes, nodeToGetBeliefs);
 
         System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> Inference <<<<<<<<<<<<<<<<<<<<<<<<<<");
         System.out.println("Beliefs of hit enemy: " + Arrays.toString(hitBeliefs));
@@ -37,18 +37,18 @@ class Test1 {
     }
 
     private void calcBestFirePowerToHit() {
-        List<InternalEvidence> internalEvidences = new ArrayList<>();
+        List<EvidenceAttribute> evidenceAttributes = new ArrayList<>();
 
-        internalEvidences.add(new InternalEvidence("EnemyDistance", EnemyDistance.RANGE_0_100.toString()));
-        internalEvidences.add(new InternalEvidence("EnemyVelocity", EnemyVelocity.RANGE_0_1.toString()));
-        internalEvidences.add(new InternalEvidence("EnemyAngle", EnemyAngle.RANGE_0_45.toString()));
-        internalEvidences.add(new InternalEvidence("EnemyHeading", EnemyHeading.RANGE_0_45.toString()));
-        internalEvidences.add(new InternalEvidence("MyGunToEnemyAngle", MyGunToEnemyAngle.RANGE_0_20.toString()));
-        internalEvidences.add(new InternalEvidence("Hit", Hit.TRUE.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("EnemyDistance", EnemyDistance.RANGE_0_100.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("EnemyVelocity", EnemyVelocity.RANGE_0_1.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("EnemyAngle", EnemyAngle.RANGE_0_45.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("EnemyHeading", EnemyHeading.RANGE_0_45.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("MyGunToEnemyAngle", MyGunToEnemyAngle.RANGE_0_20.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("Hit", Hit.TRUE.toString()));
 
         String nodeToGetBeliefs = "FirePower";
 
-        List<Double> firePowerBeliefs = Arrays.stream(jayes.getBeliefs(internalEvidences, nodeToGetBeliefs)).boxed().toList();
+        List<Double> firePowerBeliefs = Arrays.stream(jayes.getBeliefs(evidenceAttributes, nodeToGetBeliefs)).boxed().toList();
 
         Double maxFirePowerBelieve = Collections.max(firePowerBeliefs);
         int maxFirePowerBelieveIndex = firePowerBeliefs.indexOf(maxFirePowerBelieve);

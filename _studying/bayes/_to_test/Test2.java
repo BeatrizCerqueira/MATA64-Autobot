@@ -2,7 +2,7 @@ package autobot._studying.bayes._to_test;
 
 import autobot._studying.bayes.JayesWrapper;
 import autobot._studying.bayes.enums.*;
-import autobot._studying.bayes.records.InternalEvidence;
+import autobot._studying.bayes.records.EvidenceAttribute;
 import autobot.utils.Consts;
 
 import java.util.ArrayList;
@@ -20,18 +20,18 @@ class Test2 {
     }
 
     private FirePower calcBestFirePowerToHit(EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, EnemyHeading eh, MyGunToEnemyAngle mgtea) {
-        List<InternalEvidence> internalEvidences = new ArrayList<>();
+        List<EvidenceAttribute> evidenceAttributes = new ArrayList<>();
 
-        internalEvidences.add(new InternalEvidence("EnemyDistance", ed.toString()));
-        internalEvidences.add(new InternalEvidence("EnemyVelocity", ev.toString()));
-        internalEvidences.add(new InternalEvidence("EnemyAngle", ea.toString()));
-        internalEvidences.add(new InternalEvidence("EnemyHeading", eh.toString()));
-        internalEvidences.add(new InternalEvidence("MyGunToEnemyAngle", mgtea.toString()));
-        internalEvidences.add(new InternalEvidence("Hit", Hit.fromBoolean(true).toString()));
+        evidenceAttributes.add(new EvidenceAttribute("EnemyDistance", ed.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("EnemyVelocity", ev.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("EnemyAngle", ea.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("EnemyHeading", eh.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("MyGunToEnemyAngle", mgtea.toString()));
+        evidenceAttributes.add(new EvidenceAttribute("Hit", Hit.fromBoolean(true).toString()));
 
         String nodeToGetBeliefs = "FirePower";
 
-        List<Double> firePowerBeliefs = Arrays.stream(jayes.getBeliefs(internalEvidences, nodeToGetBeliefs)).boxed().toList();
+        List<Double> firePowerBeliefs = Arrays.stream(jayes.getBeliefs(evidenceAttributes, nodeToGetBeliefs)).boxed().toList();
 
         Double maxFirePowerBelieve = Collections.max(firePowerBeliefs);
         int maxFirePowerBelieveIndex = firePowerBeliefs.indexOf(maxFirePowerBelieve);
