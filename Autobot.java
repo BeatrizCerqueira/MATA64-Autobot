@@ -423,7 +423,98 @@ public class Autobot extends AdvancedRobot {
         );
         Bayes.weka.addInstance(instance2);
 
+        List<GenericAttribute> instance3 = Arrays.asList(
+                EnemyDistance.RANGE_0_200,
+                EnemyVelocity.RANGE_0_2,
+                EnemyAngle.RANGE_0_90,
+                EnemyHeading.RANGE_90_180,
+                MyGunToEnemyAngle.RANGE_15_30,
+                FirePower.FP_04,
+                Hit.FALSE
+        );
+        Bayes.weka.addInstance(instance3);
 
+        List<GenericAttribute> instance4 = Arrays.asList(
+                EnemyDistance.RANGE_0_200,
+                EnemyVelocity.RANGE_0_2,
+                EnemyAngle.RANGE_0_90,
+                EnemyHeading.RANGE_90_180,
+                MyGunToEnemyAngle.RANGE_0_15,
+                FirePower.FP_02,
+                Hit.TRUE
+        );
+        Bayes.weka.addInstance(instance4);
+
+        List<GenericAttribute> instance5 = Arrays.asList(
+                EnemyDistance.RANGE_0_200,
+                EnemyVelocity.RANGE_0_2,
+                EnemyAngle.RANGE_0_90,
+                EnemyHeading.RANGE_0_90,
+                MyGunToEnemyAngle.RANGE_15_30,
+                FirePower.FP_04,
+                Hit.TRUE
+        );
+        Bayes.weka.addInstance(instance5);
+
+        List<GenericAttribute> instance6 = Arrays.asList(
+                EnemyDistance.RANGE_0_200,
+                EnemyVelocity.RANGE_0_2,
+                EnemyAngle.RANGE_0_90,
+                EnemyHeading.RANGE_90_180,
+                MyGunToEnemyAngle.RANGE_15_30,
+                FirePower.FP_04,
+                Hit.FALSE
+        );
+        Bayes.weka.addInstance(instance6);
+
+        List<GenericAttribute> instance7 = Arrays.asList(
+                EnemyDistance.RANGE_0_200,
+                EnemyVelocity.RANGE_0_2,
+                EnemyAngle.RANGE_0_90,
+                EnemyHeading.RANGE_90_180,
+                MyGunToEnemyAngle.RANGE_0_15,
+                FirePower.FP_02,
+                Hit.TRUE
+        );
+        Bayes.weka.addInstance(instance7);
+
+        List<GenericAttribute> instance8 = Arrays.asList(
+                EnemyDistance.RANGE_0_200,
+                EnemyVelocity.RANGE_0_2,
+                EnemyAngle.RANGE_0_90,
+                EnemyHeading.RANGE_0_90,
+                MyGunToEnemyAngle.RANGE_0_15,
+                FirePower.FP_02,
+                Hit.TRUE
+        );
+        Bayes.weka.addInstance(instance8);
+
+
+        List<GenericAttribute> instance9 = Arrays.asList(
+                EnemyDistance.RANGE_0_200,
+                EnemyVelocity.RANGE_0_2,
+                EnemyAngle.RANGE_0_90,
+                EnemyHeading.RANGE_90_180,
+                MyGunToEnemyAngle.RANGE_15_30,
+                FirePower.FP_02,
+                Hit.TRUE
+        );
+        Bayes.weka.addInstance(instance9);
+
+        List<GenericAttribute> instance10 = Arrays.asList(
+                EnemyDistance.RANGE_0_200,
+                EnemyVelocity.RANGE_0_2,
+                EnemyAngle.RANGE_0_90,
+                EnemyHeading.RANGE_0_90,
+                MyGunToEnemyAngle.RANGE_15_30,
+                FirePower.FP_02,
+                Hit.FALSE
+        );
+        Bayes.weka.addInstance(instance10);
+
+
+        Bayes.weka.calcNewDistributions();
         Bayes.weka.displayGraph();
+
     }
 }
