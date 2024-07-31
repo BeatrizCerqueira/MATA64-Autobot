@@ -1,16 +1,10 @@
 package autobot.bayes.enums;
 
 public enum EnemyDistance implements GenericAttribute {
-    RANGE_0_100(0, 100),
-    RANGE_100_200(100, 200),
-    RANGE_200_300(200, 300),
-    RANGE_300_400(300, 400),
-    RANGE_400_500(400, 500),
-    RANGE_500_600(500, 600),
-    RANGE_600_700(600, 700),
-    RANGE_700_800(700, 800),
-    RANGE_800_900(800, 900),
-    RANGE_900_1000(900, 1000);
+    RANGE_0_200(0, 200),
+    RANGE_200_400(200, 400),
+    RANGE_400_700(400, 700),
+    RANGE_700_1000(700, 1000);
 
     private final double min;
     private final double max;

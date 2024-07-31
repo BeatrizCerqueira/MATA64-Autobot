@@ -4,12 +4,13 @@ import autobot.bayes.enums.*;
 import autobot.bayes.records.EvidenceAttribute;
 import autobot.records.BulletResult;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class InternalBayesianNetwork {
+public class Bayes {
 
     private static WekaWrapper weka;
     private static JayesWrapper jayes;
@@ -106,6 +107,10 @@ public class InternalBayesianNetwork {
 //        printGetParams(enemyDistance, enemyVelocity, enemyAngle, enemyHeading, myGunToEnemyAngle, ed, ev, ea, eh, mgtea);
 
         return calcBestFirePowerToHit(ed, ev, ea, eh, mgtea).toDouble();
+    }
+
+    public static void saveDataForNextRound() throws IOException {
+        weka.saveDatasetFile();
     }
 
     @SuppressWarnings("unused")

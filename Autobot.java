@@ -1,6 +1,7 @@
 package autobot;
 
 
+import autobot.bayes.Bayes;
 import autobot.fuzzy.Fuzzy;
 import autobot.genetic.GeneticAlgorithm;
 import autobot.prolog.Prolog;
@@ -44,6 +45,11 @@ public class Autobot extends AdvancedRobot {
         Prolog.loadPrologFile();
         GeneticAlgorithm.init(getRoundNum());
         Fuzzy.init();
+        try {
+            Bayes.init();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 //        Fuzzy.printCharts(); // TESTING
 
         changeRobotColors();
@@ -68,6 +74,7 @@ public class Autobot extends AdvancedRobot {
     }
 
     // ============= BULLET EVENTS ================
+
     public void onBulletHit(BulletHitEvent event) {
         addBulletResult(event.getBullet(), true);
     }
@@ -92,6 +99,7 @@ public class Autobot extends AdvancedRobot {
     }
 
     // ============= HIT EVENTS ================
+
     public void onHitByBullet(HitByBulletEvent e) {
         ahead(20);
         setTurnRight(MathUtils.random(-30, 30));
@@ -101,47 +109,18 @@ public class Autobot extends AdvancedRobot {
         checkBorders();
     }
 
+    // ============= SCANNED ROBOT ================
+
     public void onScannedRobot(ScannedRobotEvent e) {
-
         enemyBot.scanned(this, e);
-
-        setRadarTurn();
-        setGunTurn();
-        setFireTurn();
-
+        setRadarRotation();
+        setGunRotation();
+        handleSetFire();
     }
 
-    public void onRoundEnded(RoundEndedEvent event) {
-        GeneticAlgorithm.saveGeneticData();
+    // ============= RADAR / GUN ================
 
-        if (getRoundNum() >= getNumRounds() - 1)
-            // Battle finished
-            GeneticAlgorithm.clearGeneticData();
-
-    }
-
-    public void onPaint(Graphics2D g) {
-        // Draw robot's security zone
-        g.setColor(Color.green);
-        Draw.drawCircle(g, getX(), getY(), safeDistanceGA);
-
-        // Draw bordersMargin
-        int w = (int) getBattleFieldWidth();
-        int h = (int) getBattleFieldHeight();
-        int margin = bordersMarginGA;
-
-        g.setColor(new Color(0xff, 0x00, 0x00, 0x20));
-        g.fillRect(0, 0, margin, h);            // left
-        g.fillRect(0, 0, w, margin);            // bottom
-        g.fillRect(w - margin, 0, margin, h);   // right
-        g.fillRect(0, h - margin, w, margin);   // upper
-
-
-    }
-
-    // # Radar/Gun:
-
-    private void setRadarTurn() {
+    private void setRadarRotation() {
 
         // Get the enemy angle
         double enemyAngle = enemyBot.getAngle();
@@ -161,7 +140,7 @@ public class Autobot extends AdvancedRobot {
         setTurnRadarRight(radarTurn);
     }
 
-    private void setGunTurn() {
+    private void setGunRotation() {
 
         // Get the enemy angle
         double enemyAngle = enemyBot.getAngle();
@@ -177,7 +156,7 @@ public class Autobot extends AdvancedRobot {
 
     }
 
-    private void setFireTurn() {
+    private void handleSetFire() {
 
         List<Map<String, Double>> history = new ArrayList<>();
 
@@ -213,7 +192,7 @@ public class Autobot extends AdvancedRobot {
         }
     }
 
-    // # Movements:
+    // ============= MOVEMENTS ================
 
     public void moveRandomly() {
         // set default movement attributes, considering robot is at center of arena
@@ -282,9 +261,6 @@ public class Autobot extends AdvancedRobot {
         }
     }
 
-    /**
-     * If enemy gun is ready, setAhead(0)
-     */
     public void checkEnemyGunReady() {
         if (enemyBot.isGunReady()) { // enemy gun will shoot any time now. do not move
             setAhead(0);
@@ -329,18 +305,7 @@ public class Autobot extends AdvancedRobot {
 
     }
 
-    public void nextTurn() {
-        // update myRobot location
-        robotLocation = new Point2D.Double(getX(), getY());
-
-        //cool down enemy gun
-        enemyBot.passTurn(getGunCoolingRate());
-
-        // apply genetic algorithm
-        applyGeneticAlgorithm();
-        applyFuzzyAlgorithm();
-
-    }
+    // ============= GENETIC ALGORITHM ================
 
     public void applyGeneticAlgorithm() {
         GeneticAlgorithm.updateGA(getEnergy());
@@ -349,12 +314,7 @@ public class Autobot extends AdvancedRobot {
         bordersMarginGA = GeneticAlgorithm.getBordersMargin();
     }
 
-    private void changeRobotColors() {
-        setBodyColor(Color.WHITE);
-        setGunColor(Color.BLACK);
-        setRadarColor(Color.WHITE);
-//        setBulletColor(Color.WHITE);
-    }
+    // ============= FUZZY ================
 
     public void applyFuzzyAlgorithm() {
 //      Variables: distance, enemy_energy, autobot_energy
@@ -382,6 +342,56 @@ public class Autobot extends AdvancedRobot {
 //            System.out.print(" dist: " + safeDistanceGA);
 //            System.out.println(" bord: " + bordersMarginGA);
         }
+
+    }
+
+    // ============= OTHERS ================
+
+    public void nextTurn() {
+        // update myRobot location
+        robotLocation = new Point2D.Double(getX(), getY());
+
+        //cool down enemy gun
+        enemyBot.passTurn(getGunCoolingRate());
+
+        // apply genetic algorithm
+        applyGeneticAlgorithm();
+        applyFuzzyAlgorithm();
+
+    }
+
+    public void onRoundEnded(RoundEndedEvent event) {
+        GeneticAlgorithm.saveGeneticData();
+
+        if (getRoundNum() >= getNumRounds() - 1)
+            // Battle finished
+            GeneticAlgorithm.clearGeneticData();
+
+    }
+
+    private void changeRobotColors() {
+        setBodyColor(Color.WHITE);
+        setGunColor(Color.BLACK);
+        setRadarColor(Color.WHITE);
+//        setBulletColor(Color.WHITE);
+    }
+
+    public void onPaint(Graphics2D g) {
+        // Draw robot's security zone
+        g.setColor(Color.green);
+        Draw.drawCircle(g, getX(), getY(), safeDistanceGA);
+
+        // Draw bordersMargin
+        int w = (int) getBattleFieldWidth();
+        int h = (int) getBattleFieldHeight();
+        int margin = bordersMarginGA;
+
+        g.setColor(new Color(0xff, 0x00, 0x00, 0x20));
+        g.fillRect(0, 0, margin, h);            // left
+        g.fillRect(0, 0, w, margin);            // bottom
+        g.fillRect(w - margin, 0, margin, h);   // right
+        g.fillRect(0, h - margin, w, margin);   // upper
+
 
     }
 }
