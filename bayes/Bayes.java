@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Bayes {
 
-    private static WekaWrapper weka;
+    public static WekaWrapper weka;
     private static JayesWrapper jayes;
     private static List<InternalBayesNode> nodes;
 

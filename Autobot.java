@@ -2,6 +2,7 @@ package autobot;
 
 
 import autobot.bayes.Bayes;
+import autobot.bayes.enums.*;
 import autobot.fuzzy.Fuzzy;
 import autobot.genetic.GeneticAlgorithm;
 import autobot.prolog.Prolog;
@@ -16,6 +17,7 @@ import robocode.util.Utils;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Math.max;
@@ -104,7 +106,11 @@ public class Autobot extends AdvancedRobot {
         enemyBot.scanned(this, e);
         setRadarRotation();
         setGunRotation();
-        handleSetFire();
+        try {
+            handleSetFire();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     // ============= RADAR / GUN ================
@@ -148,7 +154,7 @@ public class Autobot extends AdvancedRobot {
 
     }
 
-    private void handleSetFire() {
+    private void handleSetFire() throws Exception {
 
         double enemyDistance = enemyBot.getDistance();
         double enemyVelocity = enemyBot.getVelocity();
@@ -160,6 +166,7 @@ public class Autobot extends AdvancedRobot {
             double bestFirePowerToHit = Bayes.getBestFirePowerToHit(enemyDistance, enemyVelocity, enemyAngle, enemyHeading, myGunToEnemy);
             Bullet bullet = fireBullet(bestFirePowerToHit);
             System.out.println("Firing bullet with power: " + bestFirePowerToHit);
+            Bayes.weka.displayGraph();
             if (bullet != null) {
                 activeBullets.add(new ActiveBullet(bullet, enemyBot.clone(), myGunToEnemy, bestFirePowerToHit));
             }
@@ -386,5 +393,37 @@ public class Autobot extends AdvancedRobot {
         g.fillRect(0, h - margin, w, margin);   // upper
 
 
+    }
+
+    public static void main(String[] args) throws Exception {
+        Bayes.init();
+
+
+        // Add some instances to the dataset
+        List<GenericAttribute> instance1 = Arrays.asList(
+                EnemyDistance.RANGE_0_200,
+                EnemyVelocity.RANGE_0_2,
+                EnemyAngle.RANGE_0_90,
+                EnemyHeading.RANGE_0_90,
+                MyGunToEnemyAngle.RANGE_0_15,
+                FirePower.FP_02,
+                Hit.TRUE
+        );
+        Bayes.weka.addInstance(instance1);
+
+        // Add more 20 instances with different values
+        List<GenericAttribute> instance2 = Arrays.asList(
+                EnemyDistance.RANGE_0_200,
+                EnemyVelocity.RANGE_0_2,
+                EnemyAngle.RANGE_0_90,
+                EnemyHeading.RANGE_0_90,
+                MyGunToEnemyAngle.RANGE_0_15,
+                FirePower.FP_02,
+                Hit.FALSE
+        );
+        Bayes.weka.addInstance(instance2);
+
+
+        Bayes.weka.displayGraph();
     }
 }

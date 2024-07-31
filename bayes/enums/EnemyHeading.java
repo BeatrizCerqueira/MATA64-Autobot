@@ -3,8 +3,9 @@ package autobot.bayes.enums;
 public enum EnemyHeading implements GenericAttribute {
     RANGE_0_90(0, 90),
     RANGE_90_180(90, 180),
-    RANGE_180_270(180, 270),
-    RANGE_270_360(270, 360);
+//    RANGE_180_270(180, 270),
+//    RANGE_270_360(270, 360)
+    ;
 
     private final double min;
     private final double max;
