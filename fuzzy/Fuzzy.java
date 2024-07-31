@@ -62,7 +62,6 @@ public class Fuzzy {
     }
 
     public static void getVariablesNames() {
-        System.out.print("Variáveis fuzzy: ");
         for (Variable var : variables) {
             System.out.print(var.getName() + " ");
         }

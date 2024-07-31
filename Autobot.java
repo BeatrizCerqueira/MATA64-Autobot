@@ -159,6 +159,7 @@ public class Autobot extends AdvancedRobot {
         if (Prolog.shouldFire(getEnergy())) {
             double bestFirePowerToHit = Bayes.getBestFirePowerToHit(enemyDistance, enemyVelocity, enemyAngle, enemyHeading, myGunToEnemy);
             Bullet bullet = fireBullet(bestFirePowerToHit);
+            System.out.println("Firing bullet with power: " + bestFirePowerToHit);
             if (bullet != null) {
                 activeBullets.add(new ActiveBullet(bullet, enemyBot.clone(), myGunToEnemy, bestFirePowerToHit));
             }
@@ -324,10 +325,11 @@ public class Autobot extends AdvancedRobot {
                 double firePower = activeBullet.firePower();
 
                 BulletResult bulletResult = new BulletResult(enemySnapshot, myGunToEnemyAngle, firePower, hasHit);
-                activeBullets.remove(activeBullet);
 
                 try {
                     Bayes.recordBulletResult(bulletResult);
+                    activeBullets.remove(activeBullet);
+                    return;
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
