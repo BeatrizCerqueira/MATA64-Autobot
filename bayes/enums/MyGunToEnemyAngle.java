@@ -18,7 +18,7 @@ public enum MyGunToEnemyAngle implements GenericAttribute {
 
     public static MyGunToEnemyAngle fromDouble(double angle) {
         for (MyGunToEnemyAngle mgtea : values()) {
-            if (angle >= mgtea.min && angle < mgtea.max) {
+            if (angle >= mgtea.min && angle <= mgtea.max) {
                 return mgtea;
             }
         }

@@ -10,9 +10,7 @@ isEnemyClose(EnemyDistance, SafeDistance) :- less(EnemyDistance, SafeDistance).
 
 isRadarTurnComplete(RadarTurnRemaining) :- equal(RadarTurnRemaining, 0.0).
 
-shouldFire(FirePowerToHit, Energy, Rules_MIN_BULLET_POWER, Rules_MAX_BULLET_POWER, Consts_MIN_LIFE_TO_FIRE) :-
-    greaterOrEqual(FirePowerToHit, Rules_MIN_BULLET_POWER),
-    lessOrEqual(FirePowerToHit, Rules_MAX_BULLET_POWER),
+shouldFire( Energy, Consts_MIN_LIFE_TO_FIRE) :-
     greater(Energy, Consts_MIN_LIFE_TO_FIRE).
 
 isInXMargin(X, XLimit, Consts_WALL_MARGIN) :- XAbs is abs(X), less((XLimit - XAbs), Consts_WALL_MARGIN).

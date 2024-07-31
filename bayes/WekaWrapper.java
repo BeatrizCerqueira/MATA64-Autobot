@@ -18,12 +18,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings("DuplicatedCode")
 public class WekaWrapper {
 
     private final List<InternalBayesNode> internalNodes;
     private Instances dataset;
     private EditableBayesNet bayesNet;
+
+    // TODO: Agnostic
     private final String filename = "Autobot.arff";
     private final String filepath = "C:/robocode/robots/autobot/bayes/data/" + filename;
 

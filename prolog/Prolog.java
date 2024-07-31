@@ -31,17 +31,10 @@ public class Prolog {
         return isValid("isRadarTurnComplete", radarTurnRemaining);
     }
 
-    //    shouldFire(FirePowerToHit, Energy, Rules_MIN_BULLET_POWER, Rules_MAX_BULLET_POWER, Consts_MIN_LIFE_TO_FIRE) :-
-    //        greaterOrEqual(FirePowerToHit, Rules_MIN_BULLET_POWER),
-    //        lessOrEqual(FirePowerToHit, Rules_MAX_BULLET_POWER),
+    //    shouldFire( Energy, Consts_MIN_LIFE_TO_FIRE) :-
     //        greater(Energy, Consts_MIN_LIFE_TO_FIRE).
-    public static boolean shouldFire(double firePowerNeededToHit, double energy) {
-        return isValid("shouldFire",
-                firePowerNeededToHit,
-                energy,
-                Rules.MIN_BULLET_POWER,
-                Rules.MAX_BULLET_POWER,
-                Consts.MIN_LIFE_TO_FIRE);
+    public static boolean shouldFire(double energy) {
+        return isValid("shouldFire", energy, Consts.MIN_LIFE_TO_FIRE);
     }
 
     //    isGunReady(Heat, Consts_GUN_HEAT_JUST_BEFORE_COOLING) :- less(Heat, Consts_GUN_HEAT_JUST_BEFORE_COOLING).

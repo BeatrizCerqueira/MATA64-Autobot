@@ -8,8 +8,6 @@ public class Consts {
     public static final double MIN_LIFE_TO_FIRE = 10.0;
     public static final double GUN_HEAT_JUST_BEFORE_COOLING = 0.3;
 
-    public static final int MAX_TURNS_TO_FIRE = 30;
-
     // Genetic Algorithm consts
     public static final int POPULATION_SIZE = 10;
 

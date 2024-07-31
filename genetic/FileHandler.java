@@ -39,8 +39,7 @@ public class FileHandler {
             }
             System.out.println("File saved successfully.");
         } catch (IOException e) {
-            //noinspection CallToPrintStackTrace
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -69,8 +68,7 @@ public class FileHandler {
             System.out.println("File loaded successfully.");
 
         } catch (Exception e) {
-            //noinspection CallToPrintStackTrace
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return chromosomes;
     }

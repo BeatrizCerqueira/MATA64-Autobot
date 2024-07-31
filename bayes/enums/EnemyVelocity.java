@@ -16,7 +16,7 @@ public enum EnemyVelocity implements GenericAttribute {
 
     public static EnemyVelocity fromDouble(double velocity) {
         for (EnemyVelocity ev : values()) {
-            if (velocity >= ev.min && velocity < ev.max) {
+            if (velocity >= ev.min && velocity <= ev.max) {
                 return ev;
             }
         }

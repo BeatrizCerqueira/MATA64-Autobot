@@ -16,7 +16,7 @@ public enum EnemyHeading implements GenericAttribute {
 
     public static EnemyHeading fromDouble(double heading) {
         for (EnemyHeading eh : values()) {
-            if (heading >= eh.min && heading < eh.max) {
+            if (heading >= eh.min && heading <= eh.max) {
                 return eh;
             }
         }

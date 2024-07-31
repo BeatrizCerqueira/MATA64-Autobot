@@ -1,9 +1,0 @@
-//para incluir um arquivo na raiz do jar
-jar uf nomeDoarquivo.jar -C pastaArquivo\eOutrasPastas arquivoAdd.extensaoDele
-Exemplo
-jar uf zRBT1.RBT1_1.1.jar -C RBT1\fcl rules_rbt1.fcl
-
-//para incluir um arquivo dentro de uma pasta no .jar (se o diretorio existir nele inclui no diretorio existente)
-jar uf nomeDoarquivo.jar -C pastaArquivo caminho/ate/arquivo.extensaoDele
-Exemplo
-jar uf RBT1.RBT1_1.1.jar -C RBT1 fcl\r.java

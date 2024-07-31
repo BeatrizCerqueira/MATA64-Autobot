@@ -24,6 +24,6 @@ public record BulletResult(Enemy enemySnapshot, boolean hasHit) {
     }
 
     public double getFirePower() {
-        return 0.5; // TODO: @Bia parametro firePower sem valor/referencia
+        return 0.6; // TODO: @Bia parametro firePower sem valor/referencia
     }
 }

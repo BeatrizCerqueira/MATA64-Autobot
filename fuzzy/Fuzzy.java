@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Fuzzy {
     private static FIS fis = null;
     private static FunctionBlock functionBlock;
-    private static ArrayList<Variable> variables = new ArrayList<Variable>();
+    private static final ArrayList<Variable> variables = new ArrayList<>();
     private static Variable result;
 
     public static void loadFile(String filename) {

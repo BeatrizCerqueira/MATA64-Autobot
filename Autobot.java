@@ -15,8 +15,8 @@ import robocode.util.Utils;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.*;
 
 import static java.lang.Math.max;
 import static java.lang.Math.signum;
@@ -26,7 +26,6 @@ public class Autobot extends AdvancedRobot {
 
     Point2D robotLocation;
     List<ActiveBullet> activeBullets = new ArrayList<>();
-    List<BulletResult> bulletResults = new ArrayList<>();
 
     Enemy enemyBot = new Enemy();
     int direction = 1;
@@ -50,7 +49,6 @@ public class Autobot extends AdvancedRobot {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-//        Fuzzy.printCharts(); // TESTING
 
         changeRobotColors();
 
@@ -76,23 +74,27 @@ public class Autobot extends AdvancedRobot {
     // ============= BULLET EVENTS ================
 
     public void onBulletHit(BulletHitEvent event) {
-        addBulletResult(event.getBullet(), true);
+        recordBulletResult(event.getBullet(), true);
     }
 
     public void onBulletMissed(BulletMissedEvent event) {
-        addBulletResult(event.getBullet(), false);
+        recordBulletResult(event.getBullet(), false);
     }
 
     public void onBulletHitBullet(BulletHitBulletEvent event) {
-        addBulletResult(event.getBullet(), false);
+        recordBulletResult(event.getBullet(), false);
     }
 
-    private void addBulletResult(Bullet eventBullet, boolean hasHit) {
+    private void recordBulletResult(Bullet eventBullet, boolean hasHit) {
         for (ActiveBullet activeBullet : activeBullets) {
-            if (activeBullet.bulletInstance().equals(eventBullet)) { // bulletInstance found
+            if (activeBullet.bulletInstance().equals(eventBullet)) {
                 BulletResult bulletResult = new BulletResult(activeBullet.enemySnapshot(), hasHit);
-                bulletResults.add(bulletResult);       //  add record to dataset
-                activeBullets.remove(activeBullet);     //  bulletInstance no longer active
+                try {
+                    Bayes.recordBulletResult(bulletResult);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                activeBullets.remove(activeBullet);
                 return;
             }
         }
@@ -158,34 +160,15 @@ public class Autobot extends AdvancedRobot {
 
     private void handleSetFire() {
 
-        List<Map<String, Double>> history = new ArrayList<>();
+        double enemyDistance = enemyBot.getDistance();
+        double enemyVelocity = enemyBot.getVelocity();
+        double enemyAngle = enemyBot.getAngle();
+        double enemyHeading = enemyBot.getHeading();
+        double myGunToEnemy = 20; // TODO: calculate this value
 
-        for (int i = 1; i <= Consts.MAX_TURNS_TO_FIRE; i++) {
-
-            double enemyDistanceAfterTurns = enemyBot.getEnemyDistanceAfterTurns(i);
-
-            double bulletVelocityNeededToHit = enemyDistanceAfterTurns / i;
-            double firePowerNeededToHit = (20 - bulletVelocityNeededToHit) / 3;
-
-            boolean shouldFire = Prolog.shouldFire(firePowerNeededToHit, getEnergy());
-
-//            shouldFire = false;   // MOCK FOR TESTING PURPOSES
-
-            if (shouldFire) {
-                Map<String, Double> pair = new HashMap<>();
-                pair.put("distance", enemyDistanceAfterTurns);
-                pair.put("firePower", firePowerNeededToHit);
-                history.add(pair);
-            }
-
-        }
-
-        // Keep fired bullet on track
-        if (!history.isEmpty()) {
-            history.sort(Comparator.comparing(m -> m.get("distance")));
-
-            Bullet bullet = fireBullet(history.get(0).get("firePower")); // setFire(history.get(0).get("firePower"));
-
+        if (Prolog.shouldFire(getEnergy())) {
+            double bestFirePowerToHit = Bayes.getBestFirePowerToHit(enemyDistance, enemyVelocity, enemyAngle, enemyHeading, myGunToEnemy);
+            Bullet bullet = fireBullet(bestFirePowerToHit);
             if (bullet != null) {
                 activeBullets.add(new ActiveBullet(bullet, enemyBot.clone()));
             }
@@ -337,10 +320,6 @@ public class Autobot extends AdvancedRobot {
             safeDistanceGA = (int) (MAX_FUZZY_DISTANCE * riskFactor);
             bordersMarginGA = (int) (MAX_FUZZY_BORDER_MARGIN * riskFactor);
 
-            System.out.println("Risco! " + Fuzzy.getDefuzzyValue());
-//            System.out.print("vel: " + velocityFuzzy);
-//            System.out.print(" dist: " + safeDistanceGA);
-//            System.out.println(" bord: " + bordersMarginGA);
         }
 
     }

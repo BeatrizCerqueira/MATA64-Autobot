@@ -16,7 +16,7 @@ public enum EnemyDistance implements GenericAttribute {
 
     public static EnemyDistance fromDouble(double distance) {
         for (EnemyDistance ed : values()) {
-            if (distance >= ed.min && distance < ed.max) {
+            if (distance >= ed.min && distance <= ed.max) {
                 return ed;
             }
         }

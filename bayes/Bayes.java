@@ -20,7 +20,6 @@ public class Bayes {
         initInternalNodes();
         initWeka();
         initJayes();
-
     }
 
     private static void initWeka() throws Exception {
@@ -69,44 +68,43 @@ public class Bayes {
 
         Double fpMaxBelieve = Collections.max(firePowerBeliefs);
         int fpMaxBelieveIndex = firePowerBeliefs.indexOf(fpMaxBelieve);
-        FirePower bestFirePower = FirePower.values()[fpMaxBelieveIndex];
 
 //        printFirePowerInference(firePowerBeliefs, maxFirePowerBelieve, maxFirePowerBelieveIndex, bestFirePower);
 
-        return bestFirePower;
+        return FirePower.values()[fpMaxBelieveIndex];
 
-    }
-
-    public static void recordBulletResult(BulletResult bulletResult) throws Exception {
-
-        EnemyDistance ed = EnemyDistance.fromDouble(bulletResult.getEnemyDistance());
-        EnemyVelocity ev = EnemyVelocity.fromDouble(bulletResult.getEnemyVelocity());
-        EnemyAngle ea = EnemyAngle.fromDouble(bulletResult.getEnemyAngle());
-        EnemyHeading eh = EnemyHeading.fromDouble(bulletResult.getEnemyHeading());
-        MyGunToEnemyAngle mgtea = MyGunToEnemyAngle.fromDouble(bulletResult.getMyGunToEnemyAngle());
-        FirePower fp = FirePower.fromDouble(bulletResult.getFirePower());
-        Hit hit = Hit.fromBoolean(bulletResult.hasHit());
-
-        List<GenericAttribute> instance = Arrays.asList(ed, ev, ea, eh, mgtea, fp, hit);
-
-        printSetParams(bulletResult.getEnemyDistance(), bulletResult.getEnemyVelocity(), bulletResult.getEnemyAngle(), bulletResult.getEnemyHeading(), bulletResult.getMyGunToEnemyAngle(), bulletResult.getFirePower(), bulletResult.hasHit(), ed, ev, ea, eh, mgtea, fp, hit);
-
-        weka.addInstance(instance);
-        weka.calcNewDistributions();
-        jayes.setNewProbabilities();
     }
 
     // TODO: Create a record for this
     public static double getBestFirePowerToHit(double enemyDistance, double enemyVelocity, double enemyAngle, double enemyHeading, double myGunToEnemyAngle) {
-        EnemyDistance ed = EnemyDistance.fromDouble(enemyDistance);
-        EnemyVelocity ev = EnemyVelocity.fromDouble(enemyVelocity);
-        EnemyAngle ea = EnemyAngle.fromDouble(enemyAngle);
-        EnemyHeading eh = EnemyHeading.fromDouble(enemyHeading);
-        MyGunToEnemyAngle mgtea = MyGunToEnemyAngle.fromDouble(myGunToEnemyAngle);
+        EnemyDistance ed = EnemyDistance.fromDouble(Math.abs(enemyDistance));
+        EnemyVelocity ev = EnemyVelocity.fromDouble(Math.abs(enemyVelocity));
+        EnemyAngle ea = EnemyAngle.fromDouble(Math.abs(enemyAngle));
+        EnemyHeading eh = EnemyHeading.fromDouble(Math.abs(enemyHeading));
+        MyGunToEnemyAngle mgtea = MyGunToEnemyAngle.fromDouble(Math.abs(myGunToEnemyAngle));
 
 //        printGetParams(enemyDistance, enemyVelocity, enemyAngle, enemyHeading, myGunToEnemyAngle, ed, ev, ea, eh, mgtea);
 
         return calcBestFirePowerToHit(ed, ev, ea, eh, mgtea).toDouble();
+    }
+
+    public static void recordBulletResult(BulletResult bulletResult) throws Exception {
+
+        EnemyDistance ed = EnemyDistance.fromDouble(Math.abs(bulletResult.getEnemyDistance()));
+        EnemyVelocity ev = EnemyVelocity.fromDouble(Math.abs(bulletResult.getEnemyVelocity()));
+        EnemyAngle ea = EnemyAngle.fromDouble(Math.abs(bulletResult.getEnemyAngle()));
+        EnemyHeading eh = EnemyHeading.fromDouble(Math.abs(bulletResult.getEnemyHeading()));
+        MyGunToEnemyAngle mgtea = MyGunToEnemyAngle.fromDouble(Math.abs(bulletResult.getMyGunToEnemyAngle()));
+        FirePower fp = FirePower.fromDouble(Math.abs(bulletResult.getFirePower()));
+        Hit hit = Hit.fromBoolean(bulletResult.hasHit());
+
+        List<GenericAttribute> instance = Arrays.asList(ed, ev, ea, eh, mgtea, fp, hit);
+
+//        printSetParams(bulletResult.getEnemyDistance(), bulletResult.getEnemyVelocity(), bulletResult.getEnemyAngle(), bulletResult.getEnemyHeading(), bulletResult.getMyGunToEnemyAngle(), bulletResult.getFirePower(), bulletResult.hasHit(), ed, ev, ea, eh, mgtea, fp, hit);
+
+        weka.addInstance(instance);
+        weka.calcNewDistributions();
+        jayes.setNewProbabilities();
     }
 
     public static void saveDataForNextRound() throws IOException {
@@ -122,7 +120,7 @@ public class Bayes {
         System.out.println("Best fire power to hit: " + bestFirePower);
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "DuplicatedCode"})
     private static void printGetParams(double enemyDistance, double enemyVelocity, double enemyAngle, double enemyHeading, double myGunToEnemyAngle, EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, EnemyHeading eh, MyGunToEnemyAngle mgtea) {
         System.out.println("EnemyDistance: " + enemyDistance + " = " + ed);
         System.out.println("EnemyVelocity: " + enemyVelocity + " = " + ev);
@@ -133,6 +131,7 @@ public class Bayes {
 
     @SuppressWarnings("unused")
     private static void printSetParams(double enemyDistance, double enemyVelocity, double enemyAngle, double enemyHeading, double myGunToEnemyAngle, double firePower, boolean hit, EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, EnemyHeading eh, MyGunToEnemyAngle mgtea, FirePower fp, Hit h) {
+        //noinspection DuplicatedCode
         System.out.println("EnemyDistance: " + enemyDistance + " = " + ed);
         System.out.println("EnemyVelocity: " + enemyVelocity + " = " + ev);
         System.out.println("EnemyAngle: " + enemyAngle + " = " + ea);
@@ -141,6 +140,5 @@ public class Bayes {
         System.out.println("FirePower: " + firePower + " = " + fp);
         System.out.println("Hit: " + hit + " = " + h);
     }
-
 
 }
