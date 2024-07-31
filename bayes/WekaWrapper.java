@@ -30,6 +30,8 @@ public class WekaWrapper {
     private EditableBayesNet bayesNet;
     private final String filename = "Autobot.arff";
     private final String filepath = "C:/robocode/robots/autobot/bayes/data/" + filename;
+//    private final String filepath = "robots/autobot/bayes/data/" + filename;
+
 
     public WekaWrapper(List<InternalBayesNode> internalNodes) throws Exception {
         this.internalNodes = internalNodes;
