@@ -13,7 +13,7 @@ import java.util.List;
 public class Bayes {
 
     public static WekaWrapper weka;
-    private static JayesWrapper jayes;
+    public static JayesWrapper jayes;
     private static List<InternalBayesNode> nodes;
 
     public static void init() throws Exception {
@@ -52,7 +52,7 @@ public class Bayes {
         nodes = internalNodes;
     }
 
-    private static FirePower calcBestFirePowerToHit(EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, EnemyHeading eh, MyGunToEnemyAngle mgtea) {
+    public static FirePower calcBestFirePowerToHit(EnemyDistance ed, EnemyVelocity ev, EnemyAngle ea, EnemyHeading eh, MyGunToEnemyAngle mgtea) {
         List<EvidenceAttribute> evidence = new ArrayList<>();
 
         evidence.add(new EvidenceAttribute("EnemyDistance", ed.toString()));
@@ -69,7 +69,7 @@ public class Bayes {
         Double fpMaxBelieve = Collections.max(firePowerBeliefs);
         int fpMaxBelieveIndex = firePowerBeliefs.indexOf(fpMaxBelieve);
 
-//        printFirePowerInference(firePowerBeliefs, maxFirePowerBelieve, maxFirePowerBelieveIndex, bestFirePower);
+        printFirePowerInference(firePowerBeliefs, fpMaxBelieve, fpMaxBelieveIndex, FirePower.values()[fpMaxBelieveIndex]);
 
         return FirePower.values()[fpMaxBelieveIndex];
 
@@ -115,8 +115,8 @@ public class Bayes {
     private static void printFirePowerInference(List<Double> firePowerBeliefs, Double maxFirePowerBelieve, int maxFirePowerBelieveIndex, FirePower bestFirePower) {
         System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> Inference <<<<<<<<<<<<<<<<<<<<<<<<<<");
         System.out.println("Beliefs of fire power: " + firePowerBeliefs);
-        System.out.println("Max fire power believe: " + maxFirePowerBelieve);
-        System.out.println("Index of max fire power believe: " + maxFirePowerBelieveIndex);
+        System.out.println("Fire power max believe: " + maxFirePowerBelieve);
+        System.out.println("Index of fire power max believe: " + maxFirePowerBelieveIndex);
         System.out.println("Best fire power to hit: " + bestFirePower);
     }
 

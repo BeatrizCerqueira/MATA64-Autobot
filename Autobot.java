@@ -514,7 +514,23 @@ public class Autobot extends AdvancedRobot {
 
 
         Bayes.weka.calcNewDistributions();
-        Bayes.weka.displayGraph();
+        Bayes.jayes.setNewProbabilities();
+//        Bayes.jayes.printAll();
+
+
+//        List<EvidenceAttribute> evidence = Arrays.asList(
+//                new EvidenceAttribute("EnemyDistance", EnemyDistance.RANGE_0_200.toString()),
+//                new EvidenceAttribute("EnemyVelocity", EnemyVelocity.RANGE_0_2.toString()),
+//                new EvidenceAttribute("EnemyAngle", EnemyAngle.RANGE_0_90.toString()),
+//                new EvidenceAttribute("EnemyHeading", EnemyHeading.RANGE_0_90.toString()),
+//                new EvidenceAttribute("MyGunToEnemyAngle", MyGunToEnemyAngle.RANGE_0_15.toString()),
+//                new EvidenceAttribute("Hit", Hit.TRUE.toString())
+//        );
+//
+//        Bayes.jayes.getBeliefs(evidence, "FirePower");
+//        Bayes.weka.displayGraph();
+
+        Bayes.calcBestFirePowerToHit(EnemyDistance.RANGE_0_200, EnemyVelocity.RANGE_0_2, EnemyAngle.RANGE_0_90, EnemyHeading.RANGE_0_90, MyGunToEnemyAngle.RANGE_0_15);
 
     }
 }
