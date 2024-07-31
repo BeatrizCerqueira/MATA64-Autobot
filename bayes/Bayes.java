@@ -90,12 +90,12 @@ public class Bayes {
 
     public static void recordBulletResult(BulletResult bulletResult) throws Exception {
 
-        EnemyDistance ed = EnemyDistance.fromDouble(Math.abs(bulletResult.getEnemyDistance()));
-        EnemyVelocity ev = EnemyVelocity.fromDouble(Math.abs(bulletResult.getEnemyVelocity()));
-        EnemyAngle ea = EnemyAngle.fromDouble(Math.abs(bulletResult.getEnemyAngle()));
-        EnemyHeading eh = EnemyHeading.fromDouble(Math.abs(bulletResult.getEnemyHeading()));
-        MyGunToEnemyAngle mgtea = MyGunToEnemyAngle.fromDouble(Math.abs(bulletResult.getMyGunToEnemyAngle()));
-        FirePower fp = FirePower.fromDouble(Math.abs(bulletResult.getFirePower()));
+        EnemyDistance ed = EnemyDistance.fromDouble(Math.abs(bulletResult.enemy().getDistance()));
+        EnemyVelocity ev = EnemyVelocity.fromDouble(Math.abs(bulletResult.enemy().getVelocity()));
+        EnemyAngle ea = EnemyAngle.fromDouble(Math.abs(bulletResult.enemy().getAngle()));
+        EnemyHeading eh = EnemyHeading.fromDouble(Math.abs(bulletResult.enemy().getHeading()));
+        MyGunToEnemyAngle mgtea = MyGunToEnemyAngle.fromDouble(Math.abs(bulletResult.myGunToEnemyAngle()));
+        FirePower fp = FirePower.fromDouble(Math.abs(bulletResult.firePower()));
         Hit hit = Hit.fromBoolean(bulletResult.hasHit());
 
         List<GenericAttribute> instance = Arrays.asList(ed, ev, ea, eh, mgtea, fp, hit);

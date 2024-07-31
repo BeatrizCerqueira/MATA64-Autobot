@@ -35,9 +35,12 @@ public class Autobot extends AdvancedRobot {
     int safeDistanceGA;
     int bordersMarginGA;
 
-    //Fuzzy Variables:
+    // Fuzzy Variables:
     int velocityFuzzy;
     boolean hasLifeRisk = false;
+
+    // Bayes Variables:
+    double gunAngleAfterRotation;
 
     public void run() {
 
@@ -62,8 +65,7 @@ public class Autobot extends AdvancedRobot {
 
             boolean isRadarTurnComplete = Prolog.isRadarTurnComplete(getRadarTurnRemaining());
 
-            if (isRadarTurnComplete)
-                setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
+            if (isRadarTurnComplete) setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
 
             moveRobot();
             execute();
@@ -83,21 +85,6 @@ public class Autobot extends AdvancedRobot {
 
     public void onBulletHitBullet(BulletHitBulletEvent event) {
         recordBulletResult(event.getBullet(), false);
-    }
-
-    private void recordBulletResult(Bullet eventBullet, boolean hasHit) {
-        for (ActiveBullet activeBullet : activeBullets) {
-            if (activeBullet.bulletInstance().equals(eventBullet)) {
-                BulletResult bulletResult = new BulletResult(activeBullet.enemySnapshot(), hasHit);
-                try {
-                    Bayes.recordBulletResult(bulletResult);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                activeBullets.remove(activeBullet);
-                return;
-            }
-        }
     }
 
     // ============= HIT EVENTS ================
@@ -153,6 +140,9 @@ public class Autobot extends AdvancedRobot {
         // Gun goes to the less distance direction
         double gunTurn = (Math.min(Math.abs(gunInitialTurn), Rules.GUN_TURN_RATE)) * signum(gunInitialTurn);
 
+        // Set gun angle after rotation for Bayes
+        this.gunAngleAfterRotation = Utils.normalRelativeAngleDegrees(getGunHeading() + gunTurn);
+
         // Set gun turn
         setTurnGunRight(gunTurn);
 
@@ -164,13 +154,13 @@ public class Autobot extends AdvancedRobot {
         double enemyVelocity = enemyBot.getVelocity();
         double enemyAngle = enemyBot.getAngle();
         double enemyHeading = enemyBot.getHeading();
-        double myGunToEnemy = 20; // TODO: calculate this value
+        double myGunToEnemy = this.gunAngleAfterRotation;
 
         if (Prolog.shouldFire(getEnergy())) {
             double bestFirePowerToHit = Bayes.getBestFirePowerToHit(enemyDistance, enemyVelocity, enemyAngle, enemyHeading, myGunToEnemy);
             Bullet bullet = fireBullet(bestFirePowerToHit);
             if (bullet != null) {
-                activeBullets.add(new ActiveBullet(bullet, enemyBot.clone()));
+                activeBullets.add(new ActiveBullet(bullet, enemyBot.clone(), myGunToEnemy, bestFirePowerToHit));
             }
         }
     }
@@ -276,8 +266,7 @@ public class Autobot extends AdvancedRobot {
 
 
         // Skip next methods to avoid error or override
-        if (!enemyBot.isScanned() || hasLifeRisk)
-            return;
+        if (!enemyBot.isScanned() || hasLifeRisk) return;
 
         // Override setAhead
         checkEnemyGunReady();
@@ -322,6 +311,29 @@ public class Autobot extends AdvancedRobot {
 
         }
 
+    }
+
+    // ============= BAYES ================
+
+    private void recordBulletResult(Bullet eventBullet, boolean hasHit) {
+        for (ActiveBullet activeBullet : activeBullets) {
+            if (activeBullet.bulletInstance().equals(eventBullet)) {
+
+                Enemy enemySnapshot = activeBullet.enemySnapshot();
+                double myGunToEnemyAngle = activeBullet.myGunToEnemyAngle();
+                double firePower = activeBullet.firePower();
+
+                BulletResult bulletResult = new BulletResult(enemySnapshot, myGunToEnemyAngle, firePower, hasHit);
+                activeBullets.remove(activeBullet);
+
+                try {
+                    Bayes.recordBulletResult(bulletResult);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        }
     }
 
     // ============= OTHERS ================
