@@ -10,9 +10,9 @@ import java.util.ArrayList;
 // https://jfuzzylogic.sourceforge.net/html/manual.html
 
 public class Fuzzy {
+    private static final ArrayList<Variable> variables = new ArrayList<>();
     private static FIS fis = null;
     private static FunctionBlock functionBlock;
-    private static final ArrayList<Variable> variables = new ArrayList<>();
     private static Variable result;
 
     public static void loadFile(String filename) {
@@ -57,24 +57,13 @@ public class Fuzzy {
         for (String name : names) {
             variables.add(new Variable(name));
         }
-
-        getVariablesNames();
     }
-
-    public static void getVariablesNames() {
-        for (Variable var : variables) {
-            System.out.print(var.getName() + " ");
-        }
-        System.out.println();
-    }
-
 
     public static void setFuzzyValues(Double... values) {
         for (int i = 0; i < variables.size(); i++) {
             variables.get(i).setValue(values[i]);
         }
     }
-
 
     public static void setDefuzzyVariable
             (String variableName) {

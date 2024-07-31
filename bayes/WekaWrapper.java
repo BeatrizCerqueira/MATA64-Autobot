@@ -24,12 +24,11 @@ import java.util.List;
 public class WekaWrapper {
 
     private final List<InternalBayesNode> internalNodes;
-    private Instances dataset;
-    private EditableBayesNet bayesNet;
-
     // TODO: Agnostic
     private final String filename = "Autobot.arff";
     private final String filepath = "C:/robocode/robots/autobot/bayes/data/" + filename;
+    private Instances dataset;
+    private EditableBayesNet bayesNet;
 //    private final String filepath = "robots/autobot/bayes/data/" + filename;
 
 
