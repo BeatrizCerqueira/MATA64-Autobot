@@ -44,6 +44,22 @@ public class Autobot extends AdvancedRobot {
 
     public void run() {
 
+        initAutobot();
+
+        //noinspection InfiniteLoopStatement
+        do {
+            nextTurn();
+
+            boolean isRadarTurnComplete = Prolog.isRadarTurnComplete(getRadarTurnRemaining());
+            if (isRadarTurnComplete) setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
+
+            moveRobot();
+            execute();
+
+        } while (true);
+    }
+
+    private void initAutobot() {
         Prolog.loadPrologFile();
         GeneticAlgorithm.init(getRoundNum());
         Fuzzy.init();
@@ -58,19 +74,6 @@ public class Autobot extends AdvancedRobot {
         setAdjustRadarForRobotTurn(true); // Set gun to turn independent of the robot's turn
         setAdjustRadarForGunTurn(true);
         setAdjustGunForRobotTurn(true);
-
-        //noinspection InfiniteLoopStatement
-        do {
-            nextTurn();
-
-            boolean isRadarTurnComplete = Prolog.isRadarTurnComplete(getRadarTurnRemaining());
-
-            if (isRadarTurnComplete) setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
-
-            moveRobot();
-            execute();
-
-        } while (true);
     }
 
     // ============= BULLET EVENTS ================
@@ -156,7 +159,8 @@ public class Autobot extends AdvancedRobot {
         double enemyHeading = enemyBot.getHeading();
         double myGunToEnemy = this.gunAngleAfterRotation;
 
-        if (Prolog.shouldFire(getEnergy())) {
+        boolean shouldFire = (getGunHeat() == 0) && (getEnergy() > Consts.MIN_LIFE_TO_FIRE);
+        if (shouldFire) {
             double bestFirePowerToHit = Bayes.getBestFirePowerToHit(enemyDistance, enemyVelocity, enemyAngle, enemyHeading, myGunToEnemy);
             Bullet bullet = fireBullet(bestFirePowerToHit);
             if (bullet != null) {
