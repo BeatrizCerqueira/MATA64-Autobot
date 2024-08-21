@@ -76,6 +76,23 @@ public class Autobot extends AdvancedRobot {
         setAdjustRadarForGunTurn(true);
         setAdjustGunForRobotTurn(true);
     }
+    
+    public void onRoundEnded(RoundEndedEvent event) {
+        GeneticAlgorithm.saveGeneticData();
+
+        try {
+            Bayes.saveDataForNextRound();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Battle finished
+        if (getRoundNum() >= getNumRounds() - 1) {
+            GeneticAlgorithm.clearGeneticData();
+            Bayes.clearDataset();
+        }
+
+    }
 
     // ============= BULLET EVENTS ================
 
@@ -357,22 +374,6 @@ public class Autobot extends AdvancedRobot {
 
     }
 
-    public void onRoundEnded(RoundEndedEvent event) {
-        GeneticAlgorithm.saveGeneticData();
-
-        try {
-            Bayes.saveDataForNextRound();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        // Battle finished
-        if (getRoundNum() >= getNumRounds() - 1) {
-            GeneticAlgorithm.clearGeneticData();
-            Bayes.clearDataset();
-        }
-
-    }
 
     private void changeRobotColors() {
         setBodyColor(Color.WHITE);
