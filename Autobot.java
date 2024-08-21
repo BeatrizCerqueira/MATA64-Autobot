@@ -273,7 +273,6 @@ public class Autobot extends AdvancedRobot {
 
     public void checkLifeRisk() {
         if (hasLifeRisk) {
-//            out.println("RUN! " + velocityFuzzy);
             setAhead(velocityFuzzy);
         }
     }

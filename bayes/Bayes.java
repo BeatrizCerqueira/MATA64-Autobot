@@ -16,6 +16,7 @@ public class Bayes {
     private static JayesWrapper jayes;
     private static List<InternalBayesNode> nodes;
 
+
     public static void init() throws Exception {
         initInternalNodes();
         initWeka();
@@ -70,7 +71,8 @@ public class Bayes {
         int fpMaxBelieveIndex = firePowerBeliefs.indexOf(fpMaxBelieve);
         System.out.println(fpMaxBelieve + " " + fpMaxBelieveIndex);
 
-//        printFirePowerInference(firePowerBeliefs, maxFirePowerBelieve, maxFirePowerBelieveIndex, bestFirePower);
+        // TODO: Check calculation. Always returning minimun firepower
+//        printFirePowerInference(firePowerBeliefs, fpMaxBelieve, fpMaxBelieveIndex, FirePower.values()[fpMaxBelieveIndex]);
 
         return FirePower.values()[fpMaxBelieveIndex];
 
