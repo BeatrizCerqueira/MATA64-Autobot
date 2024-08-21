@@ -15,6 +15,7 @@ import robocode.util.Utils;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -359,9 +360,17 @@ public class Autobot extends AdvancedRobot {
     public void onRoundEnded(RoundEndedEvent event) {
         GeneticAlgorithm.saveGeneticData();
 
-        if (getRoundNum() >= getNumRounds() - 1)
-            // Battle finished
+        try {
+            Bayes.saveDataForNextRound();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Battle finished
+        if (getRoundNum() >= getNumRounds() - 1) {
             GeneticAlgorithm.clearGeneticData();
+            Bayes.clearDataset();
+        }
 
     }
 

@@ -1,10 +1,9 @@
 package autobot.bayes.enums;
 
 public enum MyGunToEnemyAngle implements GenericAttribute {
-    RANGE_0_15(0, 15),
-    RANGE_15_30(15, 30),
-    RANGE_30_45(30, 45),
-    RANGE_45_60(45, 60),
+    RANGE_0_10(0, 10),
+    RANGE_10_30(10, 30),
+    RANGE_30_60(30, 60),
     RANGE_60_90(60, 90),
     MORE_THAN_90(90, 180);
 

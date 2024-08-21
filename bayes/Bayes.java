@@ -68,6 +68,7 @@ public class Bayes {
 
         Double fpMaxBelieve = Collections.max(firePowerBeliefs);
         int fpMaxBelieveIndex = firePowerBeliefs.indexOf(fpMaxBelieve);
+        System.out.println(fpMaxBelieve + " " + fpMaxBelieveIndex);
 
 //        printFirePowerInference(firePowerBeliefs, maxFirePowerBelieve, maxFirePowerBelieveIndex, bestFirePower);
 
@@ -109,6 +110,10 @@ public class Bayes {
 
     public static void saveDataForNextRound() throws IOException {
         weka.saveDatasetFile();
+    }
+
+    public static void clearDataset() {
+        weka.clearDatasetFile();
     }
 
     @SuppressWarnings("unused")

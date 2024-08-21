@@ -26,10 +26,10 @@ public class WekaWrapper {
     private final List<InternalBayesNode> internalNodes;
     // TODO: Agnostic
     private final String filename = "Autobot.arff";
-    private final String filepath = "C:/robocode/robots/autobot/bayes/data/" + filename;
+    //    private final String filepath = "C:/robocode/robots/autobot/bayes/data/" + filename;
     private Instances dataset;
     private EditableBayesNet bayesNet;
-//    private final String filepath = "robots/autobot/bayes/data/" + filename;
+    private final String filepath = "robots/autobot/bayes/data/" + filename;
 
 
     public WekaWrapper(List<InternalBayesNode> internalNodes) throws Exception {
@@ -88,6 +88,12 @@ public class WekaWrapper {
         ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
         dataset = arff.getData();
         dataset.setClassIndex(dataset.numAttributes() - 1);
+    }
+
+    public void clearDatasetFile() {
+        File file = new File(filepath);
+        if (file.delete())
+            System.out.println("File " + filename + " deleted successfully.");
     }
 
     public void calcNewDistributions() throws Exception {
