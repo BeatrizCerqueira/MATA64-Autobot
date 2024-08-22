@@ -74,9 +74,7 @@ public class Enemy implements Cloneable {
     }
 
     private void identifyEnemyBullets(double energyDecreased) {
-        // TODO:
-        // check enemy energy decrease to identify if enemy has fired
-        // if so, update heat
+        // TODO: check enemy energy decrease to identify if enemy has fired. if so, update heat
 
         boolean hasEnemyFired = Prolog.hasEnemyFired(energyDecreased);
 
