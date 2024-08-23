@@ -1,6 +1,19 @@
 package autobot.neural;
 
 
+import org.encog.Encog;
+import org.encog.engine.network.activation.ActivationSigmoid;
+import org.encog.ml.data.MLData;
+import org.encog.ml.data.MLDataPair;
+import org.encog.ml.data.basic.BasicMLDataSet;
+import org.encog.ml.train.MLTrain;
+import org.encog.ml.train.strategy.end.EarlyStoppingStrategy;
+import org.encog.neural.networks.BasicNetwork;
+import org.encog.neural.networks.layers.BasicLayer;
+import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils;
+
 import java.io.IOException;
 
 public class NeuralNetwork {
@@ -24,17 +37,16 @@ public class NeuralNetwork {
         fileHandler.updateDatasetFile();
     }
 
-/*
+
     // ========================
-    // Neural network
+    // Neural network training
     static BasicMLDataSet trainingSet;
     static BasicNetwork network = new BasicNetwork();
     static MLTrain train;
 
     private static void trainNetwork() {
         try {
-            loadDataSet();
-            addNeuralNetworkLayers();
+            buildNeuralNetwork();
             configureTraining();
             runTraining();
             printTrainingResults();
@@ -43,41 +55,31 @@ public class NeuralNetwork {
         }
     }
 
-    private static void loadDataSet() throws Exception {
+    private static void buildNeuralNetwork() throws Exception {
         // Load the dataset
-        ConverterUtils.DataSource source = new ConverterUtils.DataSource("autobot/neural/data/Autobot.arff");
+//        String filepath = "robots/autobot/neural/data/Autobot_normalized.arff";
+        String filepath = "C:/robocode/robots/autobot/neural/data/Autobot_normalized.arff";
+        ConverterUtils.DataSource source = new ConverterUtils.DataSource(filepath);
         Instances data = source.getDataSet();
         data.setClassIndex(data.numAttributes() - 1);
 
         // Prepare the input and output arrays
         double[][] input = new double[data.numInstances()][data.numAttributes() - 1];
         double[][] output = new double[data.numInstances()][1];
-
-        for (int i = 0; i < data.numInstances(); i++) {
-            input[i][0] = data.instance(i).value(0); // current x
-            input[i][1] = data.instance(i).value(1); // current y
-            input[i][2] = data.instance(i).value(2); // angle
-            input[i][3] = data.instance(i).value(3); // direction
-            input[i][4] = data.instance(i).value(4); // velocity
-            output[i][0] = data.instance(i).value(5); // next x
-            output[i][1] = data.instance(i).value(6); // next y
-        }
+        populateDataArrays(data, input, output);
 
         trainingSet = new BasicMLDataSet(input, output);
+
+        // Create the neural network
         network.addLayer(new BasicLayer(null, true, data.numAttributes() - 1));  // Input layer
-
-    }
-
-    private static void addNeuralNetworkLayers() {
-//        network.addLayer(new BasicLayer(null, true, 5));  // Input layer with 5 neurons
-        network.addLayer(new BasicLayer(new ActivationReLU(), true, 10));  // Hidden layer 1 with 10 neurons
-        network.addLayer(new BasicLayer(new ActivationReLU(), true, 10));  // Hidden layer 2 with 10 neurons
-        network.addLayer(new BasicLayer(new ActivationLinear(), false, 2));  // Output layer with 2 neurons
+        network.addLayer(new BasicLayer(new ActivationSigmoid(), true, 10));  // Hidden layer 1 with 10 neurons
+        network.addLayer(new BasicLayer(new ActivationSigmoid(), false, 1));  // Output layer with 1 neuron
         network.getStructure().finalizeStructure();
         network.reset();
     }
 
     private static void configureTraining() {
+//        train = new Backpropagation(network, trainingSet, 0.1, 0.9);  // Backpropagation configuration
         train = new ResilientPropagation(network, trainingSet);  // RPROP configuration
         EarlyStoppingStrategy earlyStopping = new EarlyStoppingStrategy(trainingSet);
         train.addStrategy(earlyStopping);
@@ -89,7 +91,7 @@ public class NeuralNetwork {
             train.iteration();
             System.out.println("Epoch #" + epoch + " Error: " + train.getError());
             epoch++;
-            if (train.getError() < 0.1) break;
+//            if (train.getError() < 0.1 || epoch > 500) break;
         }
         train.finishTraining();
         Encog.getInstance().shutdown();
@@ -99,21 +101,29 @@ public class NeuralNetwork {
         System.out.println("Results for Autobot dataset:");
         for (MLDataPair pair : trainingSet) {
             final MLData outputData = network.compute(pair.getInput());
-            System.out.printf("Input: %s - Expected: [%.1f, %.1f] - Output: [%.1f, %.1f]%n",
-                    pair.getInput().toString(), pair.getIdeal().getData(0), pair.getIdeal().getData(1),
-                    outputData.getData(0), outputData.getData(1));
+            System.out.print("Input: " + pair.getInput().toString() + " - ");
+            System.out.print("Expected: " + pair.getIdeal().getData(0) + " - ");
+            System.out.println("Output: " + outputData.getData(0));
         }
     }
-    */
 
+    // ===
+    // UTILS
+    private static void populateDataArrays(Instances data, double[][] input, double[][] output) {
+        for (int i = 0; i < data.numInstances(); i++) {
+            for (int j = 0; j < data.numAttributes() - 1; j++) {
+                input[i][j] = data.instance(i).value(j);
+            }
+            // Ensure the output array is correctly populated
+            for (int k = 0; k < output[i].length; k++) {
+                output[i][k] = data.instance(i).value(data.numAttributes() - output[i].length + k);
+            }
+        }
+    }
 
     public static void main(String[] args) throws IOException {
-        String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyAngle", "enemyHeading", "myGunToEnemyAngle", "firePower", "hit"};
-        initDataCollection(attributesNames, 1);
-        addInstance(100, 5, 80, 10, 10, 1, 1);
-        addInstance(200, 6, 90, 10, 8, 2, 1);
-        addInstance(300, 5, 92, 15, 5, 1, 0);
-        saveDatasetFile();
-//        trainNetwork();
+        // create dataset
+        // normalize data
+        trainNetwork();
     }
 }

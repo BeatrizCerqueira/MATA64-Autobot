@@ -10,9 +10,8 @@ import java.io.File;
 
 public class DataNormalizer {
 
-    private static final String filename = "Autobot.arff";
-    //    private static final String filepath = "robots/autobot/neural/data/" + filename;
-    private static final String filepath = "C:/robocode/robots/autobot/neural/data/" + filename;
+    private static final String filepath = "robots/autobot/neural/data/Autobot.arff";
+//    private static final String filepath = "C:/robocode/robots/autobot/neural/data/" + filename;
 
 
     public static void normalizeData() throws Exception {
