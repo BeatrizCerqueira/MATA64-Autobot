@@ -64,7 +64,8 @@ public class Autobot extends AdvancedRobot {
         Fuzzy.init();
 
         out.println("Training Neural Network...");
-        String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyAngle", "enemyHeading", "myGunToEnemyAngle", "firePower", "hit"};
+//        String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyAngle", "enemyHeading", "myGunToEnemyAngle", "firePower", "hit"};
+        String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun", "hit"};
         NeuralNetwork.initDataCollection(attributesNames, 1);
 
 //        try {
@@ -347,9 +348,15 @@ public class Autobot extends AdvancedRobot {
 
                 BulletResult bulletResult = new BulletResult(enemySnapshot, myGunToEnemyAngle, firePower, hasHit);
 
+                double enemyDistance = enemySnapshot.getDistance();
+                double enemyVelocity = enemySnapshot.getVelocity();
+                double enemyDirectionRelativeToGun = Math.cos(Math.toRadians(getGunHeading() - enemyBot.getHeading())); // TODO: Calculate this value
+
+
                 try {
 //                    Bayes.recordBulletResult(bulletResult);
-                    updateNeuralNetworkDataset(bulletResult);
+//                    updateNeuralNetworkDataset(bulletResult);
+                    updateNeuralNetworkDataset(enemyDistance, enemyVelocity, enemyDirectionRelativeToGun, hasHit);
                     activeBullets.remove(activeBullet);
 
                     return;
@@ -380,6 +387,10 @@ public class Autobot extends AdvancedRobot {
 
     private void updateNeuralNetworkDataset(BulletResult bulletResult) {
         NeuralNetwork.addInstance(bulletResult.enemy().getDistance(), bulletResult.enemy().getVelocity(), bulletResult.enemy().getAngle(), bulletResult.enemy().getHeading(), bulletResult.myGunToEnemyAngle(), bulletResult.firePower(), bulletResult.hasHit() ? 1 : 0);
+    }
+
+    private void updateNeuralNetworkDataset(double enemyDistance, double enemyVelocity, double enemyAngleRelativeToGun, boolean hit) {
+        NeuralNetwork.addInstance(enemyDistance, enemyVelocity, enemyAngleRelativeToGun, hit ? 1 : 0);
     }
 
     // ============= OTHERS ================

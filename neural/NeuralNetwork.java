@@ -1,23 +1,31 @@
 package autobot.neural;
 
 
-import org.encog.Encog;
-import org.encog.engine.network.activation.ActivationSigmoid;
-import org.encog.ml.data.MLData;
-import org.encog.ml.data.MLDataPair;
-import org.encog.ml.data.basic.BasicMLDataSet;
-import org.encog.ml.train.MLTrain;
-import org.encog.ml.train.strategy.end.EarlyStoppingStrategy;
-import org.encog.neural.networks.BasicNetwork;
-import org.encog.neural.networks.layers.BasicLayer;
-import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
-import weka.core.Instances;
-import weka.core.converters.ConverterUtils;
-
 import java.io.IOException;
 
 public class NeuralNetwork {
 
+    // Passo a passo
+    // 1. Coletar dados
+    // 2. Preparar os dados
+    // 2.1. Normalizar os dados
+    // 2.2. Dividir os dados em treino e teste
+    // 3. Definir a arquitetura da rede neural
+    // 3.1. Definir o número de camadas e neurônios
+    // 3.2. Definir a função de ativação
+    // 3.3 Inicializar os pesos (como? técncias de inicialização xavier?)
+    // 4. Treinar a rede neural
+    // 4.1 Função de custo (MSE, Cross-Entropy)??
+    // 4.2 Otimizador (SGD, Adam, Backpropagation, RPROP, etc)???
+    // 5. Avaliar a rede neural
+    // 5.1. Métricas de avaliação (Acurácia, Precisão, Recall, F1-Score, etc)?
+    // 5.2. Matriz de confusão?
+    // 5.3. Curva ROC?
+    // 5.4. Curva de aprendizado?
+
+    // TODO: make methods non-static so i can declare the neural network as a field, with different attributes
+    // TODO: set activation function as parameter
+    // TODO: divide data folders?
     // ========================
     // ROBOCODE Integration
     static FileHandler fileHandler = new FileHandler();
@@ -38,92 +46,8 @@ public class NeuralNetwork {
     }
 
 
-    // ========================
-    // Neural network training
-    static BasicMLDataSet trainingSet;
-    static BasicNetwork network = new BasicNetwork();
-    static MLTrain train;
-
-    private static void trainNetwork() {
-        try {
-            buildNeuralNetwork();
-            configureTraining();
-            runTraining();
-            printTrainingResults();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static void buildNeuralNetwork() throws Exception {
-        // Load the dataset
-//        String filepath = "robots/autobot/neural/data/Autobot_normalized.arff";
-        String filepath = "C:/robocode/robots/autobot/neural/data/Autobot_normalized.arff";
-        ConverterUtils.DataSource source = new ConverterUtils.DataSource(filepath);
-        Instances data = source.getDataSet();
-        data.setClassIndex(data.numAttributes() - 1);
-
-        // Prepare the input and output arrays
-        double[][] input = new double[data.numInstances()][data.numAttributes() - 1];
-        double[][] output = new double[data.numInstances()][1];
-        populateDataArrays(data, input, output);
-
-        trainingSet = new BasicMLDataSet(input, output);
-
-        // Create the neural network
-        network.addLayer(new BasicLayer(null, true, data.numAttributes() - 1));  // Input layer
-        network.addLayer(new BasicLayer(new ActivationSigmoid(), true, 10));  // Hidden layer 1 with 10 neurons
-        network.addLayer(new BasicLayer(new ActivationSigmoid(), false, 1));  // Output layer with 1 neuron
-        network.getStructure().finalizeStructure();
-        network.reset();
-    }
-
-    private static void configureTraining() {
-//        train = new Backpropagation(network, trainingSet, 0.1, 0.9);  // Backpropagation configuration
-        train = new ResilientPropagation(network, trainingSet);  // RPROP configuration
-        EarlyStoppingStrategy earlyStopping = new EarlyStoppingStrategy(trainingSet);
-        train.addStrategy(earlyStopping);
-    }
-
-    private static void runTraining() {
-        int epoch = 1;
-        while (!train.isTrainingDone()) {
-            train.iteration();
-            System.out.println("Epoch #" + epoch + " Error: " + train.getError());
-            epoch++;
-//            if (train.getError() < 0.1 || epoch > 500) break;
-        }
-        train.finishTraining();
-        Encog.getInstance().shutdown();
-    }
-
-    private static void printTrainingResults() {
-        System.out.println("Results for Autobot dataset:");
-        for (MLDataPair pair : trainingSet) {
-            final MLData outputData = network.compute(pair.getInput());
-            System.out.print("Input: " + pair.getInput().toString() + " - ");
-            System.out.print("Expected: " + pair.getIdeal().getData(0) + " - ");
-            System.out.println("Output: " + outputData.getData(0));
-        }
-    }
-
-    // ===
-    // UTILS
-    private static void populateDataArrays(Instances data, double[][] input, double[][] output) {
-        for (int i = 0; i < data.numInstances(); i++) {
-            for (int j = 0; j < data.numAttributes() - 1; j++) {
-                input[i][j] = data.instance(i).value(j);
-            }
-            // Ensure the output array is correctly populated
-            for (int k = 0; k < output[i].length; k++) {
-                output[i][k] = data.instance(i).value(data.numAttributes() - output[i].length + k);
-            }
-        }
-    }
-
     public static void main(String[] args) throws IOException {
         // create dataset
         // normalize data
-        trainNetwork();
     }
 }
