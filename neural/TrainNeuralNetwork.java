@@ -110,7 +110,7 @@ public class TrainNeuralNetwork {
         }
     }
 
-''    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
         // create dataset
         // normalize data
         trainNetwork();
