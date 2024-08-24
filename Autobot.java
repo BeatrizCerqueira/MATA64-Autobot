@@ -3,7 +3,7 @@ package autobot;
 
 import autobot.fuzzy.Fuzzy;
 import autobot.genetic.GeneticAlgorithm;
-import autobot.neural.NeuralNetwork;
+import autobot.neural.drafts.NeuralNetwork;
 import autobot.prolog.Prolog;
 import autobot.records.ActiveBullet;
 import autobot.utils.Consts;

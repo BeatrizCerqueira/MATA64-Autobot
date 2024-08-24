@@ -101,6 +101,13 @@ public class NN {
         System.out.println("Network saved successfully to " + networkFile.getAbsolutePath());
     }
 
+    private static BasicNetwork loadNetwork() {
+        String filename = "AutobotNetwork.eg";
+        File networkFile = new File(filepath + filename);
+        BasicNetwork loadedNetwork = (BasicNetwork) EncogDirectoryPersistence.loadObject(networkFile);
+        System.out.println("Network loaded successfully from " + networkFile.getAbsolutePath());
+        return loadedNetwork;
+    }
 
     public static void main(String[] args) {
         // load training dataset
@@ -117,9 +124,13 @@ public class NN {
         saveNetwork(trainingNetwork);
 
         // load testing dataset
+        BasicMLDataSet testingSet = getDataSet("AutobotTesting.arff", 2);
+
         // load network saved from training
-        // load testing dataset
+        BasicNetwork testingNetwork = loadNetwork();
+
         // test loaded network
+        printDatasetResults(testingNetwork, testingSet);
 
     }
 
