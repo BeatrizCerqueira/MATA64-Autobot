@@ -6,7 +6,6 @@ import autobot.genetic.GeneticAlgorithm;
 import autobot.neural.NeuralNetwork;
 import autobot.prolog.Prolog;
 import autobot.records.ActiveBullet;
-import autobot.records.BulletResult;
 import autobot.utils.Consts;
 import autobot.utils.MathUtils;
 import autobot.utils.draw.Draw;
@@ -65,7 +64,7 @@ public class Autobot extends AdvancedRobot {
 
         out.println("Training Neural Network...");
 //        String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyAngle", "enemyHeading", "myGunToEnemyAngle", "firePower", "hit"};
-        String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun", "hit", "notHit"};
+        String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun", "notHit", "hit"};
         NeuralNetwork.initDataCollection(attributesNames, 2);
 
 //        try {
@@ -172,10 +171,6 @@ public class Autobot extends AdvancedRobot {
 
     private void handleSetFire() {
 
-        double enemyDistance = enemyBot.getDistance();
-        double enemyVelocity = enemyBot.getVelocity();
-        double enemyAngle = enemyBot.getAngle();
-        double enemyHeading = enemyBot.getHeading();
         double myGunToEnemy = this.gunAngleAfterRotation;
 
         boolean shouldFire = (getGunHeat() == 0) && (getEnergy() > Consts.MIN_LIFE_TO_FIRE);
@@ -369,28 +364,9 @@ public class Autobot extends AdvancedRobot {
     }
 
     // ============= REDES NEURAIS ================
-/*
-
-    // another option for using neural network: predict enemy position
-    private void updateNeuralNetworkDataset() {
-        String[] attributesNames = {"currentX", "currentY", "enemyAngle", "enemyHeading", "velocity", "nextX", "nextY"};
-        //"currentX", "currentY", "enemyAngle", "enemyHeading", "velocity", "prediction"
-        double currentX = enemyBot.getLocation().getX();
-        double currentY = enemyBot.getLocation().getY();
-        double enemyAngle = enemyBot.getAngle();
-        double enemyHeading = enemyBot.getHeading();
-        double velocity = enemyBot.getVelocity();
-        double prediction = 0;
-        NeuralNetwork.addInstance(currentX, currentY, enemyAngle, enemyHeading, velocity, prediction);
-    }
-*/
-
-    private void updateNeuralNetworkDataset(BulletResult bulletResult) {
-        NeuralNetwork.addInstance(bulletResult.enemy().getDistance(), bulletResult.enemy().getVelocity(), bulletResult.enemy().getAngle(), bulletResult.enemy().getHeading(), bulletResult.myGunToEnemyAngle(), bulletResult.firePower(), bulletResult.hasHit() ? 1 : 0);
-    }
-
     private void updateNeuralNetworkDataset(double enemyDistance, double enemyVelocity, double enemyAngleRelativeToGun, boolean hit) {
-        NeuralNetwork.addInstance(enemyDistance, enemyVelocity, enemyAngleRelativeToGun, hit ? 1 : 0, hit ? 0 : 1);
+        //  {"enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun", "notHit", "hit"};
+        NeuralNetwork.addInstance(enemyDistance, enemyVelocity, enemyAngleRelativeToGun, hit ? 0 : 1, hit ? 1 : 0);
     }
 
     // ============= OTHERS ================

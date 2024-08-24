@@ -14,6 +14,7 @@ import weka.core.Instances;
 import weka.core.converters.ConverterUtils;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class TrainNeuralNetwork {
 
@@ -65,7 +66,9 @@ public class TrainNeuralNetwork {
     }
 
     private static void configureTraining() {
-//        train = new Backpropagation(network, trainingSet, 0.01, 0.9);  // Backpropagation configuration
+//        train = new Backpropagation(network, dataset, 0.01, 0.9);  // Backpropagation configuration
+        // Backprogation did not converged. More tem 50k epochs and error still high
+
         train = new ResilientPropagation(network, dataset);  // RPROP configuration
         train.addStrategy(new StoppingStrategy(10)); // Stop training after 10 epochs without improvement
 
@@ -80,7 +83,6 @@ public class TrainNeuralNetwork {
             train.iteration();
             System.out.println("Epoch #" + epoch + " Error: " + train.getError());
             epoch++;
-//            if (train.getError() < 0.1 || epoch > 500) break;
         }
         train.finishTraining();
         Encog.getInstance().shutdown();
@@ -90,9 +92,9 @@ public class TrainNeuralNetwork {
         System.out.println("Results for Autobot dataset:");
         for (MLDataPair pair : dataset) {
             final MLData outputData = network.compute(pair.getInput());
-            System.out.print("Input: " + pair.getInput().toString() + " - ");
-            System.out.print("Expected: " + pair.getIdeal().toString() + " - ");
-            System.out.println("Output: " + outputData.toString());
+            System.out.print("Input: " + Arrays.toString(pair.getInput().getData()) + " - ");
+            System.out.print("Expected: " + Arrays.toString(pair.getIdeal().getData()) + " - ");
+            System.out.println("Output: " + Arrays.toString(outputData.getData()));
         }
     }
 
