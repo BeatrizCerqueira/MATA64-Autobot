@@ -65,8 +65,8 @@ public class Autobot extends AdvancedRobot {
 
         out.println("Training Neural Network...");
 //        String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyAngle", "enemyHeading", "myGunToEnemyAngle", "firePower", "hit"};
-        String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun", "hit"};
-        NeuralNetwork.initDataCollection(attributesNames, 1);
+        String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun", "hit", "notHit"};
+        NeuralNetwork.initDataCollection(attributesNames, 2);
 
 //        try {
 //            Bayes.init();
@@ -343,26 +343,26 @@ public class Autobot extends AdvancedRobot {
             if (activeBullet.bulletInstance().equals(eventBullet)) {
 
                 Enemy enemySnapshot = activeBullet.enemySnapshot();
-                double myGunToEnemyAngle = activeBullet.myGunToEnemyAngle();
-                double firePower = activeBullet.firePower();
+//                double myGunToEnemyAngle = activeBullet.myGunToEnemyAngle();
+//                double firePower = activeBullet.firePower();
 
-                BulletResult bulletResult = new BulletResult(enemySnapshot, myGunToEnemyAngle, firePower, hasHit);
+//                BulletResult bulletResult = new BulletResult(enemySnapshot, myGunToEnemyAngle, firePower, hasHit);
+//                activeBullets.remove(activeBullet);
 
-                double enemyDistance = enemySnapshot.getDistance();
-                double enemyVelocity = enemySnapshot.getVelocity();
+                double enemyDistance = enemySnapshot.getDistance() / 1000;
+                double enemyVelocity = enemySnapshot.getVelocity() / 8;
                 double enemyDirectionRelativeToGun = Math.cos(Math.toRadians(getGunHeading() - enemyBot.getHeading())); // TODO: Calculate this value
 
+                updateNeuralNetworkDataset(enemyDistance, enemyVelocity, enemyDirectionRelativeToGun, hasHit);
 
+                /*
                 try {
-//                    Bayes.recordBulletResult(bulletResult);
-//                    updateNeuralNetworkDataset(bulletResult);
-                    updateNeuralNetworkDataset(enemyDistance, enemyVelocity, enemyDirectionRelativeToGun, hasHit);
-                    activeBullets.remove(activeBullet);
-
-                    return;
+                    Bayes.recordBulletResult(bulletResult);
+                    updateNeuralNetworkDataset(bulletResult);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
+                */
 
             }
         }
@@ -390,7 +390,7 @@ public class Autobot extends AdvancedRobot {
     }
 
     private void updateNeuralNetworkDataset(double enemyDistance, double enemyVelocity, double enemyAngleRelativeToGun, boolean hit) {
-        NeuralNetwork.addInstance(enemyDistance, enemyVelocity, enemyAngleRelativeToGun, hit ? 1 : 0);
+        NeuralNetwork.addInstance(enemyDistance, enemyVelocity, enemyAngleRelativeToGun, hit ? 1 : 0, hit ? 0 : 1);
     }
 
     // ============= OTHERS ================

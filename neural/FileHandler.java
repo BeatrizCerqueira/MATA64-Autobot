@@ -50,9 +50,8 @@ public class FileHandler {
     }
 
     public void loadDatasetFile() {
-        BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(filepath));
+            BufferedReader reader = new BufferedReader(new FileReader(filepath));
             ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
             Instances existingData = arff.getData();
             reader.close();

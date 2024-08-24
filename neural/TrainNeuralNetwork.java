@@ -19,26 +19,21 @@ public class TrainNeuralNetwork {
 
     // ========================
     // Neural network training
-    static BasicMLDataSet trainingSet;
+    static BasicMLDataSet dataset;
     static BasicNetwork network = new BasicNetwork();
     static MLTrain train;
 
     private static void trainNetwork() {
-        try {
-            buildNeuralNetwork();
-            configureTraining();
-            runTraining();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        buildNeuralNetwork();
+        configureTraining();
+        runTraining();
     }
 
-    private static void buildNeuralNetwork() throws Exception {
+    private static void buildNeuralNetwork() {
+
         // Load the dataset
-//        String filepath = "robots/autobot/neural/data/Autobot_normalized.arff";
         String filepath = "C:/robocode/robots/autobot/neural/data/Autobot_normalized.arff";
-        ConverterUtils.DataSource source = new ConverterUtils.DataSource(filepath);
-        Instances data = source.getDataSet();
+        Instances data = loadDataset(filepath);
         data.setClassIndex(data.numAttributes() - 1);
 
         // Prepare the input and output arrays
@@ -46,23 +41,37 @@ public class TrainNeuralNetwork {
         double[][] output = new double[data.numInstances()][1];
         populateDataArrays(data, input, output);
 
-        trainingSet = new BasicMLDataSet(input, output);
+        dataset = new BasicMLDataSet(input, output);
+        network = createNetwork(input[0].length, 10, output[0].length);
+    }
 
-        // Create the neural network
-        network.addLayer(new BasicLayer(null, true, data.numAttributes() - 1));  // Input layer
-        network.addLayer(new BasicLayer(new ActivationSigmoid(), true, 10));  // Hidden layer 1
-        network.addLayer(new BasicLayer(new ActivationSigmoid(), false, 1));  // Output layer
+    private static Instances loadDataset(String filepath) {
+        try {
+            ConverterUtils.DataSource source = new ConverterUtils.DataSource(filepath);
+            return source.getDataSet();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static BasicNetwork createNetwork(int inputCount, int hiddenCount, int outputCount) {
+        BasicNetwork network = new BasicNetwork();
+        network.addLayer(new BasicLayer(null, true, inputCount));
+        network.addLayer(new BasicLayer(new ActivationSigmoid(), true, hiddenCount));
+        network.addLayer(new BasicLayer(new ActivationSigmoid(), false, outputCount));
         network.getStructure().finalizeStructure();
         network.reset();
+        return network;
     }
 
     private static void configureTraining() {
 //        train = new Backpropagation(network, trainingSet, 0.01, 0.9);  // Backpropagation configuration
-        train = new ResilientPropagation(network, trainingSet);  // RPROP configuration
+        train = new ResilientPropagation(network, dataset);  // RPROP configuration
         train.addStrategy(new StoppingStrategy(10)); // Stop training after 10 epochs without improvement
 
 //        EarlyStoppingStrategy earlyStopping = new EarlyStoppingStrategy(trainingSet);
 //        train.addStrategy(earlyStopping);
+
     }
 
     private static void runTraining() {
@@ -79,11 +88,11 @@ public class TrainNeuralNetwork {
 
     private static void printTrainingResults() {
         System.out.println("Results for Autobot dataset:");
-        for (MLDataPair pair : trainingSet) {
+        for (MLDataPair pair : dataset) {
             final MLData outputData = network.compute(pair.getInput());
             System.out.print("Input: " + pair.getInput().toString() + " - ");
-            System.out.print("Expected: " + pair.getIdeal().getData(0) + " - ");
-            System.out.println("Output: " + outputData.getData(0));
+            System.out.print("Expected: " + pair.getIdeal().toString() + " - ");
+            System.out.println("Output: " + outputData.toString());
         }
     }
 
@@ -91,7 +100,7 @@ public class TrainNeuralNetwork {
     // UTILS
     private static void populateDataArrays(Instances data, double[][] input, double[][] output) {
         for (int i = 0; i < data.numInstances(); i++) {
-            for (int j = 0; j < data.numAttributes() - 1; j++) {
+            for (int j = 0; j < data.numAttributes() - output[i].length; j++) {
                 input[i][j] = data.instance(i).value(j);
             }
             // Ensure the output array is correctly populated
