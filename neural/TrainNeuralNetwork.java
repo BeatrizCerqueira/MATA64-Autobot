@@ -32,7 +32,7 @@ public class TrainNeuralNetwork {
     private static void buildNeuralNetwork() {
 
         // Load the dataset
-        String filepath = "C:/robocode/robots/autobot/neural/data/Autobot_normalized.arff";
+        String filepath = "C:/robocode/robots/autobot/neural/data/Autobot.arff";
         Instances data = loadDataset(filepath);
         data.setClassIndex(data.numAttributes() - 1);
 
@@ -110,7 +110,7 @@ public class TrainNeuralNetwork {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+''    public static void main(String[] args) throws IOException {
         // create dataset
         // normalize data
         trainNetwork();
