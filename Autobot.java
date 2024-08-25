@@ -3,6 +3,8 @@ package autobot;
 
 import autobot.fuzzy.Fuzzy;
 import autobot.genetic.GeneticAlgorithm;
+import autobot.neural.Dataset;
+import autobot.neural.NeuralNetwork;
 import autobot.prolog.Prolog;
 import autobot.records.ActiveBullet;
 import autobot.utils.Consts;
@@ -39,6 +41,13 @@ public class Autobot extends AdvancedRobot {
     // Bayes Variables:
     double gunAngleAfterRotation;
 
+    // Neural Network variables:
+    // input: "enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun"
+    // output: "notHit", "hit"
+    NeuralNetwork neuralNetwork = new NeuralNetwork("Autobot", 3, 10, 2);
+    Dataset neuralNetworkDataset = new Dataset("Autobot.arff");
+    // {"enemyDistance", "enemyVelocity", "enemyAngle", "enemyHeading", "myGunToEnemyAngle", "firePower", "hit"};
+
     public void run() {
 
         initAutobot();
@@ -60,10 +69,9 @@ public class Autobot extends AdvancedRobot {
         Prolog.loadPrologFile();
         GeneticAlgorithm.init(getRoundNum());
         Fuzzy.init();
+        neuralNetwork.init();
 
-        out.println("Training Neural Network...");
-//        String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyAngle", "enemyHeading", "myGunToEnemyAngle", "firePower", "hit"};
-        String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun", "notHit", "hit"};
+//        out.println("Training Neural Network...");
 //        NeuralNetwork.initDataCollection(attributesNames, 2);
 
 //        try {
@@ -81,6 +89,8 @@ public class Autobot extends AdvancedRobot {
 
     public void onRoundEnded(RoundEndedEvent event) {
         GeneticAlgorithm.saveGeneticData();
+        neuralNetwork.trainAndUpdateNetwork(neuralNetworkDataset);
+//        neuralNetwork.finishTraining();
 //        NeuralNetwork.saveDatasetFile();
 
 //      Bayes.saveDataForNextRound();
@@ -343,9 +353,12 @@ public class Autobot extends AdvancedRobot {
 //                BulletResult bulletResult = new BulletResult(enemySnapshot, myGunToEnemyAngle, firePower, hasHit);
 //                activeBullets.remove(activeBullet);
 
+
+                // Normalize inputs and add instance to dataset
+                // Variables: {"enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun", "notHit", "hit"};
                 double enemyDistance = enemySnapshot.getDistance() / 1000;
                 double enemyVelocity = enemySnapshot.getVelocity() / 8;
-                double enemyDirectionRelativeToGun = Math.cos(Math.toRadians(getGunHeading() - enemyBot.getHeading())); // TODO: Calculate this value
+                double enemyDirectionRelativeToGun = Math.cos(Math.toRadians(getGunHeading() - enemyBot.getHeading())); // 1 if enemy is in front of gun, -1 otherwise
 
                 updateNeuralNetworkDataset(enemyDistance, enemyVelocity, enemyDirectionRelativeToGun, hasHit);
 
@@ -363,10 +376,13 @@ public class Autobot extends AdvancedRobot {
     }
 
     // ============= REDES NEURAIS ================
-    private void updateNeuralNetworkDataset(double enemyDistance, double enemyVelocity, double enemyAngleRelativeToGun, boolean hit) {
+    private void updateNeuralNetworkDataset(double enemyDistance, double enemyVelocity, double enemyAngleRelativeToGun, boolean hasHit) {
         //  {"enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun", "notHit", "hit"};
-//        NeuralNetwork.addInstance(enemyDistance, enemyVelocity, enemyAngleRelativeToGun, hit ? 0 : 1, hit ? 1 : 0);
+//        NeuralNetwork.addInstance(enemyDistance, enemyVelocity, enemyAngleRelativeToGun, hasHit ? 0 : 1, hasHit ? 1 : 0);
+//        neuralNetwork.updateDataset(enemyDistance, enemyVelocity, enemyAngleRelativeToGun, hasHit ? 0 : 1, hasHit ? 1 : 0);
+        neuralNetworkDataset.addInstance(enemyDistance, enemyVelocity, enemyAngleRelativeToGun, hasHit ? 0 : 1, hasHit ? 1 : 0);
     }
+
 
     // ============= OTHERS ================
 

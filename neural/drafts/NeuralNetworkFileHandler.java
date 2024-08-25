@@ -1,8 +1,6 @@
 package autobot.neural.drafts;
 
 
-import autobot.neural.FileHandler;
-
 import java.io.IOException;
 
 public class NeuralNetworkFileHandler {
