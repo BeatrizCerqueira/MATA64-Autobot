@@ -1,4 +1,4 @@
-package autobot.neural;
+package autobot.neural.drafts;
 
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;

@@ -1,4 +1,4 @@
-package autobot.neural;
+package autobot.neural.drafts;
 
 import org.encog.Encog;
 import org.encog.engine.network.activation.ActivationSigmoid;
