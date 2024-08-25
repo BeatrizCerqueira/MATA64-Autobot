@@ -1,61 +1,179 @@
 package autobot.neural.drafts;
 
+import org.encog.Encog;
+import org.encog.engine.network.activation.ActivationSigmoid;
+import org.encog.ml.data.MLData;
+import org.encog.ml.data.MLDataPair;
+import org.encog.ml.data.basic.BasicMLDataSet;
+import org.encog.ml.train.MLTrain;
+import org.encog.ml.train.strategy.end.StoppingStrategy;
+import org.encog.neural.networks.BasicNetwork;
+import org.encog.neural.networks.layers.BasicLayer;
+import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
+import org.encog.persist.EncogDirectoryPersistence;
+import weka.core.Instances;
+import weka.core.converters.ArffSaver;
+import weka.core.converters.ConverterUtils;
 
-import autobot.neural.FileHandler;
-
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Random;
 
 public class NeuralNetwork {
+    static String filepath = "C:/robocode/robots/autobot/neural/data/";
 
-    // Passo a passo
-    // [OK] 1. Coletar dados
-    // [OK] 2. Preparar os dados
-    // [OK] 2.1. Normalizar os dados
-    // [--] 2.2. Dividir os dados em treino e teste
-    // [OK] 3. Definir a arquitetura da rede neural
-    // [OK] 3.1. Definir o número de camadas e neurônios
-    // [OK] 3.2. Definir a função de ativação
-    // [??] 3.3 Inicializar os pesos (como? técncias de inicialização xavier?)
-    // [  ] 4. Treinar a rede neural
-    // [  ] 4.1 Função de custo (MSE, Cross-Entropy)??
-    // [OK] 4.2 Otimizador (SGD, Adam, Backpropagation, RPROP, etc)???
-    // [  ] 5. Avaliar a rede neural
-    // [  ] 5.1. Métricas de avaliação (Acurácia, Precisão, Recall, F1-Score, etc)?
-    // [  ] 5.2. Matriz de confusão?
-    // [  ] 5.3. Curva ROC?
-    // [  ] 5.4. Curva de aprendizado?
-
-
-    // ========================
-    // TODO: make methods non-static so i can declare the neural network as a field, with different attributes
-    // TODO: set activation function as parameter
-    // TODO: divide data folders?
-    // ========================
-    // ROBOCODE Integration
-    static FileHandler fileHandler = new FileHandler();
-    static int numOutputs;
-
-
-    public static void initDataCollection(String[] attributesNames, int numOutputs) {
-        fileHandler.initDataset(attributesNames);
-        NeuralNetwork.numOutputs = numOutputs;
+    // Load data from files
+    private static Instances getInstances(String filename) {
+        try {
+            ConverterUtils.DataSource source = new ConverterUtils.DataSource(filepath + filename);
+            return source.getDataSet();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static void addInstance(double... values) {
-        fileHandler.addInstances(values);   // DataHandler.addInstance(currentX, currentY, enemyAngle, enemyHeading, velocity, nextX, nextY);
+    private static BasicMLDataSet getDataSet(String filename, int outputSize) {
+
+        // Load the dataset
+        Instances data = getInstances(filename);
+        data.setClassIndex(data.numAttributes() - outputSize);
+
+        // Prepare the input and output arrays
+        double[][] input = new double[data.numInstances()][data.numAttributes() - outputSize];
+        double[][] output = new double[data.numInstances()][outputSize];
+        populateDataArrays(data, input, output);
+
+        return new BasicMLDataSet(input, output);
     }
 
-    public static void saveDatasetFile() {
-        fileHandler.updateDatasetFile();
-    }
-
-    public static void loadNeuralNetwork() {
-        // load neural network
+    private static BasicNetwork getNetwork(String filename) {
+        File networkFile = new File(filepath + filename);
+        BasicNetwork loadedNetwork = (BasicNetwork) EncogDirectoryPersistence.loadObject(networkFile);
+        System.out.println("Network loaded successfully from " + networkFile.getAbsolutePath());
+        return loadedNetwork;
     }
 
 
-    public static void main(String[] args) throws IOException {
-        // create dataset
-        // normalize data
+    private static void populateDataArrays(Instances data, double[][] input, double[][] output) {
+        for (int i = 0; i < data.numInstances(); i++) {
+            for (int j = 0; j < data.numAttributes() - output[i].length; j++) {
+                input[i][j] = data.instance(i).value(j);
+            }
+            // Ensure the output array is correctly populated
+            for (int k = 0; k < output[i].length; k++) {
+                output[i][k] = data.instance(i).value(data.numAttributes() - output[i].length + k);
+            }
+        }
+    }
+
+    private static BasicNetwork createNetworkLayers(int inputCount, int hiddenCount, int outputCount) {
+        BasicNetwork network = new BasicNetwork();
+        network.addLayer(new BasicLayer(null, true, inputCount));
+        network.addLayer(new BasicLayer(new ActivationSigmoid(), true, hiddenCount));
+        network.addLayer(new BasicLayer(new ActivationSigmoid(), false, outputCount));
+        network.getStructure().finalizeStructure();
+        network.reset();
+        return network;
+    }
+
+
+    private static void runTraining(BasicNetwork network, BasicMLDataSet dataset) {
+        System.out.println("Training the network...");
+        // Configure the training
+        MLTrain train;
+        train = new ResilientPropagation(network, dataset);  // RPROP configuration
+        train.addStrategy(new StoppingStrategy(10)); // Stop training after 10 epochs without improvement
+        // train = new Backpropagation(network, dataset, 0.01, 0.9);  // Backpropagation configuration
+        // Backprogation did not converge. More tem 50k epochs and error still high
+
+        int epoch = 1;
+        while (!train.isTrainingDone()) {
+            train.iteration();
+//            System.out.println("Epoch #" + epoch + " Error: " + train.getError());
+            epoch++;
+        }
+        train.finishTraining();
+        System.out.println("Training complete. " + epoch + " epochs. " + train.getError() + " error.");
+        Encog.getInstance().shutdown();
+    }
+
+    private static void splitDataset(String filename, double trainRatio) {
+        Instances data = getInstances(filename);
+        data.randomize(new Random());
+
+        int trainSize = (int) Math.round(data.numInstances() * trainRatio);
+
+        Instances trainingData = new Instances(data, 0, trainSize);
+        Instances validationData = new Instances(data, trainSize, data.numInstances() - trainSize);
+
+        saveInstances(trainingData, filename + "AutobotTraining.arff");
+        saveInstances(validationData, filename + "AutobotValidation.arff");
+
+
+    }
+
+    private static void saveInstances(Instances data, String filename) {
+        ArffSaver saver = new ArffSaver();
+        saver.setInstances(data);
+        try {
+            saver.setFile(new File(filepath + filename));
+            saver.writeBatch();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void saveNetwork(String filename, BasicNetwork network) {
+        File networkFile = new File(filepath + filename);
+        EncogDirectoryPersistence.saveObject(networkFile, network);
+        System.out.println("Network saved successfully to " + networkFile.getAbsolutePath());
+    }
+
+
+    private static void printDatasetResults(BasicNetwork network, BasicMLDataSet dataset) {
+        System.out.println("Results for dataset:");
+        for (MLDataPair pair : dataset) {
+            final MLData outputData = network.compute(pair.getInput());
+            System.out.print("Input: " + Arrays.toString(pair.getInput().getData()) + " - ");
+            System.out.print("Expected: " + Arrays.toString(pair.getIdeal().getData()) + " - ");
+            System.out.println("Output: " + Arrays.toString(outputData.getData()));
+        }
+    }
+
+
+    public void initTraining(String filename) {
+        // train network given the dataset .arff and save .eg network
+
+        // Split the dataset into training (80%) and validation (20%) sets
+        splitDataset(filename, 0.8);
+
+        // Load datasets
+        BasicMLDataSet trainingSet = getDataSet(filename + "Training.arff", 2);
+        BasicMLDataSet validationSet = getDataSet(filename + "Validation.arff", 2);
+
+        // Create default network
+        BasicNetwork trainingNetwork = createNetworkLayers(trainingSet.getInputSize(), 10, 2);
+
+        // Train network
+        runTraining(trainingNetwork, trainingSet);
+        saveNetwork(filename + "Network.eg", trainingNetwork);
+
+        // Validation
+        BasicNetwork loadedNetwork = getNetwork(filename + "Network.eg");
+
+//        printDatasetResults(trainingNetwork, trainingSet);
+//        printDatasetResults(loadedNetwork, validationSet);
+
+        System.out.println("Training Error: " + trainingNetwork.calculateError(trainingSet));
+        System.out.println("Validation Error: " + loadedNetwork.calculateError(validationSet));
+
+        System.out.println("\nTraining complete.\n");
+    }
+
+
+    public static void main(String[] args) {
+        NeuralNetwork nn = new NeuralNetwork();
+        nn.initTraining("Autobot.arff");
     }
 }
