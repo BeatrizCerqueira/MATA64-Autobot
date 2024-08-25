@@ -87,7 +87,9 @@ public class Autobot extends AdvancedRobot {
 
     public void onRoundEnded(RoundEndedEvent event) {
         GeneticAlgorithm.saveGeneticData();
+
         neuralNetwork.trainAndUpdateNetwork(neuralNetworkDataset);
+        neuralNetwork.clearDatasetFiles();
 
 //      Bayes.saveDataForNextRound();
 

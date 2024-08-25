@@ -71,23 +71,29 @@ public class NeuralNetwork {
         System.out.println("Initializing network...");
         String filename = baseFilename + networkSuffix;
         if (FileHandler.fileExists(filepath + filename))
-            network = getNetwork(filename);
+            System.out.println("Loading network...");
+        network = getNetwork(filename);
     }
 
     public void trainAndUpdateNetwork(Dataset dataset) {
-        // Save dataset on .arff file for training
-//        dataset.updateDatasetFile();
-        dataset.saveDataset();
         String datasetFilename = dataset.getFilename();
 
-        // Train network
-        initTraining(datasetFilename, 0.8);
+        // Save dataset on .arff file for training
+        dataset.saveDataset();
 
-        // Save dataset history and clear current dataset
-        dataset.saveHistoryDataset();
+        // Train network
+        initTraining(datasetFilename, 1);
 
         // Save network on .eg file, so it can be loaded on next round;
         saveNetwork(baseFilename + networkSuffix);
+    }
+
+    public void clearDatasetFiles() {
+        // Save history data
+        FileHandler.copyFileTo(filepath + baseFilename + ".arff", filepath + "history/");
+
+        // Clear dataset files already used and trained. stored in History dir
+        FileHandler.deleteFilesWithExtension(filepath, ".arff");
 
     }
 
@@ -249,10 +255,5 @@ public class NeuralNetwork {
 //        net.trainAndUpdateNetwork(new Dataset("Autobot"));
 //        net.initTraining("Autobot.arff", 0.8);
 //        net.saveNetwork("AutobotNetwork.eg");
-
-
-//        net.saveHistoryDataset("Autobot.arff");
-
-
     }
 }
