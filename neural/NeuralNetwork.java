@@ -67,7 +67,7 @@ public class NeuralNetwork {
         }
     }
 
-    private static BasicNetwork createNetwork(int inputCount, int hiddenCount, int outputCount) {
+    private static BasicNetwork createNetworkLayers(int inputCount, int hiddenCount, int outputCount) {
         BasicNetwork network = new BasicNetwork();
         network.addLayer(new BasicLayer(null, true, inputCount));
         network.addLayer(new BasicLayer(new ActivationSigmoid(), true, hiddenCount));
@@ -107,8 +107,8 @@ public class NeuralNetwork {
         Instances trainingData = new Instances(data, 0, trainSize);
         Instances validationData = new Instances(data, trainSize, data.numInstances() - trainSize);
 
-        saveInstances(trainingData, "AutobotTraining.arff");
-        saveInstances(validationData, "AutobotValidation.arff");
+        saveInstances(trainingData, filename + "AutobotTraining.arff");
+        saveInstances(validationData, filename + "AutobotValidation.arff");
 
 
     }
@@ -124,8 +124,7 @@ public class NeuralNetwork {
         }
     }
 
-    private static void saveNetwork(BasicNetwork network) {
-        String filename = "AutobotNetwork.eg";
+    private static void saveNetwork(String filename, BasicNetwork network) {
         File networkFile = new File(filepath + filename);
         EncogDirectoryPersistence.saveObject(networkFile, network);
         System.out.println("Network saved successfully to " + networkFile.getAbsolutePath());
@@ -143,29 +142,38 @@ public class NeuralNetwork {
     }
 
 
-    public static void main(String[] args) {
+    public void initTraining(String filename) {
+        // train network given the dataset .arff and save .eg network
+
         // Split the dataset into training (80%) and validation (20%) sets
-        splitDataset("Autobot.arff", 0.8);
+        splitDataset(filename, 0.8);
 
         // Load datasets
-        BasicMLDataSet trainingSet = getDataSet("AutobotTraining.arff", 2);
-        BasicMLDataSet validationSet = getDataSet("AutobotValidation.arff", 2);
+        BasicMLDataSet trainingSet = getDataSet(filename + "Training.arff", 2);
+        BasicMLDataSet validationSet = getDataSet(filename + "Validation.arff", 2);
 
         // Create default network
-        BasicNetwork trainingNetwork = createNetwork(trainingSet.getInputSize(), 10, 2);
+        BasicNetwork trainingNetwork = createNetworkLayers(trainingSet.getInputSize(), 10, 2);
 
         // Train network
         runTraining(trainingNetwork, trainingSet);
-        saveNetwork(trainingNetwork);
+        saveNetwork(filename + "Network.eg", trainingNetwork);
 
         // Validation
-        BasicNetwork loadedNetwork = getNetwork("AutobotNetwork.eg");
+        BasicNetwork loadedNetwork = getNetwork(filename + "Network.eg");
 
-//        printDatasetResults(trainingNetwork, trainigSet);
-//        printDatasetResults(testingNetwork, testingSet);
+//        printDatasetResults(trainingNetwork, trainingSet);
+//        printDatasetResults(loadedNetwork, validationSet);
 
         System.out.println("Training Error: " + trainingNetwork.calculateError(trainingSet));
         System.out.println("Validation Error: " + loadedNetwork.calculateError(validationSet));
 
+        System.out.println("\nTraining complete.\n");
+    }
+
+
+    public static void main(String[] args) {
+        NeuralNetwork nn = new NeuralNetwork();
+        nn.initTraining("Autobot.arff");
     }
 }
