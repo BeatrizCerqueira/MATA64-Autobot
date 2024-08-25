@@ -23,6 +23,7 @@ public class Enemy implements Cloneable {
     double distance;
     double heading;
     double velocity;
+    double enemyDirectionToGun;
 
     boolean isScanned = false;
 
@@ -46,6 +47,9 @@ public class Enemy implements Cloneable {
 
         setLocation(myBot);
         isScanned = true;
+
+        enemyDirectionToGun = Math.cos(Math.toRadians(myBot.getGunHeading() - heading)); // 1 if enemy is in front of gun, -1 otherwise
+
     }
 
     public double getAngle() {
@@ -66,6 +70,10 @@ public class Enemy implements Cloneable {
 
     public double getVelocity() {
         return velocity;
+    }
+
+    public double getEnemyDirectionToGun() {
+        return enemyDirectionToGun;
     }
 
     private void setLocation(AdvancedRobot myBot) {

@@ -38,10 +38,14 @@ import java.util.Random;
 // [  ] 5.3. Curva ROC?
 // [  ] 5.4. Curva de aprendizado?
 
+// Notes
+// Tipo de rede: classificação ou regressão?
+// MAE ou MSE? // metricas para regressão?
 
 public class NeuralNetwork {
     final String baseFilename;
-    final String filepath = "C:/robocode/robots/autobot/neural/data/";
+    //    final String filepath = "C:/robocode/robots/autobot/neural/data/";
+    final String filepath = "robots/autobot/neural/data/";
     final String trainingSuffix = "Training.arff";
     final String validationSuffix = "Validation.arff";
     final String networkSuffix = "Network.eg";
@@ -49,11 +53,13 @@ public class NeuralNetwork {
     int outputCount;
 
     public NeuralNetwork(String filename, int inputCount, int hiddenCount, int outputCount) {
+        System.out.println("Creating new network...");
         baseFilename = filename;
         this.network = createNetworkLayers(inputCount, hiddenCount, outputCount);
     }
 
     public NeuralNetwork(String filename) {
+        System.out.println("Loading network...");
         baseFilename = filename;
         this.network = getNetwork(filename + networkSuffix);
         outputCount = network.getOutputCount();
@@ -62,23 +68,25 @@ public class NeuralNetwork {
     // ===== Robocode Integration =====
 
     public void init() { // Check if there is saved network on file directory
+        System.out.println("Initializing network...");
         String filename = baseFilename + networkSuffix;
         if (FileHandler.fileExists(filepath + filename))
             network = getNetwork(filename);
     }
 
     public void trainAndUpdateNetwork(Dataset dataset) {
+        System.out.println("Training network with new data...");
         // save dataset on .arff file
         dataset.updateDatasetFile();
 
         // train network
         initTraining(baseFilename + ".arff", 0.8);
+        // TODO: print results of training
+        // TODO: remove .arff file? so it can restart on next round
 
         // save network on .eg file
         saveNetwork(baseFilename + networkSuffix);
 
-        // may remove .arff file? so it can restart on next round
-        // TODO: print results of training
 
         // on next round, by calling init(), will load the network from file
     }
@@ -195,7 +203,6 @@ public class NeuralNetwork {
         File networkFile = new File(filepath + filename);
         EncogDirectoryPersistence.saveObject(networkFile, network);
 
-        System.out.println();
         System.out.println("Network saved successfully to " + networkFile.getAbsolutePath());
         System.out.println();
 
@@ -238,10 +245,11 @@ public class NeuralNetwork {
 
     public static void main(String[] args) {
         NeuralNetwork net = new NeuralNetwork("Autobot", 3, 10, 2);
-//        NeuralNetwork net = new NeuralNetwork("Autobot");
         net.init();
+//        net.trainAndUpdateNetwork(new Dataset("Autobot"));
         net.initTraining("Autobot.arff", 0.8);
         net.saveNetwork("AutobotNetwork.eg");
+
 
     }
 }

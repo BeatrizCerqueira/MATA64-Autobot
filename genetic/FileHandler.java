@@ -23,7 +23,7 @@ public class FileHandler {
     public static void deleteFile() {
         File file = new File(filepath);
         if (file.delete())
-            System.out.println("File deleted successfully.");
+            System.out.println("File " + filepath + " deleted successfully.");
     }
 
     public static void saveToFile(Population population) {
@@ -37,7 +37,7 @@ public class FileHandler {
                 writer.write(separatorChromosomes); // Separator for chromosomes
                 writer.newLine();
             }
-            System.out.println("File saved successfully.");
+            System.out.println("File " + filepath + " saved successfully.");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
