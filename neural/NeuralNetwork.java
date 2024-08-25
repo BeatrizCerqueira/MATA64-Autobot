@@ -21,13 +21,16 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class NeuralNetwork {
-    static final String filepath = "C:/robocode/robots/autobot/neural/data/";
+    final String filepath = "C:/robocode/robots/autobot/neural/data/";
+    final String trainingSuffix = "Training.arff";
+    final String validationSuffix = "Validation.arff";
+    static final String networkSuffix = "Network.eg";
     BasicNetwork network;
     int outputCount;
 
 
     public NeuralNetwork(String filename) {
-        this.network = getNetwork(filename);
+        this.network = getNetwork(filename + networkSuffix);
         outputCount = network.getOutputCount();
     }
 
@@ -119,8 +122,8 @@ public class NeuralNetwork {
         Instances trainingData = new Instances(data, 0, trainSize);
         Instances validationData = new Instances(data, trainSize, data.numInstances() - trainSize);
 
-        saveInstances(trainingData, filename + "AutobotTraining.arff");
-        saveInstances(validationData, filename + "AutobotValidation.arff");
+        saveInstances(trainingData, filename.replace(".arff", trainingSuffix));
+        saveInstances(validationData, filename.replace(".arff", validationSuffix));
 
 
     }
@@ -154,20 +157,20 @@ public class NeuralNetwork {
     }
 
 
-    public void initTraining(String filename) {
+    public void initTraining(String filename, double trainRatio) {
         // train network given the dataset .arff and save .eg network
 
         // Split the dataset into training and validation
-        splitDataset(filename, 0.8);
+        splitDataset(filename, trainRatio);
 
         // Load datasets
-        BasicMLDataSet trainingSet = getDataSet(filename.replace(".arff", "Training.arff"), 2);
-        BasicMLDataSet validationSet = getDataSet(filename.replace(".arff", "Validation.arff"), 2);
+        BasicMLDataSet trainingSet = getDataSet(filename.replace(".arff", trainingSuffix), 2);
+        BasicMLDataSet validationSet = getDataSet(filename.replace(".arff", validationSuffix), 2);
 
 
         // Train network
         runTraining(trainingSet);
-        saveNetwork(filename + "Network.eg");
+        saveNetwork(filename.replace(".arff", networkSuffix));
 
         System.out.println("Training Error: " + network.calculateError(trainingSet));
         System.out.println("Validation Error: " + network.calculateError(validationSet));
@@ -180,7 +183,8 @@ public class NeuralNetwork {
 
 
     public static void main(String[] args) {
-        NeuralNetwork net = new NeuralNetwork(3, 10, 2);
-        net.initTraining("Autobot.arff");
+//        NeuralNetwork net = new NeuralNetwork(3, 10, 2);
+        NeuralNetwork net = new NeuralNetwork("Autobot");
+        net.initTraining("Autobot.arff", 0.8);
     }
 }
