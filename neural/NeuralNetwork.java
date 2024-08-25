@@ -44,18 +44,21 @@ import java.util.Random;
 
 public class NeuralNetwork {
     final String baseFilename;
-    //    final String filepath = "C:/robocode/robots/autobot/neural/data/";
-    final String filepath = "robots/autobot/neural/data/";
+    final String filepath = "C:/robocode/robots/autobot/neural/data/";
+    //    final String filepath = "robots/autobot/neural/data/";
     final String trainingSuffix = "Training.arff";
     final String validationSuffix = "Validation.arff";
     final String networkSuffix = "Network.eg";
     BasicNetwork network;
+
     int outputCount;
+    final int trainRatio = 1;
 
     public NeuralNetwork(String filename, int inputCount, int hiddenCount, int outputCount) {
         System.out.println("Creating new network...");
         baseFilename = filename;
         this.network = createNetworkLayers(inputCount, hiddenCount, outputCount);
+        this.outputCount = outputCount;
     }
 
     public NeuralNetwork(String filename) {
@@ -70,9 +73,10 @@ public class NeuralNetwork {
     public void init() { // Check if there is saved network on file directory
         System.out.println("Initializing network...");
         String filename = baseFilename + networkSuffix;
-        if (FileHandler.fileExists(filepath + filename))
+        if (FileHandler.fileExists(filepath + filename)) {
             System.out.println("Loading network...");
-        network = getNetwork(filename);
+            network = getNetwork(filename);
+        }
     }
 
     public void trainAndUpdateNetwork(Dataset dataset) {
@@ -82,7 +86,7 @@ public class NeuralNetwork {
         dataset.saveDataset();
 
         // Train network
-        initTraining(datasetFilename, 1);
+        initTraining(datasetFilename, trainRatio);
 
         // Save network on .eg file, so it can be loaded on next round;
         saveNetwork(baseFilename + networkSuffix);
@@ -250,8 +254,15 @@ public class NeuralNetwork {
 
     public static void main(String[] args) {
         NeuralNetwork net = new NeuralNetwork("Autobot", 3, 10, 2);
+        net.init();
 
-//        net.init();
+        String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun", "notHit", "hit"};
+        Dataset dataset = new Dataset("Autobot.arff", attributesNames);
+        dataset.addInstance(1, 2, 3, 0, 1);
+
+        net.trainAndUpdateNetwork(dataset);
+
+        net.clearDatasetFiles();
 //        net.trainAndUpdateNetwork(new Dataset("Autobot"));
 //        net.initTraining("Autobot.arff", 0.8);
 //        net.saveNetwork("AutobotNetwork.eg");
