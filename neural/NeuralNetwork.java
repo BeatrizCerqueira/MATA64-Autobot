@@ -75,26 +75,26 @@ public class NeuralNetwork {
     }
 
     public void trainAndUpdateNetwork(Dataset dataset) {
-        System.out.println("Training network with new data...");
-        // save dataset on .arff file
-        dataset.updateDatasetFile();
+        // Save dataset on .arff file for training
+//        dataset.updateDatasetFile();
+        dataset.saveDataset();
+        String datasetFilename = dataset.getFilename();
 
-        // train network
-        initTraining(baseFilename + ".arff", 0.8);
-        // TODO: print results of training
-        // TODO: remove .arff file? so it can restart on next round
+        // Train network
+        initTraining(datasetFilename, 0.8);
 
-        // save network on .eg file
+        // Save dataset history and clear current dataset
+        dataset.saveHistoryDataset();
+
+        // Save network on .eg file, so it can be loaded on next round;
         saveNetwork(baseFilename + networkSuffix);
 
-
-        // on next round, by calling init(), will load the network from file
     }
 
-    public double[] predict(double... input) { // TODO: test
+    public double[] predict(double... input) {
         MLData outputData = network.compute(new BasicMLDataSet(new double[][]{input}, new double[][]{{0, 0}}).get(0).getInput());
         return outputData.getData();
-    }
+    } // TODO: implement on robocode
 
     // ===== Neural Network Config =====
 
@@ -152,7 +152,7 @@ public class NeuralNetwork {
 
 
     private void runTraining(BasicMLDataSet dataset) {
-        System.out.println("Training the network...");
+        System.out.print("Training the network... ");
         // Configure the training
         MLTrain train;
         train = new ResilientPropagation(network, dataset);  // RPROP configuration
@@ -161,7 +161,7 @@ public class NeuralNetwork {
         // train = new Backpropagation(network, dataset, 0.01, 0.9);  // Backpropagation configuration
         // Backprogation did not converge. More tem 50k epochs and error still high
 
-        System.out.println("Training with " + dataset.size() + " instances...");
+        System.out.println(dataset.size() + " instances...");
         int epoch = 1;
         while (!train.isTrainingDone()) {
             train.iteration();
@@ -208,7 +208,6 @@ public class NeuralNetwork {
 
     }
 
-
     public void initTraining(String datasetFilename, double trainRatio) {
         // train network given the dataset .arff and save .eg network
 
@@ -245,10 +244,14 @@ public class NeuralNetwork {
 
     public static void main(String[] args) {
         NeuralNetwork net = new NeuralNetwork("Autobot", 3, 10, 2);
-        net.init();
+
+//        net.init();
 //        net.trainAndUpdateNetwork(new Dataset("Autobot"));
-        net.initTraining("Autobot.arff", 0.8);
-        net.saveNetwork("AutobotNetwork.eg");
+//        net.initTraining("Autobot.arff", 0.8);
+//        net.saveNetwork("AutobotNetwork.eg");
+
+
+//        net.saveHistoryDataset("Autobot.arff");
 
 
     }

@@ -44,8 +44,8 @@ public class Autobot extends AdvancedRobot {
     // Neural Network variables:
     // input: "enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun"
     // output: "notHit", "hit"
-    String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun", "notHit", "hit"};
     NeuralNetwork neuralNetwork = new NeuralNetwork("Autobot", 3, 10, 2);
+    String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun", "notHit", "hit"};
     Dataset neuralNetworkDataset = new Dataset("Autobot.arff", attributesNames);
     // {"enemyDistance", "enemyVelocity", "enemyAngle", "enemyHeading", "myGunToEnemyAngle", "firePower", "hit"};
 
