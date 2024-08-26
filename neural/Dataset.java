@@ -13,44 +13,24 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Dataset {
-    Instances instances;
-    private final String filepath;
-    private final String filename;
     //    private final String baseFilepath = "C:/robocode/robots/autobot/neural/data/";
     private final String baseFilepath = "robots/autobot/neural/data/";
+    Instances instances;
 
-
-    public Dataset(String filename, String[] attributesNames) {
-        this.filepath = baseFilepath + filename;
-        this.filename = filename;
-        createInstances(filename, attributesNames);
+    public Dataset(String[] attributesNames) { // init dataset from attributes
+        createInstances(attributesNames);
     }
 
-    public Dataset(String filename) {
-        this.filepath = baseFilepath + filename;
-        this.filename = filename;
-        initInstances();
-        loadDataset();
-    }
-
-    private void initInstances() {
-        // initialize instances with loaded data
-        if (FileHandler.fileExists(filepath)) {
-            try {
-                BufferedReader reader = new BufferedReader(new FileReader(filepath));
-                ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
-                instances = arff.getData();
-                reader.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            instances = new Instances(filename, new ArrayList<>(), 0);
-        }
+    public Dataset(String filename) { // init dataset from file
+        loadInstancesFromFile(filename);
     }
 
 
-    public void createInstances(String filename, String[] attributesNames) {
+    public Instances getInstances() {
+        return instances;
+    }
+
+    public void createInstances(String[] attributesNames) {
         ArrayList<Attribute> attributes = new ArrayList<>();
 
         // Define attributes
@@ -58,43 +38,66 @@ public class Dataset {
             attributes.add(new Attribute(name));
         }
         // Create dataset
-        instances = new Instances(filename, attributes, 0);
+        instances = new Instances("AutobotDataset", attributes, 0);
     }
 
-    public void loadDataset() {
+    private Instances getInstancesFromFile(String filename) {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(filepath));
+            BufferedReader reader = new BufferedReader(new FileReader(filename));
             ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
-            Instances existingData = arff.getData();
-            reader.close();
-
-            // Merge existing data with the new data
-            for (int i = 0; i < existingData.numInstances(); i++) {
-                instances.add(existingData.instance(i));
-            }
+            return arff.getData();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void addInstance(double... values) { // expects value for each attribute in the dataset
+    private void loadInstancesFromFile(String filename) {
+        // Initialize instances with loaded data
+
+        String filepath = baseFilepath + filename;
+
+        if (FileHandler.fileExists(filepath)) {
+            instances = getInstancesFromFile(filepath);
+        } else {
+            instances = new Instances(filename, new ArrayList<>(), 0);
+        }
+    }
+
+
+    public void mergeInstancesWithFile(String filename) {
+        String filepath = baseFilepath + filename;
+        Instances existingData = getInstancesFromFile(filepath);
+        // Merge existing data with the new data
+        for (int i = 0; i < existingData.numInstances(); i++) {
+            instances.add(existingData.instance(i));
+        }
+    }
+
+    public void appendInstance(double... values) { // expects value for each attribute in the dataset
         double[] instance = new double[values.length];
         System.arraycopy(values, 0, instance, 0, values.length);
         instances.add(new DenseInstance(1.0, instance));
     }
+/*
 
-
-    public void saveDataset() {
-        System.out.println("Saving dataset to file: " + filepath);
-        saveDatasetFile(instances, filepath);
+    public void saveFile(String dir, String filename){
+        String filepathToSave = dir + filename;
+        saveFileAt();
     }
 
-    private void saveDatasetFile(Instances data, String filepathToSave) {
+    public void saveFile(String filename){
+        saveFileAt(baseFilepath + filename);
+    }
+
+*/
+
+    public void saveFile(String filename) {
+        String filepathToSave = baseFilepath + filename;
         try {
             File file = new File(filepathToSave);
             ArffSaver saver = new ArffSaver();
-            saver.setInstances(data);
-
+            saver.setInstances(instances);
+            System.out.print("Saving... ");
             if (file.exists()) {
                 System.out.println("Existing file: " + filepathToSave);
 
@@ -125,17 +128,9 @@ public class Dataset {
         }
     }
 
-
-    public String getFilename() {
-        return filename;
+    public void deleteDatasetFiles() {
+        FileHandler.deleteFilesWithExtension(baseFilepath, ".arff");
     }
-
-    private Instances getInstances(String filepath) throws Exception {
-        ArffLoader loader = new ArffLoader();
-        loader.setFile(new File(filepath));
-        return loader.getDataSet();
-    }
-
 
     public static void main(String[] args) {
 

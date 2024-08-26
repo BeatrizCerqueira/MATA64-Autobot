@@ -9,13 +9,21 @@ public class FileHandler {
     }
 
     public static String generateUniqueFilename(String baseDir, String baseFilename) {
+        File dir = new File(baseDir);
+        if (!dir.exists() || !dir.isDirectory()) {
+            throw new IllegalArgumentException("Invalid directory: " + baseDir);
+        }
+
+        String baseNameWithoutExtension = baseFilename.replace(".arff", "");
+        File[] files = dir.listFiles((d, name) -> name.startsWith(baseNameWithoutExtension) && name.endsWith(".arff"));
+
         int counter = 1;
-        String uniqueFilename;
-        do {
-            uniqueFilename = baseDir + baseFilename.replace(".arff", "_" + counter + ".arff");
-            counter++;
-        } while (new File(uniqueFilename).exists());
-        return uniqueFilename;
+        if (files != null) {
+            counter = files.length + 1;
+        }
+        String newFilename = baseDir + baseNameWithoutExtension + "_" + counter + ".arff";
+        System.out.println("New history file: " + newFilename);
+        return newFilename;
     }
 
     public static void deleteFilesWithExtension(String directoryPath, String extension) {
@@ -32,6 +40,27 @@ public class FileHandler {
                     System.out.println("Deleted file: " + file.getAbsolutePath());
                 } else {
                     System.out.println("Failed to delete file: " + file.getAbsolutePath());
+                }
+            }
+        }
+    }
+
+    public static void clearFilesWithExtension(String directoryPath, String extension) {
+        File directory = new File(directoryPath);
+        if (!directory.exists() || !directory.isDirectory()) {
+            System.out.println("Invalid directory: " + directoryPath);
+            return;
+        }
+
+        File[] files = directory.listFiles((dir, name) -> name.endsWith(extension));
+        if (files != null) {
+            for (File file : files) {
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                    writer.write("");
+                    System.out.println("Cleared file: " + file.getAbsolutePath());
+                } catch (IOException e) {
+                    System.out.println("Failed to clear file: " + file.getAbsolutePath());
+                    e.printStackTrace();
                 }
             }
         }
