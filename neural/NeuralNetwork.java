@@ -79,7 +79,7 @@ public class NeuralNetwork {
     }
 
 
-    public double[] predict(double... input) {
+    public double[] getOutputs(double... input) {
         MLData outputData = network.compute(new BasicMLDataSet(new double[][]{input}, new double[][]{{0, 0}}).get(0).getInput());
         return outputData.getData();
     } // TODO: implement on robocode
@@ -202,18 +202,20 @@ public class NeuralNetwork {
         NeuralNetwork net = new NeuralNetwork("Autobot", 3, 10, 2);
         net.setupNetwork();
 
-        String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun", "notHit", "hit"};
-
-        Dataset dataset = new Dataset(attributesNames);
-        dataset.appendInstance(1, 2, 3, 0, 1);
-        net.trainAndUpdateNetwork(dataset);
-
-
-        Dataset dataset2 = new Dataset(attributesNames);
-        dataset.appendInstance(2, 2, 3, 0, 1);
-
-        net.trainAndUpdateNetwork(dataset2);
+        System.out.println(Arrays.toString(net.getOutputs(0.3, 0.8, 0)));
+//        String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun", "notHit", "hit"};
+//
+//        Dataset dataset = new Dataset(attributesNames);
+//        dataset.appendInstance(1, 2, 3, 0, 1);
+//        net.trainAndUpdateNetwork(dataset);
+//
+//
+//        Dataset dataset2 = new Dataset(attributesNames);
+//        dataset.appendInstance(2, 2, 3, 0, 1);
+//
+//        net.trainAndUpdateNetwork(dataset2);
 //        net.clearDatasetFiles();
+
 
     }
 }
