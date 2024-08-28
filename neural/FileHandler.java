@@ -112,4 +112,11 @@ public class FileHandler {
 
     }
 
+    public static File[] getFilesWithExtension(String dirPath, String extension) {
+        File dir = new File(dirPath);
+        if (!dir.exists() || !dir.isDirectory()) {
+            throw new IllegalArgumentException("Invalid directory: " + dirPath);
+        }
+        return dir.listFiles((d, name) -> name.endsWith(extension));
+    }
 }

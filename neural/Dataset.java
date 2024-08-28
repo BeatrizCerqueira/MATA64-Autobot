@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Dataset {
-    //    private final String baseFilepath = "C:/robocode/robots/autobot/neural/data/";
+//        private final String baseFilepath = "C:/robocode/robots/autobot/neural/data/";
     private final String baseFilepath = "robots/autobot/neural/data/";
     Instances instances;
 
@@ -21,9 +21,17 @@ public class Dataset {
         createInstances(attributesNames);
     }
 
-    public Dataset(String filename) { // init dataset from file
-        loadInstancesFromFile(filename);
+    public Dataset(String name) {  // init dataset with all arff files from current directory
+        instances = new Instances(name, new ArrayList<>(), 0);
+
+        // for each file in directory, load instances
+        File[] files = FileHandler.getFilesWithExtension(baseFilepath, ".arff");
+
+        for (File file : files) {
+            loadInstancesFromFile(file.getName());
+        }
     }
+
 
 
     public Instances getInstances() {
@@ -51,20 +59,7 @@ public class Dataset {
         }
     }
 
-    private void loadInstancesFromFile(String filename) {
-        // Initialize instances with loaded data
-
-        String filepath = baseFilepath + filename;
-
-        if (FileHandler.fileExists(filepath)) {
-            instances = getInstancesFromFile(filepath);
-        } else {
-            instances = new Instances(filename, new ArrayList<>(), 0);
-        }
-    }
-
-
-    public void mergeInstancesWithFile(String filename) {
+    public void loadInstancesFromFile(String filename) {
         String filepath = baseFilepath + filename;
         Instances existingData = getInstancesFromFile(filepath);
         // Merge existing data with the new data
@@ -78,21 +73,19 @@ public class Dataset {
         System.arraycopy(values, 0, instance, 0, values.length);
         instances.add(new DenseInstance(1.0, instance));
     }
-/*
 
-    public void saveFile(String dir, String filename){
-        String filepathToSave = dir + filename;
-        saveFileAt();
+    public void saveFile(String filename, String dir) {
+        String filepathToSave = baseFilepath + dir + "/" + filename;
+        saveFileToDir(filepathToSave);
     }
 
     public void saveFile(String filename){
-        saveFileAt(baseFilepath + filename);
+        String filepathToSave = baseFilepath + filename;
+        saveFileToDir(filepathToSave);
     }
 
-*/
-
-    public void saveFile(String filename) {
-        String filepathToSave = baseFilepath + filename;
+    private void saveFileToDir(String filepathToSave) {
+//        String filepathToSave = baseFilepath + filename;
         try {
             File file = new File(filepathToSave);
             ArffSaver saver = new ArffSaver();
@@ -133,6 +126,9 @@ public class Dataset {
     }
 
     public static void main(String[] args) {
+        Dataset dataset = new Dataset("history");
+        dataset.saveFile("AutobotDatasetHistory.arff", "history"); // Save history files with retrieved data until now
+        dataset.deleteDatasetFiles(); // Remove temp arff files, keep only history
 
     }
 

@@ -102,8 +102,12 @@ public class Autobot extends AdvancedRobot {
 
         // Battle finished
         if (getRoundNum() >= getNumRounds() - 1) {
+            System.out.println("Battle finished!");
+            Dataset dataset = new Dataset("history");
+            dataset.saveFile("AutobotDatasetHistory.arff", "/history"); // Save history files with retrieved data until now
+            dataset.deleteDatasetFiles(); // Remove temp arff files, keep only history
             GeneticAlgorithm.clearGeneticData();
-//            neuralNetworkDataset.saveHistoryFiles(); // TODO: save history files. make a final training and update neural network. save on .eg file
+
 //            Bayes.clearDataset();
         }
 
@@ -188,11 +192,8 @@ public class Autobot extends AdvancedRobot {
 
         double myGunToEnemy = this.gunAngleAfterRotation;
 
-        boolean shouldFire = (getGunHeat() == 0) && (getEnergy() > Consts.MIN_LIFE_TO_FIRE);
+        boolean shouldFire = (getGunHeat() == 0);
         if (shouldFire) {
-
-
-//            double enemyDirectionToGun = enemyBot.getEnemyDirectionToGun(); // 1 if enemy is in front of gun, -1 otherwise
 
             // output[1] is the hit factor based on previous record and neural network calculations
             double[] neuralOutputs = neuralNetwork.getOutputs(enemyBot.getDistance(), enemyBot.getVelocity(), enemyBot.getEnemyDirectionToGun());
@@ -200,14 +201,17 @@ public class Autobot extends AdvancedRobot {
             double firePower = hitFactor * (300 / enemyBot.getDistance());
             double bestFirePowerToHit = Math.min(firePower, 3);
 
-            System.out.println();
-            System.out.println("Neural network inputs: " + enemyBot.getDistance() + ", " + enemyBot.getVelocity() + ", " + enemyBot.getEnemyDirectionToGun());
-            System.out.println("Neural network outputs: " + neuralOutputs[0] + ", " + neuralOutputs[1]);
-            System.out.println("Best fire power to hit: " + bestFirePowerToHit);
+//            System.out.println("Neural network inputs: " + enemyBot.getDistance() + ", " + enemyBot.getVelocity() + ", " + enemyBot.getEnemyDirectionToGun());
+//            System.out.println("Neural network outputs: " + neuralOutputs[0] + ", " + neuralOutputs[1]);
+//            System.out.println("Best fire power to hit: " + bestFirePowerToHit);
 
-            Bullet bullet = fireBullet(bestFirePowerToHit);
-            if (bullet != null) {
-                activeBullets.add(new ActiveBullet(bullet, enemyBot.clone(), myGunToEnemy, bestFirePowerToHit));
+            if (bestFirePowerToHit > 0 || !hasLifeRisk) { // fire if it's going to hit for sure or has no life risk
+//                System.out.println("Firing with power: " + bestFirePowerToHit);
+
+                Bullet bullet = fireBullet(bestFirePowerToHit);
+                if (bullet != null) {
+                    activeBullets.add(new ActiveBullet(bullet, enemyBot.clone(), myGunToEnemy, bestFirePowerToHit));
+                }
             }
         }
     }
