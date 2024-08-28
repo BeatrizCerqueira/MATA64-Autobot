@@ -45,27 +45,6 @@ public class FileHandler {
         }
     }
 
-    public static void clearFilesWithExtension(String directoryPath, String extension) {
-        File directory = new File(directoryPath);
-        if (!directory.exists() || !directory.isDirectory()) {
-            System.out.println("Invalid directory: " + directoryPath);
-            return;
-        }
-
-        File[] files = directory.listFiles((dir, name) -> name.endsWith(extension));
-        if (files != null) {
-            for (File file : files) {
-                try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-                    writer.write("");
-                    System.out.println("Cleared file: " + file.getAbsolutePath());
-                } catch (IOException e) {
-                    System.out.println("Failed to clear file: " + file.getAbsolutePath());
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
     private static void deleteFile(String filepathToDelete) {
         File file = new File(filepathToDelete);
         if (file.delete())
@@ -108,8 +87,6 @@ public class FileHandler {
 
     public static void main(String[] args) {
         deleteFilesWithExtension("C:/robocode/robots/autobot/neural/data", ".arff");
-
-
     }
 
     public static File[] getFilesWithExtension(String dirPath, String extension) {

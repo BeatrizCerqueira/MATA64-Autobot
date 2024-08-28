@@ -10,10 +10,9 @@ import java.util.Map;
 
 public class FileHandler {
 
+    static final String filename = "Autobot.txt";
     static String separatorGeneValues = ";";
     static String separatorChromosomes = "---";
-
-    static final String filename = "Autobot.txt";
     static String filepath = "robots/autobot/genetic/data/" + filename;
 
     public static boolean fileExists() {
@@ -64,8 +63,6 @@ public class FileHandler {
             if (!genes.isEmpty()) {
                 chromosomes.add(new Chromosome(genes));
             }
-
-            System.out.println("File loaded successfully.");
 
         } catch (Exception e) {
             throw new RuntimeException(e);

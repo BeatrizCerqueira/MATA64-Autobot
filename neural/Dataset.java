@@ -13,7 +13,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Dataset {
-//        private final String baseFilepath = "C:/robocode/robots/autobot/neural/data/";
+
+    //    private final String baseFilepath = "C:/robocode/robots/autobot/neural/data/";
     private final String baseFilepath = "robots/autobot/neural/data/";
     Instances instances;
 
@@ -26,13 +27,17 @@ public class Dataset {
 
         // for each file in directory, load instances
         File[] files = FileHandler.getFilesWithExtension(baseFilepath, ".arff");
-
         for (File file : files) {
             loadInstancesFromFile(file.getName());
         }
     }
 
+    public static void main(String[] args) {
+        Dataset dataset = new Dataset("history");
+        dataset.saveFile("AutobotDatasetHistory.arff", "history"); // Save history files with retrieved data until now
+        dataset.deleteDatasetFiles(); // Remove temp arff files, keep only history
 
+    }
 
     public Instances getInstances() {
         return instances;
@@ -79,16 +84,16 @@ public class Dataset {
         saveFileToDir(filepathToSave);
     }
 
-    public void saveFile(String filename){
+    public void saveFile(String filename) {
         String filepathToSave = baseFilepath + filename;
         saveFileToDir(filepathToSave);
     }
 
     private void saveFileToDir(String filepathToSave) {
-//        String filepathToSave = baseFilepath + filename;
         try {
             File file = new File(filepathToSave);
             ArffSaver saver = new ArffSaver();
+            System.out.print("About to... ");
             saver.setInstances(instances);
             System.out.print("Saving... ");
             if (file.exists()) {
@@ -124,12 +129,4 @@ public class Dataset {
     public void deleteDatasetFiles() {
         FileHandler.deleteFilesWithExtension(baseFilepath, ".arff");
     }
-
-    public static void main(String[] args) {
-        Dataset dataset = new Dataset("history");
-        dataset.saveFile("AutobotDatasetHistory.arff", "history"); // Save history files with retrieved data until now
-        dataset.deleteDatasetFiles(); // Remove temp arff files, keep only history
-
-    }
-
 }

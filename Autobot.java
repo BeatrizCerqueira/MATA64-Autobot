@@ -102,10 +102,10 @@ public class Autobot extends AdvancedRobot {
 
         // Battle finished
         if (getRoundNum() >= getNumRounds() - 1) {
-            System.out.println("Battle finished!");
-            Dataset dataset = new Dataset("history");
-            dataset.saveFile("AutobotDatasetHistory.arff", "/history"); // Save history files with retrieved data until now
-            dataset.deleteDatasetFiles(); // Remove temp arff files, keep only history
+            System.out.println("\nBattle finished!");
+//            Dataset dataset = new Dataset("history");
+//            dataset.saveFile("AutobotDatasetHistory.arff", "history"); // Save history files with retrieved data until now
+            neuralNetworkDataset.deleteDatasetFiles(); // Remove temp arff files, keep only history
             GeneticAlgorithm.clearGeneticData();
 
 //            Bayes.clearDataset();

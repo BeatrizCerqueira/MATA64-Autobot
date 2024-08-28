@@ -19,37 +19,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-// Passo a passo
-// [OK] 1. Coletar dados
-// [OK] 2. Preparar os dados
-// [OK] 2.1. Normalizar os dados
-// [OK] 2.2. Dividir os dados em treino e teste
-// [OK] 3. Definir a arquitetura da rede neural
-// [OK] 3.1. Definir o número de camadas e neurônios
-// [OK] 3.2. Definir a função de ativação
-// [OK] 3.3 Inicializar os pesos
-// [OK] 4. Treinar a rede neural
-// [  ] 4.1 Função de custo (MSE, Cross-Entropy)??
-// [OK] 4.2 Otimizador (SGD, Adam, Backpropagation, RPROP, etc)???
-// [  ] 5. Avaliar a rede neural
-// [  ] 5.1. Métricas de avaliação (Acurácia, Precisão, Recall, F1-Score, etc)?
-// [  ] 5.2. Matriz de confusão?
-// [  ] 5.3. Curva ROC?
-// [  ] 5.4. Curva de aprendizado?
-
-// Notes
-// Tipo de rede: classificação ou regressão?
-// MAE ou MSE? // metricas para regressão?
-
 public class NeuralNetwork {
     final String baseFilename;
     //    final String filepath = "C:/robocode/robots/autobot/neural/data/";
     final String filepath = "robots/autobot/neural/data/";
     final String networkSuffix = "Network.eg";
-    BasicNetwork network;
-
-    int outputCount;
     final int trainRatio = 1;
+    BasicNetwork network;
+    int outputCount;
 
     public NeuralNetwork(String filename, int inputCount, int hiddenCount, int outputCount) {
         baseFilename = filename;
@@ -58,6 +35,11 @@ public class NeuralNetwork {
     }
 
     // ===== Robocode Integration =====
+
+    public static void main(String[] args) {
+        NeuralNetwork net = new NeuralNetwork("Autobot", 3, 10, 2);
+        net.setupNetwork();
+    }
 
     public void setupNetwork() { // Check if there is saved network on file directory
         String filename = baseFilename + networkSuffix;
@@ -68,23 +50,22 @@ public class NeuralNetwork {
         }
     }
 
+    // ===== Neural Network Config =====
+
     public void trainAndUpdateNetwork(Dataset dataset) {
         // Train network
         BasicMLDataSet trainingDataset = getDataset(dataset.getInstances(), outputCount);
-        runTrainingAndValidation(trainingDataset, trainRatio);
-//        runTraining(trainingDataset);
+        runTraining(trainingDataset);
+//        runTrainingAndValidation(trainingDataset, trainRatio);
 
         // Save network on .eg file, so it can be loaded on next round;
         saveNetwork(baseFilename + networkSuffix);
     }
 
-
     public double[] getOutputs(double... input) {
         MLData outputData = network.compute(new BasicMLDataSet(new double[][]{input}, new double[][]{{0, 0}}).get(0).getInput());
         return outputData.getData();
-    } // TODO: implement on robocode
-
-    // ===== Neural Network Config =====
+    }
 
     private BasicMLDataSet getDataset(Instances data, int outputSize) {
         data.setClassIndex(data.numAttributes() - outputSize);
@@ -101,7 +82,6 @@ public class NeuralNetwork {
         File networkFile = new File(filepath + filename);
         return (BasicNetwork) EncogDirectoryPersistence.loadObject(networkFile);
     }
-
 
     private void populateDataArrays(Instances data, double[][] input, double[][] output) {
         for (int i = 0; i < data.numInstances(); i++) {
@@ -125,9 +105,8 @@ public class NeuralNetwork {
         return network;
     }
 
-
     public void runTraining(BasicMLDataSet dataset) {
-        System.out.print("Training the network... ");
+        System.out.print("\nTraining the network... ");
         // Configure the training
         MLTrain train;
         train = new ResilientPropagation(network, dataset);  // RPROP configuration
@@ -177,7 +156,6 @@ public class NeuralNetwork {
         runValidation(validationSet);
     }
 
-
     private void saveNetwork(String filename) {
         File networkFile = new File(filepath + filename);
         EncogDirectoryPersistence.saveObject(networkFile, network);
@@ -197,25 +175,4 @@ public class NeuralNetwork {
         }
     }
 
-
-    public static void main(String[] args) {
-        NeuralNetwork net = new NeuralNetwork("Autobot", 3, 10, 2);
-        net.setupNetwork();
-
-        System.out.println(Arrays.toString(net.getOutputs(0.3, 0.8, 0)));
-//        String[] attributesNames = {"enemyDistance", "enemyVelocity", "enemyDirectionRelativeToGun", "notHit", "hit"};
-//
-//        Dataset dataset = new Dataset(attributesNames);
-//        dataset.appendInstance(1, 2, 3, 0, 1);
-//        net.trainAndUpdateNetwork(dataset);
-//
-//
-//        Dataset dataset2 = new Dataset(attributesNames);
-//        dataset.appendInstance(2, 2, 3, 0, 1);
-//
-//        net.trainAndUpdateNetwork(dataset2);
-//        net.clearDatasetFiles();
-
-
-    }
 }
