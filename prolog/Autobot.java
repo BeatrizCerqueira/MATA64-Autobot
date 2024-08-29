@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("CommentedOutCode")
-public class Prolog {
+public class Autobot {
 
-    private static final String filepath = "robots/autobot/prolog/Prolog.pl";
+    private static final String filepath = "robots/autobot/prolog/Autobot.pl";
 
     // ============================= Robocode =============================
 

@@ -76,8 +76,10 @@ public class NeuralNetwork {
 
         // Print additional properties if any
         System.out.println("Network Properties: " + network.getProperties());
+    }
 
-
+    public void deleteNetworkFiles(){
+        FileHandler.deleteFilesWithExtension(filepath, ".eg");
     }
 
     // ===== Neural Network Config =====

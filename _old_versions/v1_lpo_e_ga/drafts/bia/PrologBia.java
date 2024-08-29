@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class PrologBia {
     public static void main(String[] args) {
-//        checkHasSolution("C:/robocode/Prolog.pl");
+//        checkHasSolution("C:/robocode/Autobot.pl");
 //        testStr();
 //        testDouble();
 //        System.out.println("\n=================================");
