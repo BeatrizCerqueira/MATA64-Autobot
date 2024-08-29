@@ -103,8 +103,8 @@ public class Autobot extends AdvancedRobot {
         // Battle finished
         if (getRoundNum() >= getNumRounds() - 1) {
             System.out.println("\nBattle finished!");
-//            Dataset dataset = new Dataset("history");
-//            dataset.saveFile("AutobotDatasetHistory.arff", "history"); // Save history files with retrieved data until now
+            Dataset dataset = new Dataset("history");
+            dataset.saveFile("AutobotDatasetHistory.arff", "history"); // Save history files with retrieved data until now
             neuralNetworkDataset.deleteDatasetFiles(); // Remove temp arff files, keep only history
             GeneticAlgorithm.clearGeneticData();
 
@@ -198,7 +198,7 @@ public class Autobot extends AdvancedRobot {
             // output[1] is the hit factor based on previous record and neural network calculations
             double[] neuralOutputs = neuralNetwork.getOutputs(enemyBot.getDistance(), enemyBot.getVelocity(), enemyBot.getEnemyDirectionToGun());
             double hitFactor = neuralOutputs[1];
-            double firePower = hitFactor * (300 / enemyBot.getDistance());
+            double firePower = hitFactor * (400 / enemyBot.getDistance());
             double bestFirePowerToHit = Math.min(firePower, 3);
 
 //            System.out.println("Neural network inputs: " + enemyBot.getDistance() + ", " + enemyBot.getVelocity() + ", " + enemyBot.getEnemyDirectionToGun());
@@ -206,7 +206,8 @@ public class Autobot extends AdvancedRobot {
 //            System.out.println("Best fire power to hit: " + bestFirePowerToHit);
 
             if (bestFirePowerToHit > 0 || !hasLifeRisk) { // fire if it's going to hit for sure or has no life risk
-//                System.out.println("Firing with power: " + bestFirePowerToHit);
+//                System.out.println("hitFactor: " + hitFactor);
+//                System.out.println("Firing with power: " + bestFirePowerToHit );
 
                 Bullet bullet = fireBullet(bestFirePowerToHit);
                 if (bullet != null) {

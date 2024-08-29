@@ -21,7 +21,7 @@ import java.util.Random;
 
 public class NeuralNetwork {
     final String baseFilename;
-    //    final String filepath = "C:/robocode/robots/autobot/neural/data/";
+//        final String filepath = "C:/robocode/robots/autobot/neural/data/";
     final String filepath = "robots/autobot/neural/data/";
     final String networkSuffix = "Network.eg";
     final int trainRatio = 1;
@@ -39,6 +39,12 @@ public class NeuralNetwork {
     public static void main(String[] args) {
         NeuralNetwork net = new NeuralNetwork("Autobot", 3, 10, 2);
         net.setupNetwork();
+//        net.printNetworkEstructure();
+
+        Dataset dataset = new Dataset("history");
+        BasicMLDataSet MLDataSet = net.getDataset(dataset.getInstances(), 2);
+        dataset.saveFile("AutobotDatasetHistory.arff", "history"); // Save history files with retrieved data until now
+        net.runTrainingAndValidation(MLDataSet,0.5);
     }
 
     public void setupNetwork() { // Check if there is saved network on file directory
@@ -48,6 +54,30 @@ public class NeuralNetwork {
             System.out.print("Network loaded successfully. ");
             System.out.println(network.getProperties());
         }
+    }
+    private void printNetworkEstructure() {
+        System.out.println("Network Structure:");
+        System.out.println("Number of layers: " + network.getLayerCount());
+
+        for (int i = 0; i < network.getLayerCount(); i++) {
+            System.out.println("Layer " + i + ":");
+            System.out.println("  Neurons: " + network.getLayerNeuronCount(i));
+            System.out.println("  Activation Function: " + network.getActivation(i).getClass().getSimpleName());
+
+            if (i < network.getLayerCount() - 1) {
+                System.out.println("  Weights:");
+                for (int j = 0; j < network.getLayerNeuronCount(i); j++) {
+                    for (int k = 0; k < network.getLayerNeuronCount(i + 1); k++) {
+                        System.out.printf("    Weight[%d][%d]: %.4f%n", j, k, network.getWeight(i, j, k));
+                    }
+                }
+            }
+        }
+
+        // Print additional properties if any
+        System.out.println("Network Properties: " + network.getProperties());
+
+
     }
 
     // ===== Neural Network Config =====

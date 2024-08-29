@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class Dataset {
 
-    //    private final String baseFilepath = "C:/robocode/robots/autobot/neural/data/";
+//        private final String baseFilepath = "C:/robocode/robots/autobot/neural/data/";
     private final String baseFilepath = "robots/autobot/neural/data/";
     Instances instances;
 
@@ -23,8 +23,6 @@ public class Dataset {
     }
 
     public Dataset(String name) {  // init dataset with all arff files from current directory
-        instances = new Instances(name, new ArrayList<>(), 0);
-
         // for each file in directory, load instances
         File[] files = FileHandler.getFilesWithExtension(baseFilepath, ".arff");
         for (File file : files) {
@@ -67,6 +65,12 @@ public class Dataset {
     public void loadInstancesFromFile(String filename) {
         String filepath = baseFilepath + filename;
         Instances existingData = getInstancesFromFile(filepath);
+
+        // Initialize instances if null
+        if (instances == null) {
+            instances = new Instances(existingData, 0);
+        }
+
         // Merge existing data with the new data
         for (int i = 0; i < existingData.numInstances(); i++) {
             instances.add(existingData.instance(i));
@@ -93,7 +97,6 @@ public class Dataset {
         try {
             File file = new File(filepathToSave);
             ArffSaver saver = new ArffSaver();
-            System.out.print("About to... ");
             saver.setInstances(instances);
             System.out.print("Saving... ");
             if (file.exists()) {
