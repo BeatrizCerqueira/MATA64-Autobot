@@ -192,8 +192,8 @@ public class Autobot extends AdvancedRobot {
 
         double myGunToEnemy = this.gunAngleAfterRotation;
 
-        boolean shouldFire = (getGunHeat() == 0);
-        if (shouldFire) {
+//        boolean shouldFire = getGunHeat() == 0;
+        if (getGunHeat() == 0) {
 
             // output[1] is the hit factor based on previous record and neural network calculations
             double[] neuralOutputs = neuralNetwork.getOutputs(enemyBot.getDistance(), enemyBot.getVelocity(), enemyBot.getEnemyDirectionToGun());
@@ -205,8 +205,9 @@ public class Autobot extends AdvancedRobot {
 //            System.out.println("Neural network outputs: " + neuralOutputs[0] + ", " + neuralOutputs[1]);
 //            System.out.println("Best fire power to hit: " + bestFirePowerToHit);
 
-            if (bestFirePowerToHit > 0 || !hasLifeRisk) { // fire if it's going to hit for sure or has no life risk
-//                System.out.println("hitFactor: " + hitFactor);
+            boolean shouldFire = (hitFactor==1) || !(hasLifeRisk);
+//            System.out.println("hitFactor: " + hitFactor + " | lifeRisk " + hasLifeRisk + " = " + (hitFactor==1) + " || " + !(hasLifeRisk));
+            if (shouldFire) { // fire if it's going to hit for sure or has no life risk
 //                System.out.println("Firing with power: " + bestFirePowerToHit );
 
                 Bullet bullet = fireBullet(bestFirePowerToHit);
