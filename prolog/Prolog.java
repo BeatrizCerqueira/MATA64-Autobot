@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("CommentedOutCode")
-public class Autobot {
+public class Prolog {
 
     private static final String filepath = "robots/autobot/prolog/Autobot.pl";
 

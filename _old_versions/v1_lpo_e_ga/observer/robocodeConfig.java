@@ -33,11 +33,11 @@
 //        // D:\Documentos\UFCG\IA\robocode-jgap-template\robots\custom
 //        // String fileToCompile = "robots/custom/JoselitoBot.java"; // which file to compile * rhyming :) *
 //
-//        // C:\robocode\robots\autobot\v1\drafts\lucas\Autobot.java
-//        // C:\robocode\robots\autobot\Autobot.java
+//        // C:\robocode\robots\autobot\v1\drafts\lucas\Prolog.java
+//        // C:\robocode\robots\autobot\Prolog.java
 //
-//        String fileToCompile = "autobot/Autobot.java"; // which file to compile * rhyming :) *
-////        String fileToCompile = "autobot/v1/drafts/lucas/Autobot.java"; // which file to compile * rhyming :) *
+//        String fileToCompile = "autobot/Prolog.java"; // which file to compile * rhyming :) *
+////        String fileToCompile = "autobot/v1/drafts/lucas/Prolog.java"; // which file to compile * rhyming :) *
 //        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 //        System.out.println("vai rodar o run()?");
 //        compiler.run(null, null, null, fileToCompile); // run compile
@@ -68,7 +68,7 @@
 //    }
 //
 //    public boolean battleResults(String name, int score) {
-//        String same = "autobot.Autobot*"; // enter robot name here with folder prefix
+//        String same = "autobot.Prolog*"; // enter robot name here with folder prefix
 //
 //        //get results of battle
 //        if (name.equals(same)) {

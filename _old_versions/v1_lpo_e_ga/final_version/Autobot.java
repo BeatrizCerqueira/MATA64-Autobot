@@ -2,7 +2,6 @@ package autobot._old_versions.v1_lpo_e_ga.final_version;
 
 
 import autobot._old_versions.v1_lpo_e_ga.final_version.genetic.GeneticAlgorithm;
-import autobot._old_versions.v1_lpo_e_ga.final_version.prolog.Prolog;
 import autobot._old_versions.v1_lpo_e_ga.final_version.utils.Consts;
 import autobot._old_versions.v1_lpo_e_ga.final_version.utils.Draw;
 import autobot._old_versions.v1_lpo_e_ga.final_version.utils.MathUtils;
@@ -28,7 +27,7 @@ public class Autobot extends AdvancedRobot {
     public void run() {
 
         // !!! WARNING !!! File was kept in the original folder
-        Prolog.loadPrologFile("robots/autobot/prolog/Autobot.pl");
+        autobot._old_versions.v1_lpo_e_ga.final_version.prolog.Prolog.loadPrologFile("robots/autobot/prolog/Autobot.pl");
         GeneticAlgorithm.init(getRoundNum());
         changeRobotColors();
 
@@ -40,7 +39,7 @@ public class Autobot extends AdvancedRobot {
         do {
             nextTurn();
 
-            boolean isRadarTurnComplete = Prolog.isRadarTurnComplete(getRadarTurnRemaining());
+            boolean isRadarTurnComplete = autobot._old_versions.v1_lpo_e_ga.final_version.prolog.Prolog.isRadarTurnComplete(getRadarTurnRemaining());
 
             if (isRadarTurnComplete)
                 setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
@@ -155,7 +154,7 @@ public class Autobot extends AdvancedRobot {
             double bulletVelocityNeededToHit = enemyDistanceAfterTurns / i;
             double firePowerNeededToHit = (20 - bulletVelocityNeededToHit) / 3;
 
-            boolean shouldFire = Prolog.shouldFire(firePowerNeededToHit, getEnergy());
+            boolean shouldFire = autobot._old_versions.v1_lpo_e_ga.final_version.prolog.Prolog.shouldFire(firePowerNeededToHit, getEnergy());
 
             if (shouldFire) {
                 Map<String, Double> pair = new HashMap<>();
@@ -246,7 +245,7 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void checkEnemyIsClose() {
-        boolean isEnemyClose = Prolog.isEnemyClose(enemyBot.getDistance(), safeDistanceGA);
+        boolean isEnemyClose = autobot._old_versions.v1_lpo_e_ga.final_version.prolog.Prolog.isEnemyClose(enemyBot.getDistance(), safeDistanceGA);
         if (isEnemyClose) {
             setAhead(20);
         }

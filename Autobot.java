@@ -5,6 +5,7 @@ import autobot.fuzzy.Fuzzy;
 import autobot.genetic.GeneticAlgorithm;
 import autobot.neural.Dataset;
 import autobot.neural.NeuralNetwork;
+import autobot.prolog.Prolog;
 import autobot.records.ActiveBullet;
 import autobot.utils.Consts;
 import autobot.utils.MathUtils;
@@ -56,7 +57,7 @@ public class Autobot extends AdvancedRobot {
         do {
             nextTurn();
 
-            boolean isRadarTurnComplete = autobot.prolog.Autobot.isRadarTurnComplete(getRadarTurnRemaining());
+            boolean isRadarTurnComplete = Prolog.isRadarTurnComplete(getRadarTurnRemaining());
             if (isRadarTurnComplete) setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
 
             moveRobot();
@@ -66,7 +67,7 @@ public class Autobot extends AdvancedRobot {
     }
 
     private void initAutobot() {
-        autobot.prolog.Autobot.loadPrologFile();
+        Prolog.loadPrologFile();
         GeneticAlgorithm.init(getRoundNum());
         Fuzzy.init();
 
@@ -295,7 +296,7 @@ public class Autobot extends AdvancedRobot {
     }
 
     public void checkEnemyIsClose() {
-        boolean isEnemyClose = autobot.prolog.Autobot.isEnemyClose(enemyBot.getDistance(), safeDistanceGA);
+        boolean isEnemyClose = Prolog.isEnemyClose(enemyBot.getDistance(), safeDistanceGA);
         if (isEnemyClose) {
             int escapeVelocity = MathUtils.random(10, 20); // random velocity to allow more freedom to turn
             setAhead(escapeVelocity);

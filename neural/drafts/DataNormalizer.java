@@ -10,7 +10,7 @@ import java.io.File;
 
 public class DataNormalizer {
 
-    //    private static final String filepath = "robots/autobot/neural/data/Autobot.arff";
+    //    private static final String filepath = "robots/autobot/neural/data/Prolog.arff";
     private static final String filepath = "C:/robocode/robots/autobot/neural/data/Autobot.arff";
 
 

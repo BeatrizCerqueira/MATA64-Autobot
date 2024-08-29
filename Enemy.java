@@ -1,6 +1,6 @@
 package autobot;
 
-import autobot.prolog.Autobot;
+import autobot.prolog.Prolog;
 import autobot.utils.Consts;
 import autobot.utils.MathUtils;
 import robocode.AdvancedRobot;
@@ -84,7 +84,7 @@ public class Enemy implements Cloneable {
     private void identifyEnemyBullets(double energyDecreased) {
         // TODO: check enemy energy decrease to identify if enemy has fired. if so, update heat
 
-        boolean hasEnemyFired = Autobot.hasEnemyFired(energyDecreased);
+        boolean hasEnemyFired = Prolog.hasEnemyFired(energyDecreased);
 
         if (hasEnemyFired) {
             heat = 1 + (energyDecreased / 5);
@@ -98,7 +98,7 @@ public class Enemy implements Cloneable {
     }
 
     public boolean isGunReady() {
-        return Autobot.isGunReady(heat);
+        return Prolog.isGunReady(heat);
     }
 
     public boolean isScanned() {
